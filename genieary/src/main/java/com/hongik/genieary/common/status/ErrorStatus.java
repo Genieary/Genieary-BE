@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+import java.util.Optional;
+import java.util.function.Predicate;
+
 @Getter
 @AllArgsConstructor
 public enum ErrorStatus {
@@ -18,4 +21,10 @@ public enum ErrorStatus {
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;
+
+    public String getMessage(String message) {
+        return Optional.ofNullable(message)
+                .filter(Predicate.not(String::isBlank))
+                .orElse(this.getMessage());
+    }
 }
