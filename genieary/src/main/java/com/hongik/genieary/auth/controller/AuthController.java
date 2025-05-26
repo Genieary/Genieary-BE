@@ -45,9 +45,9 @@ public class AuthController {
             }
     )
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@org.springframework.web.bind.annotation.RequestBody SignupRequest request) {
-        authService.signup(request);
-        return ResponseEntity.ok("회원가입 성공");
+    public ResponseEntity<TokenResponse> signup(@org.springframework.web.bind.annotation.RequestBody SignupRequest request) {
+       TokenResponse response = authService.signup(request);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(

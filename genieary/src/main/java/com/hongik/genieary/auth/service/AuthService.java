@@ -27,7 +27,7 @@ public class AuthService {
     /**
      회원가입
      */
-    public void signup(SignupRequest request) {
+    public TokenResponse signup(SignupRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new GeneralException(ErrorStatus.AUTH_EMAIL_ALREADY_EXISTS);
         }
@@ -38,7 +38,23 @@ public class AuthService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        String accessToken = jwtUtil.generateToken(savedUser.getEmail());
+        String refreshToken = jwtUtil.generateRefreshToken(savedUser.getEmail());
+
+        refreshTokenRepository.save(
+                RefreshToken.builder()
+                        .email(savedUser.getEmail())
+                        .refreshToken(refreshToken)
+                        .build()
+        );
+
+        return TokenResponse.builder()
+                .userId(savedUser.getId())
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     /**
@@ -61,6 +77,7 @@ public class AuthService {
         );
 
         return TokenResponse.builder()
+                .userId(user.getId())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
@@ -90,6 +107,9 @@ public class AuthService {
         savedToken.updateToken(newRefreshToken);
         refreshTokenRepository.save(savedToken);
 
-        return new TokenResponse(newAccessToken, newRefreshToken);
+        return TokenResponse.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .build();
     }
 }
