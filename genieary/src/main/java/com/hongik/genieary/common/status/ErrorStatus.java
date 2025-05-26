@@ -16,7 +16,15 @@ public enum ErrorStatus {
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
     _NOT_FOUND(HttpStatus.NOT_FOUND, "COMMON404", "페이지를 찾을 수 없습니다."),
     // 입력값 검증 관련 에러
-    VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "VALID401", "입력값이 올바르지 않습니다.");
+    VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "VALID401", "입력값이 올바르지 않습니다."),
+
+    // Auth
+    AUTH_EMAIL_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "AUTH4001", "이미 사용중인 이메일입니다."),
+    AUTH_PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "AUTH4002", "비밀번호가 일치하지 않습니다."),
+    AUTH_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH4003", "회원이 존재하지 않습니다."),
+    AUTH_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "AUTH4004", "비밀번호가 올바르지 않습니다."),
+    AUTH_INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4005", "유효하지 않은 리프레시 토큰입니다.");
+
 
     private final HttpStatus httpStatus;
     private final String code;

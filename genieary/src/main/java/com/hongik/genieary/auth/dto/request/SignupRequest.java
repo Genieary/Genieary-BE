@@ -9,5 +9,5 @@ import lombok.*;
 public class SignupRequest {
     private String email;
     private String password;
-    private String passwordCk;
+    private String passwordCheck;
 }

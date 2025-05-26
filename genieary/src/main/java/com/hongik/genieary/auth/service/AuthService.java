@@ -6,6 +6,8 @@ import com.hongik.genieary.auth.dto.response.TokenResponse;
 import com.hongik.genieary.auth.entity.RefreshToken;
 import com.hongik.genieary.auth.jwt.JwtUtil;
 import com.hongik.genieary.auth.repository.RefreshTokenRepository;
+import com.hongik.genieary.common.exception.GeneralException;
+import com.hongik.genieary.common.status.ErrorStatus;
 import com.hongik.genieary.domain.user.entity.User;
 import com.hongik.genieary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +26,10 @@ public class AuthService {
 
     public void signup(SignupRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("이미 사용중인 이메일입니다.");
+            throw new GeneralException(ErrorStatus.AUTH_EMAIL_ALREADY_EXISTS);
         }
-        if (!request.getPassword().equals(request.getPasswordCk())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        if (!request.getPassword().equals(request.getPasswordCheck())) {
+            throw new GeneralException(ErrorStatus.AUTH_PASSWORD_MISMATCH);
         }
         User user = User.builder()
                 .email(request.getEmail())
@@ -38,9 +40,9 @@ public class AuthService {
 
     public TokenResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.AUTH_USER_NOT_FOUND));
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new GeneralException(ErrorStatus.AUTH_INVALID_PASSWORD);
         }
         String accessToken = jwtUtil.generateToken(user.getEmail());
         String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
@@ -61,16 +63,16 @@ public class AuthService {
 
     public TokenResponse refresh(String refreshToken) {
         if (!jwtUtil.validateToken(refreshToken)) {
-            throw new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다.");
+            throw new GeneralException(ErrorStatus.AUTH_INVALID_REFRESH_TOKEN);
         }
 
         String email = jwtUtil.getEmailFromToken(refreshToken);
 
         RefreshToken savedToken = refreshTokenRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("리프레시 토큰이 존재하지 않습니다."));
+                .orElseThrow(() ->new GeneralException(ErrorStatus.AUTH_INVALID_REFRESH_TOKEN));
 
         if (!savedToken.getRefreshToken().equals(refreshToken)) {
-            throw new IllegalArgumentException("리프레시 토큰이 일치하지 않습니다.");
+            throw new GeneralException(ErrorStatus.AUTH_INVALID_REFRESH_TOKEN);
         }
 
         String newAccessToken = jwtUtil.generateToken(email);
