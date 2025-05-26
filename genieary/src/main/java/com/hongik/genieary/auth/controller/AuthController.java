@@ -35,7 +35,7 @@ public class AuthController {
                             schema = @Schema(implementation = SignupRequest.class),
                             examples = @ExampleObject(
                                     name = "회원가입 예시",
-                                    value = "{\"email\": \"test@example.com\", \"password\": \"1234\", \"passwordConfirm\": \"1234\"}"
+                                    value = "{\"email\": \"test@example.com\", \"password\": \"1234\", \"passwordCheck\": \"1234\"}"
                             )
                     )
             ),
