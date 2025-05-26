@@ -57,4 +57,28 @@ public class AuthService {
                 .refreshToken(refreshToken)
                 .build();
     }
+
+
+    public TokenResponse refresh(String refreshToken) {
+        if (!jwtUtil.validateToken(refreshToken)) {
+            throw new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다.");
+        }
+
+        String email = jwtUtil.getEmailFromToken(refreshToken);
+
+        RefreshToken savedToken = refreshTokenRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("리프레시 토큰이 존재하지 않습니다."));
+
+        if (!savedToken.getRefreshToken().equals(refreshToken)) {
+            throw new IllegalArgumentException("리프레시 토큰이 일치하지 않습니다.");
+        }
+
+        String newAccessToken = jwtUtil.generateToken(email);
+        String newRefreshToken = jwtUtil.generateRefreshToken(email);
+
+        savedToken.updateToken(newRefreshToken);
+        refreshTokenRepository.save(savedToken);
+
+        return new TokenResponse(newAccessToken, newRefreshToken);
+    }
 }
