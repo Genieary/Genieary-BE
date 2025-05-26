@@ -18,12 +18,15 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+    //TODO : 이메일 인증
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
 
-
+    /**
+     회원가입
+     */
     public void signup(SignupRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new GeneralException(ErrorStatus.AUTH_EMAIL_ALREADY_EXISTS);
@@ -38,6 +41,9 @@ public class AuthService {
         userRepository.save(user);
     }
 
+    /**
+    로그인
+     */
     public TokenResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.AUTH_USER_NOT_FOUND));
@@ -61,6 +67,9 @@ public class AuthService {
     }
 
 
+    /**
+     토큰 재발급
+     */
     public TokenResponse refresh(String refreshToken) {
         if (!jwtUtil.validateToken(refreshToken)) {
             throw new GeneralException(ErrorStatus.AUTH_INVALID_REFRESH_TOKEN);
