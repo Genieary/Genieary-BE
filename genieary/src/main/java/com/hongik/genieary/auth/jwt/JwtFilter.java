@@ -1,6 +1,6 @@
-package com.hongik.genieary.common.jwt;
+package com.hongik.genieary.auth.jwt;
 
-import com.hongik.genieary.domain.user.service.CustomUserDetailsService;
+import com.hongik.genieary.auth.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

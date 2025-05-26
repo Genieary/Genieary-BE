@@ -1,4 +1,4 @@
-package com.hongik.genieary.domain.user.service;
+package com.hongik.genieary.auth.service;
 
 import com.hongik.genieary.domain.user.entity.User;
 import lombok.Getter;

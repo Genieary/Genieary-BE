@@ -1,4 +1,4 @@
-package com.hongik.genieary.common.jwt;
+package com.hongik.genieary.auth.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
