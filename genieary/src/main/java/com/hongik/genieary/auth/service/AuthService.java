@@ -101,6 +101,9 @@ public class AuthService {
             throw new GeneralException(ErrorStatus.AUTH_INVALID_REFRESH_TOKEN);
         }
 
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.AUTH_USER_NOT_FOUND));
+
         String newAccessToken = jwtUtil.generateToken(email);
         String newRefreshToken = jwtUtil.generateRefreshToken(email);
 
@@ -108,6 +111,7 @@ public class AuthService {
         refreshTokenRepository.save(savedToken);
 
         return TokenResponse.builder()
+                .userId(user.getId())
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .build();

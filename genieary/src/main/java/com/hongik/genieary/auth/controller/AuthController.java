@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,7 +46,7 @@ public class AuthController {
             }
     )
     @PostMapping("/signup")
-    public ResponseEntity<TokenResponse> signup(@org.springframework.web.bind.annotation.RequestBody SignupRequest request) {
+    public ResponseEntity<TokenResponse> signup(@Valid @org.springframework.web.bind.annotation.RequestBody SignupRequest request) {
        TokenResponse response = authService.signup(request);
         return ResponseEntity.ok(response);
     }
