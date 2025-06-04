@@ -23,8 +23,10 @@ public enum ErrorStatus {
     AUTH_PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "AUTH4002", "비밀번호가 일치하지 않습니다."),
     AUTH_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH4003", "회원이 존재하지 않습니다."),
     AUTH_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "AUTH4004", "비밀번호가 올바르지 않습니다."),
-    AUTH_INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4005", "유효하지 않은 리프레시 토큰입니다.");
+    AUTH_INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4005", "유효하지 않은 리프레시 토큰입니다."),
 
+    // Diary
+    DIARY_DAY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "DIARY4001", "해당 날짜에 일기가 이미 존재합니다. 수정API를 사용해주세요.");
 
     private final HttpStatus httpStatus;
     private final String code;
