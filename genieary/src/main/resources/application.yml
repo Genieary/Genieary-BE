@@ -19,6 +19,6 @@ spring:
         default_batch_fetch_size: 1000
 jwt:
   #geniearyecretaccesstokengeniearyecretaccesstokengeniearyecretaccesstoken
-  secret: ${access_token}
+  secret: ${access_token_secret}
   expiration: ${expiration}
   refresh-expiration: ${refresh_expiration}
