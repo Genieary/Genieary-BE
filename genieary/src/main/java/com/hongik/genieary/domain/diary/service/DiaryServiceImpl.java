@@ -52,4 +52,17 @@ public class DiaryServiceImpl implements DiaryService{
         return DiaryConverter.toResponseDto(diary);
     }
 
+
+    @Override
+    @Transactional
+    public DiaryResponseDto.DiaryResultDto updateDiary(Long diaryId, User user, DiaryRequestDto.UpdateDto dto) {
+        Diary diary = diaryRepository.findByDiaryIdAndUser(diaryId, user)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.DIARY_NOT_FOUND));
+
+        diary.update(dto.getContent(), dto.getIsLiked());
+
+        return DiaryConverter.toResponseDto(diary);
+    }
+
+
 }
