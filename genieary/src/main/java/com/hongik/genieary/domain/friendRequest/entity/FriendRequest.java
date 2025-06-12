@@ -28,4 +28,12 @@ public class FriendRequest extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private FriendStatus status;
+
+    public void accept() {
+        this.status = FriendStatus.ACCEPTED;
+    }
+
+    public void reject() {
+        this.status = FriendStatus.REJECTED;
+    }
 }
