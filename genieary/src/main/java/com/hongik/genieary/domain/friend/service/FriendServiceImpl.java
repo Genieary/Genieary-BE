@@ -17,7 +17,7 @@ public class FriendServiceImpl implements FriendService {
     private final FriendRepository friendRepository;
 
     public List<FriendResponseDto.FriendListResultDto> getFriendList(User user) {
-        List<Friend> friends = friendRepository.findAllByUserId(user);
+        List<Friend> friends = friendRepository.findAllByUser(user);
         return FriendConverter.toFriendListResultDtoList(friends);
     }
 }
