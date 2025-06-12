@@ -21,7 +21,7 @@ public class FriendConverter {
 
     public static List<FriendResponseDto.FriendListResultDto> toFriendListResultDtoList(List<Friend> friends) {
         return friends.stream()
-                .map(friend -> toFriendListResultDto(friend.getFriendId())) // Friend.friendId 는 User
+                .map(friend -> toFriendListResultDto(friend.getFriend()))
                 .collect(Collectors.toList());
     }
 }

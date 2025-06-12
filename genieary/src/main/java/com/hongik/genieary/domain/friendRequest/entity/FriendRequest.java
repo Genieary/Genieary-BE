@@ -18,13 +18,14 @@ public class FriendRequest extends BaseEntity {
     private Long requestId;
 
     @ManyToOne
-    @JoinColumn(name = "requester_id")
-    private User requesterId;
+    @JoinColumn(name = "requester_id", nullable = false)
+    private User requester;
 
     @ManyToOne
-    @JoinColumn(name = "receiver_id")
-    private User receiverId;
+    @JoinColumn(name = "receiver_id", nullable = false)
+    private User receiver;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private FriendStatus status;
 }
