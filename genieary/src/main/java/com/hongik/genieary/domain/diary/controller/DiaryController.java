@@ -108,5 +108,14 @@ public class DiaryController{
         return ApiResponse.onSuccess(SuccessStatus._OK, response);
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/{diaryId}")
+    @Operation(summary = "일기 삭제", description = "일기 ID에 해당하는 일기를 삭제합니다.")
+    public ResponseEntity<ApiResponse> deleteDiary(@AuthenticationPrincipal CustomUserDetails user,
+                                                   @PathVariable Long diaryId) {
+        diaryService.deleteDiary(user.getUser(), diaryId);
+        return ApiResponse.onSuccess(SuccessStatus._OK);
+    }
+
 }
 

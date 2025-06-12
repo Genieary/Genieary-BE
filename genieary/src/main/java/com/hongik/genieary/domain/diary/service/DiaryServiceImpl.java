@@ -64,5 +64,14 @@ public class DiaryServiceImpl implements DiaryService{
         return DiaryConverter.toResponseDto(diary);
     }
 
+    @Override
+    @Transactional
+    public void deleteDiary(User user, Long diaryId) {
+        Diary diary = diaryRepository.findByDiaryIdAndUser(diaryId, user)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.DIARY_NOT_FOUND));
+
+        diaryRepository.delete(diary);
+    }
+
 
 }
