@@ -19,16 +19,25 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList(); // 권한이 필요하다면 추가
+        return Collections.emptyList();
     }
+
 
     @Override
     public String getPassword() {
-        return null; // 소셜 로그인 등 비밀번호가 없으면 null
+        return getPassword(); // 소셜 로그인은 비밀번호 필요X
     }
 
     @Override
     public String getUsername() {
+        return user.getEmail();
+    }
+
+    public Long getId() {
+        return user.getId();
+    }
+
+    public String getEmail() {
         return user.getEmail();
     }
 

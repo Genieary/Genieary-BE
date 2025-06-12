@@ -40,6 +40,7 @@ public enum ErrorStatus {
     FRIEND_REQUEST_ACCESS_FORBIDDEN(HttpStatus.FORBIDDEN, "FRIEND_REQUEST4005", "해당 친구 요청에 접근할 수 없습니다."),
     FRIEND_REQUEST_ALREADY_HANDLED(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST4006", "이미 처리된 친구 요청입니다.");
 
+
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;
