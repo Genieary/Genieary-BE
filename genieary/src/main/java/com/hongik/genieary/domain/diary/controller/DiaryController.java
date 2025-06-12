@@ -3,6 +3,8 @@ package com.hongik.genieary.domain.diary.controller;
 import com.hongik.genieary.auth.dto.request.SignupRequest;
 import com.hongik.genieary.auth.service.CustomUserDetails;
 import com.hongik.genieary.common.status.SuccessStatus;
+import com.hongik.genieary.common.swagger.DiaryNotFoundApiResponse;
+import com.hongik.genieary.common.swagger.SuccessApiResponse;
 import com.hongik.genieary.domain.diary.dto.DiaryRequestDto;
 import com.hongik.genieary.domain.diary.dto.DiaryResponseDto;
 import com.hongik.genieary.domain.diary.service.DiaryService;
@@ -111,6 +113,8 @@ public class DiaryController{
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{diaryId}")
     @Operation(summary = "일기 삭제", description = "일기 ID에 해당하는 일기를 삭제합니다.")
+    @SuccessApiResponse
+    @DiaryNotFoundApiResponse
     public ResponseEntity<ApiResponse> deleteDiary(@AuthenticationPrincipal CustomUserDetails user,
                                                    @PathVariable Long diaryId) {
         diaryService.deleteDiary(user.getUser(), diaryId);
