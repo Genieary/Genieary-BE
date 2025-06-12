@@ -3,6 +3,7 @@ package com.hongik.genieary.domain.friendRequest.service;
 import com.hongik.genieary.common.exception.GeneralException;
 import com.hongik.genieary.common.status.ErrorStatus;
 import com.hongik.genieary.domain.enums.FriendStatus;
+import com.hongik.genieary.domain.friend.converter.FriendConverter;
 import com.hongik.genieary.domain.friend.entity.Friend;
 import com.hongik.genieary.domain.friend.repository.FriendRepository;
 import com.hongik.genieary.domain.friendRequest.converter.FriendRequestConverter;
@@ -75,15 +76,8 @@ public class FriendRequestServiceImpl implements FriendRequestService {
         request.accept();
         friendRequestRepository.save(request);
 
-        Friend friend1 = Friend.builder()
-                .user(request.getRequester())
-                .friend(request.getReceiver())
-                .build();
-
-        Friend friend2 = Friend.builder()
-                .user(request.getReceiver())
-                .friend(request.getRequester())
-                .build();
+        Friend friend1 = FriendConverter.toEntity(request.getRequester(), request.getReceiver());
+        Friend friend2 = FriendConverter.toEntity(request.getReceiver(), request.getRequester());
 
         friendRepository.save(friend1);
         friendRepository.save(friend2);

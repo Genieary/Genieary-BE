@@ -24,4 +24,11 @@ public class FriendConverter {
                 .map(friend -> toFriendListResultDto(friend.getFriend()))
                 .collect(Collectors.toList());
     }
+
+    public static Friend toEntity(User user, User friend) {
+        return Friend.builder()
+                .user(user)
+                .friend(friend)
+                .build();
+    }
 }
