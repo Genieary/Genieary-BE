@@ -27,7 +27,19 @@ public enum ErrorStatus {
 
     // Diary
     DIARY_DAY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "DIARY4001", "해당 날짜에 일기가 이미 존재합니다. 수정API를 사용해주세요."),
-    DIARY_NOT_FOUND(HttpStatus.NOT_FOUND, "DIARY4002", "일기가 존재하지 않습니다. 먼저 생성해주세요.");
+    DIARY_NOT_FOUND(HttpStatus.NOT_FOUND, "DIARY4002", "일기가 존재하지 않습니다. 먼저 생성해주세요."),
+
+    //Friend
+    FRIEND_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "FRIEND4001", "이미 친구인 사용자입니다."),
+
+    // FriendRequest
+    FRIEND_REQUEST_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST4001", "이미 친구 요청을 보냈습니다."),
+    FRIEND_REQUEST_SELF(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST4002", "자기 자신에게는 친구 요청을 보낼 수 없습니다."),
+    FRIEND_REQUEST_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "FRIEND_REQUEST4003", "상대 유저가 존재하지 않습니다."),
+    FRIEND_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "FRIEND_REQUEST4004", "해당 친구 요청을 찾을 수 없습니다."),
+    FRIEND_REQUEST_ACCESS_FORBIDDEN(HttpStatus.FORBIDDEN, "FRIEND_REQUEST4005", "해당 친구 요청에 접근할 수 없습니다."),
+    FRIEND_REQUEST_ALREADY_HANDLED(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST4006", "이미 처리된 친구 요청입니다.");
+
 
     private final HttpStatus httpStatus;
     private final String code;
