@@ -17,10 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Diary API", description = "일기 CRUD API")
 @RestController
@@ -81,5 +78,35 @@ public class DiaryController{
 
         return ApiResponse.onSuccess(SuccessStatus._OK, response);
     }
+
+    @Operation(
+            summary = "일기 수정",
+            description = "기존 일기의 내용을 수정합니다.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = DiaryRequestDto.UpdateDto.class),
+                            examples = @ExampleObject(
+                                    name = "일기 수정 예시",
+                                    value = "{\"content\": \"수정된 내용입니다.\", \"isLiked\": true }"
+                            )
+                    )
+            ),
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "일기 수정 성공"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "4002", description = "존재하지 않는 일기")
+            }
+    )
+    @PatchMapping("/{diaryId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse> updateDiary(@PathVariable Long diaryId,
+                                                   @AuthenticationPrincipal CustomUserDetails user,
+                                                   @Valid @RequestBody DiaryRequestDto.UpdateDto requestDto) {
+
+        DiaryResponseDto.DiaryResultDto response = diaryService.updateDiary(diaryId, user.getUser(), requestDto);
+
+        return ApiResponse.onSuccess(SuccessStatus._OK, response);
+    }
+
 }
 

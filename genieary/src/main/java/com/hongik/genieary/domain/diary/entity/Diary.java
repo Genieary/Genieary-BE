@@ -34,5 +34,8 @@ public class Diary extends BaseEntity{
     private Boolean isLiked;
 
 
-
+    public void update(String content, Boolean isLiked) {
+        if (content != null) this.content = content;
+        if (isLiked != null) this.isLiked = isLiked;
+    }
 }

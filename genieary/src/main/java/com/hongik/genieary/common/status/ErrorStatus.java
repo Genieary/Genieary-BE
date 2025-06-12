@@ -26,7 +26,8 @@ public enum ErrorStatus {
     AUTH_INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4005", "유효하지 않은 리프레시 토큰입니다."),
 
     // Diary
-    DIARY_DAY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "DIARY4001", "해당 날짜에 일기가 이미 존재합니다. 수정API를 사용해주세요.");
+    DIARY_DAY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "DIARY4001", "해당 날짜에 일기가 이미 존재합니다. 수정API를 사용해주세요."),
+    DIARY_NOT_FOUND(HttpStatus.NOT_FOUND, "DIARY4002", "일기가 존재하지 않습니다. 먼저 생성해주세요.");
 
     private final HttpStatus httpStatus;
     private final String code;
