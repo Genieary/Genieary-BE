@@ -11,7 +11,6 @@ import com.hongik.genieary.common.status.ErrorStatus;
 import com.hongik.genieary.domain.user.entity.User;
 import com.hongik.genieary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -43,12 +42,8 @@ public class AuthService {
         String accessToken = jwtUtil.generateToken(savedUser.getEmail());
         String refreshToken = jwtUtil.generateRefreshToken(savedUser.getEmail());
 
-        refreshTokenRepository.save(
-                RefreshToken.builder()
-                        .email(savedUser.getEmail())
-                        .refreshToken(refreshToken)
-                        .build()
-        );
+        // Redis에 저장
+        refreshTokenRepository.save(user.getEmail(), refreshToken, jwtUtil.getRefreshTokenExpirationMillis());
 
         return TokenResponse.builder()
                 .userId(savedUser.getId())
@@ -69,12 +64,8 @@ public class AuthService {
         String accessToken = jwtUtil.generateToken(user.getEmail());
         String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
 
-        refreshTokenRepository.save(
-                RefreshToken.builder()
-                        .email(user.getEmail())
-                        .refreshToken(refreshToken)
-                        .build()
-        );
+        // Redis에 저장
+        refreshTokenRepository.save(user.getEmail(), refreshToken, jwtUtil.getRefreshTokenExpirationMillis());
 
         return TokenResponse.builder()
                 .userId(user.getId())
@@ -94,10 +85,10 @@ public class AuthService {
 
         String email = jwtUtil.getEmailFromToken(refreshToken);
 
-        RefreshToken savedToken = refreshTokenRepository.findByEmail(email)
-                .orElseThrow(() ->new GeneralException(ErrorStatus.AUTH_INVALID_REFRESH_TOKEN));
+        String savedToken = refreshTokenRepository.findByEmail(email)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.AUTH_INVALID_REFRESH_TOKEN));
 
-        if (!savedToken.getRefreshToken().equals(refreshToken)) {
+        if (!savedToken.equals(refreshToken)) {
             throw new GeneralException(ErrorStatus.AUTH_INVALID_REFRESH_TOKEN);
         }
 
@@ -107,8 +98,7 @@ public class AuthService {
         String newAccessToken = jwtUtil.generateToken(email);
         String newRefreshToken = jwtUtil.generateRefreshToken(email);
 
-        savedToken.updateToken(newRefreshToken);
-        refreshTokenRepository.save(savedToken);
+        refreshTokenRepository.save(email, newRefreshToken, jwtUtil.getRefreshTokenExpirationMillis());
 
         return TokenResponse.builder()
                 .userId(user.getId())

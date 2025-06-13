@@ -73,4 +73,8 @@ public class JwtUtil {
             return false;
         }
     }
+
+    public long getRefreshTokenExpirationMillis() {
+        return this.jwtRefreshExpirationMs;
+    }
 }
