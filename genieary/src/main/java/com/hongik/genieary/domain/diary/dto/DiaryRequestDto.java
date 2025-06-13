@@ -13,4 +13,12 @@ public class DiaryRequestDto {
         private String content;
         private Boolean isLiked;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateDto {
+        private String content;
+        private Boolean isLiked;
+    }
 }
