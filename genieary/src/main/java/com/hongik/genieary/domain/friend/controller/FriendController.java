@@ -10,9 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,5 +28,15 @@ public class FriendController {
 
         List<FriendResponseDto.FriendListResultDto> friends = friendService.getFriendList(userDetails.getUser());
         return ApiResponse.onSuccess(SuccessStatus._OK, friends);
+    }
+
+    @DeleteMapping("/{friendId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse> deleteFriend(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long friendId) {
+
+        friendService.deleteFriend(userDetails.getUser(), friendId);
+        return ApiResponse.onSuccess(SuccessStatus._OK);
     }
 }
