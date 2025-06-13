@@ -30,4 +30,4 @@ jwt:
 kakao:
   client-id: ${REST_API_KEY}
   client-secret: ${KAKAO_SECRET}
-  redirect-uri: http://localhost:3000/oauth/kakao/callback
+  redirect-uri: ${REDIRECT_URI}
