@@ -8,6 +8,7 @@ import com.hongik.genieary.auth.jwt.JwtUtil;
 import com.hongik.genieary.auth.repository.RefreshTokenRepository;
 import com.hongik.genieary.common.exception.GeneralException;
 import com.hongik.genieary.common.status.ErrorStatus;
+import com.hongik.genieary.domain.enums.LoginType;
 import com.hongik.genieary.domain.user.entity.User;
 import com.hongik.genieary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class AuthService {
         User user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .loginType(LoginType.NORMAL)
                 .build();
         User savedUser = userRepository.save(user);
 

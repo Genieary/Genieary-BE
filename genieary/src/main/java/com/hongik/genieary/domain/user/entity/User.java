@@ -2,6 +2,7 @@ package com.hongik.genieary.domain.user.entity;
 
 import com.hongik.genieary.domain.common.BaseEntity;
 import com.hongik.genieary.domain.enums.Gender;
+import com.hongik.genieary.domain.enums.LoginType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,5 +37,6 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-
+    @Enumerated(EnumType.STRING)
+    private LoginType loginType;
 }

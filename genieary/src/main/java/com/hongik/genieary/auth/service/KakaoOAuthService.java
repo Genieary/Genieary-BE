@@ -4,6 +4,7 @@ import com.hongik.genieary.auth.dto.request.KakaoUserInfo;
 import com.hongik.genieary.auth.dto.response.TokenResponse;
 import com.hongik.genieary.auth.jwt.JwtUtil;
 import com.hongik.genieary.auth.repository.RefreshTokenRepository;
+import com.hongik.genieary.domain.enums.LoginType;
 import com.hongik.genieary.domain.user.entity.User;
 import com.hongik.genieary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,7 @@ public class KakaoOAuthService {
                             .nickname(userInfo.getNickname())
                             // 소셜 로그인 회원은 랜덤 비밀번호를 암호화해서 저장
                             .password(passwordEncoder.encode(UUID.randomUUID().toString()))
+                            .loginType(LoginType.KAKAO)
                             .build();
                     return userRepository.save(newUser);
                 });
