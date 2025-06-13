@@ -5,6 +5,7 @@ import com.hongik.genieary.auth.dto.request.SignupRequest;
 import com.hongik.genieary.auth.dto.response.TokenResponse;
 import com.hongik.genieary.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,10 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -98,5 +96,32 @@ public class AuthController {
         String refreshToken = request.get("refreshToken");
         TokenResponse tokens = authService.refresh(refreshToken);
         return ResponseEntity.ok(tokens);
+    }
+
+    @Operation(
+            summary = "로그아웃",
+            description = """
+            JWT 로그아웃을 수행합니다.  
+            Authorization 헤더에 AccessToken을 Bearer 타입으로 전달하세요.
+            """,
+            parameters = {
+                    @Parameter(
+                            name = "Authorization",
+                            description = "Bearer 타입의 AccessToken (예: Bearer eyJhbGciOi...)",
+                            required = true,
+                            example = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "로그아웃 성공 (No Content)"),
+                    @ApiResponse(responseCode = "401", description = "인증 실패 또는 토큰 오류")
+            }
+    )
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String authHeader) {
+        // "Bearer {token}"에서 token만 추출
+        String accessToken = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
+        authService.logout(accessToken);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -108,4 +108,14 @@ public class AuthService {
                 .refreshToken(newRefreshToken)
                 .build();
     }
+
+    /**
+     로그아웃
+     */
+    public void logout(String accessToken) {
+        String email = jwtUtil.getEmailFromToken(accessToken);
+
+        // Redis에서 RefreshToken 삭제
+        refreshTokenRepository.deleteByEmail(email);
+    }
 }
