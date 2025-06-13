@@ -39,8 +39,46 @@ public class AuthController {
                     )
             ),
             responses = {
-                    @ApiResponse(responseCode = "200", description = "회원가입 성공"),
-                    @ApiResponse(responseCode = "400", description = "입력값 오류 등")
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "회원가입 성공",
+                            content = @Content(
+                                    schema = @Schema(implementation = ApiResponse.class),
+                                    examples = @ExampleObject(
+                                            name = "회원가입 성공 예시",
+                                            value = """
+                        {
+                          "isSuccess": true,
+                          "code": "200",
+                          "message": "회원가입 성공",
+                          "result": {
+                            "userId": 1,
+                            "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                            "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                          }
+                        }
+                        """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "입력값 오류 등",
+                            content = @Content(
+                                    schema = @Schema(implementation = ApiResponse.class),
+                                    examples = @ExampleObject(
+                                            name = "회원가입 실패 예시",
+                                            value = """
+                        {
+                          "isSuccess": false,
+                          "code": "VALID401",
+                          "message": "이메일 형식이 올바르지 않습니다.",
+                          "result": null
+                        }
+                        """
+                                    )
+                            )
+                    )
             }
     )
     @PostMapping("/signup")
@@ -63,9 +101,46 @@ public class AuthController {
                     )
             ),
             responses = {
-                    @ApiResponse(responseCode = "200", description = "로그인 성공, 토큰 반환",
-                            content = @Content(schema = @Schema(implementation = TokenResponse.class))),
-                    @ApiResponse(responseCode = "400", description = "입력값 오류 등")
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "로그인 성공, 토큰 반환",
+                            content = @Content(
+                                    schema = @Schema(implementation = ApiResponse.class),
+                                    examples = @ExampleObject(
+                                            name = "로그인 성공 예시",
+                                            value = """
+                                                    {
+                                                      "isSuccess": true,
+                                                      "code": "S200",
+                                                      "message": "로그인 성공",
+                                                      "result": {
+                                                        "userId": 1,
+                                                        "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                                                        "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                                                      }
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "입력값 오류 등",
+                            content = @Content(
+                                    schema = @Schema(implementation = ApiResponse.class),
+                                    examples = @ExampleObject(
+                                            name = "로그인 실패 예시",
+                                            value = """
+                                                    {
+                                                      "isSuccess": false,
+                                                      "code": "AUTH4004",
+                                                      "message": "이메일 또는 비밀번호가 올바르지 않습니다.",
+                                                      "result": null
+                                                    }
+                                                    """
+                                    )
+                            )
+                    )
             }
     )
     @PostMapping("/login")
