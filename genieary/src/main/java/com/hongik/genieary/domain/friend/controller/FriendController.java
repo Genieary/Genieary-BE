@@ -42,4 +42,15 @@ public class FriendController {
         friendService.deleteFriend(userDetails.getUser(), friendId);
         return ApiResponse.onSuccess(SuccessStatus._OK);
     }
+
+    @GetMapping("/{friendId}")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "친구 프로필", description = "친구 ID에 해당하는 친구의 프로필을 조회합니다.")
+    public ResponseEntity<ApiResponse> getFriendProfile(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long friendId) {
+
+        FriendResponseDto.FriendProfileDto profile = friendService.getFriendProfile(userDetails.getUser(), friendId);
+        return ApiResponse.onSuccess(SuccessStatus._OK, profile);
+    }
 }
