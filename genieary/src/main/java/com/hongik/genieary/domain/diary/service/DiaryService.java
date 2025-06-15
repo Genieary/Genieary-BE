@@ -9,4 +9,6 @@ public interface DiaryService {
 
     DiaryResponseDto.DiaryResultDto createDiary(CustomUserDetails user, DiaryRequestDto.CreateDto requestDto);
     DiaryResponseDto.DiaryResultDto updateDiary(Long diaryId, User user, DiaryRequestDto.UpdateDto dto);
+    void deleteDiary(User user, Long diaryId);
+
 }
