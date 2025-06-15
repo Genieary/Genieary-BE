@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "FriendRequest API", description = "친구 요청 CRUD API")
+@Tag(name = "FriendRequest API", description = "친구 요청 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/friend")
