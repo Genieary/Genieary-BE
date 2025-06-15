@@ -9,6 +9,7 @@ import com.hongik.genieary.domain.enums.FriendStatus;
 import com.hongik.genieary.domain.friendRequest.dto.FriendRequestDto;
 import com.hongik.genieary.domain.friendRequest.dto.FriendRequestStatusUpdateDto;
 import com.hongik.genieary.domain.friendRequest.service.FriendRequestService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ public class FriendRequestController {
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "친구 요청", description = "친구 요청을 보냅니다.")
     public ResponseEntity<ApiResponse> sendRequest(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody FriendRequestDto requestDto) {
@@ -39,6 +41,7 @@ public class FriendRequestController {
 
     @PostMapping("/request")
     @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "친구 요청 승인/거절", description = "친구 요청을 승인, 거절 합니다.")
     public ResponseEntity<ApiResponse> updateRequestStatus(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody FriendRequestStatusUpdateDto dto) {
