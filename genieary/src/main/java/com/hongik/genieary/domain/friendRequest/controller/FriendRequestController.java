@@ -12,6 +12,7 @@ import com.hongik.genieary.domain.friendRequest.service.FriendRequestService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,7 @@ public class FriendRequestController {
     private final FriendRequestService friendRequestService;
 
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse> sendRequest(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody FriendRequestDto requestDto) {
@@ -36,6 +38,7 @@ public class FriendRequestController {
     }
 
     @PostMapping("/request")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse> updateRequestStatus(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody FriendRequestStatusUpdateDto dto) {

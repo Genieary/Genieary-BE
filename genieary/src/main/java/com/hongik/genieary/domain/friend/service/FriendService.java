@@ -9,4 +9,5 @@ import java.util.List;
 public interface FriendService {
 
     List<FriendResponseDto.FriendListResultDto> getFriendList(User user);
+    void deleteFriend(User user, Long friendId);
 }

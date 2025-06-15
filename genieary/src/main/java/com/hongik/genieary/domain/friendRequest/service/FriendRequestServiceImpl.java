@@ -97,7 +97,6 @@ public class FriendRequestServiceImpl implements FriendRequestService {
             throw new GeneralException(ErrorStatus.FRIEND_REQUEST_ALREADY_HANDLED);
         }
 
-        request.reject();
-        friendRequestRepository.save(request);
+        friendRequestRepository.delete(request);
     }
 }
