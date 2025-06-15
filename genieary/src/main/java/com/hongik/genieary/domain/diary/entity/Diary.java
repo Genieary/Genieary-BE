@@ -6,6 +6,7 @@ import com.hongik.genieary.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 
 
 @Entity
@@ -33,6 +34,8 @@ public class Diary extends BaseEntity{
     @Column(name = "isLiked")
     private Boolean isLiked;
 
+    @Column(name = "diaryDate")
+    private LocalDate diaryDate;
 
     public void update(String content, Boolean isLiked) {
         if (content != null) this.content = content;

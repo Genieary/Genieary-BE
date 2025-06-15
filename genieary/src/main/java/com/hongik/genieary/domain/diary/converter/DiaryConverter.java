@@ -9,12 +9,13 @@ import com.hongik.genieary.domain.user.entity.User;
 
 public class DiaryConverter {
 
-    public static Diary toEntity(User user, Calendar calendar, DiaryRequestDto.CreateDto dto) {
+    public static Diary toEntity(User user, Calendar calendar, DiaryRequestDto.DiaryCreateDto dto) {
         return Diary.builder()
                 .user(user)
                 .calendar(calendar)
                 .content(dto.getContent())
                 .isLiked(dto.getIsLiked() != null ? dto.getIsLiked() : false)
+                .diaryDate(dto.getDiaryDate())
                 .build();
     }
 
@@ -24,6 +25,7 @@ public class DiaryConverter {
                 .content(diary.getContent())
                 .createdAt(diary.getCreatedAt())
                 .isLiked(diary.getIsLiked())
+                .diaryDate(diary.getDiaryDate())
                 .build();
     }
 
