@@ -3,6 +3,8 @@ package com.hongik.genieary.domain.friend.controller;
 import com.hongik.genieary.auth.service.CustomUserDetails;
 import com.hongik.genieary.common.response.ApiResponse;
 import com.hongik.genieary.common.status.SuccessStatus;
+import com.hongik.genieary.common.swagger.FriendNotFoundApiResponse;
+import com.hongik.genieary.common.swagger.FriendUserNotFoundApiResponse;
 import com.hongik.genieary.domain.friend.dto.FriendResponseDto;
 import com.hongik.genieary.domain.friend.service.FriendService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +37,8 @@ public class FriendController {
     @DeleteMapping("/{friendId}")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "친구 삭제", description = "친구 ID에 해당하는 친구를 삭제합니다.")
+    @FriendNotFoundApiResponse
+    @FriendUserNotFoundApiResponse
     public ResponseEntity<ApiResponse> deleteFriend(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long friendId) {
@@ -46,6 +50,7 @@ public class FriendController {
     @GetMapping("/{friendId}")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "친구 프로필", description = "친구 ID에 해당하는 친구의 프로필을 조회합니다.")
+    @FriendNotFoundApiResponse
     public ResponseEntity<ApiResponse> getFriendProfile(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long friendId) {

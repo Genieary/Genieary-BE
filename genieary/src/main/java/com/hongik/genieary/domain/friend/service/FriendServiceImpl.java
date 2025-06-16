@@ -35,7 +35,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public void deleteFriend(User user, Long friendId) {
         User friend = userRepository.findById(friendId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.FRIEND_REQUEST_USER_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.FRIEND_USER_NOT_FOUND));
 
         boolean exists = friendRepository.existsByUserAndFriend(user, friend) ||
                 friendRepository.existsByUserAndFriend(friend, user);
