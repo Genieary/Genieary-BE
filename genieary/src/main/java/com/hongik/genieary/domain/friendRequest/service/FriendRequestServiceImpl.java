@@ -26,7 +26,7 @@ public class FriendRequestServiceImpl implements FriendRequestService {
     @Override
     public void sendRequest(User requester, Long receiverId) {
         User receiver = userRepository.findById(receiverId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.FRIEND_REQUEST_USER_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.FRIEND_USER_NOT_FOUND));
 
         if (requester.getId().equals(receiver.getId())) {
             throw new GeneralException(ErrorStatus.FRIEND_REQUEST_SELF);
