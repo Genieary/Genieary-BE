@@ -7,13 +7,16 @@ import com.hongik.genieary.domain.friend.converter.FriendConverter;
 import com.hongik.genieary.domain.friend.entity.Friend;
 import com.hongik.genieary.domain.friend.repository.FriendRepository;
 import com.hongik.genieary.domain.friendRequest.converter.FriendRequestConverter;
+import com.hongik.genieary.domain.friendRequest.dto.FriendRequestResponseDto;
 import com.hongik.genieary.domain.friendRequest.entity.FriendRequest;
 import com.hongik.genieary.domain.friendRequest.repository.FriendRequestRepository;
 import com.hongik.genieary.domain.user.entity.User;
 import com.hongik.genieary.domain.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -98,5 +101,12 @@ public class FriendRequestServiceImpl implements FriendRequestService {
         }
 
         friendRequestRepository.delete(request);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<FriendRequestResponseDto.FriendRequestResultDto> getReceivedRequests(User receiver) {
+        List<FriendRequest> requests = friendRequestRepository.findByReceiver(receiver);
+        return FriendRequestConverter.toResponseDtoList(requests);
     }
 }
