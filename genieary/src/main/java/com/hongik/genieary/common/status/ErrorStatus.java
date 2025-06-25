@@ -25,6 +25,14 @@ public enum ErrorStatus {
     AUTH_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "AUTH4004", "비밀번호가 올바르지 않습니다."),
     AUTH_INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4005", "유효하지 않은 리프레시 토큰입니다."),
 
+    //USER
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER001", "사용자를 찾을 수 없습니다"),
+    PROFILE_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "USER003", "이미 프로필이 등록된 사용자입니다"),
+
+    //USER_PERSONALITY
+    PERSONALITY_REQUIRED(HttpStatus.BAD_REQUEST, "P001", "성격을 최소 1개는 선택해야 합니다"),
+    PERSONALITY_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "P002", "성격은 최대 3개까지만 선택할 수 있습니다"),
+
     // Diary
     DIARY_DAY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "DIARY4001", "해당 날짜에 일기가 이미 존재합니다. 수정API를 사용해주세요."),
     DIARY_NOT_FOUND(HttpStatus.NOT_FOUND, "DIARY4002", "일기가 존재하지 않습니다. 먼저 생성해주세요."),

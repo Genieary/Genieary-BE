@@ -7,6 +7,10 @@ import com.hongik.genieary.domain.user.dto.request.ProfileCompleteRequest;
 import com.hongik.genieary.domain.user.dto.request.ProfileUpdateRequest;
 import com.hongik.genieary.domain.user.dto.response.ProfileResponse;
 import com.hongik.genieary.domain.user.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +22,20 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "User Profile", description = "사용자 프로필 관리 API")
 public class UserController {
 
     private final UserService userService;
 
     // 프로필 완성 (첫 로그인 시)
+    @Operation(
+            summary = "프로필 등록",
+            description = "첫 로그인 시 사용자 프로필을 완성합니다. 닉네임, 생년월일, 성별, 성격(1-3개)을 입력받습니다.",
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "프로필 완성 성공",
+                            content = @Content(schema = @Schema(implementation = ProfileResponse.class))),
+            }
+    )
     @PostMapping("/profile")
     public ResponseEntity<ApiResponse> completeProfile(
             @AuthenticationPrincipal(expression = "id") Long userId,
@@ -33,6 +46,9 @@ public class UserController {
     }
 
     // 프로필 수정
+    @Operation(
+            summary = "프로필 수정",
+            description = "사용자 프로필을 부분 수정합니다. 변경하고 싶은 필드만 포함하세요. null 필드는 변경되지 않습니다.")
     @PutMapping("/profile")
     public ResponseEntity<ApiResponse> updateProfile(
             @AuthenticationPrincipal(expression = "id") Long userId,
@@ -43,6 +59,9 @@ public class UserController {
     }
 
     // 프로필 조회
+    @Operation(
+            summary = "프로필 조회",
+            description = "현재 로그인한 사용자의 프로필 정보를 조회합니다.")
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse> getProfile(
             @AuthenticationPrincipal(expression = "id") Long userId) {
@@ -52,6 +71,9 @@ public class UserController {
     }
 
     // 프로필 완성 여부 확인
+    @Operation(
+            summary = "프로필 완성 여부 확인",
+            description = "사용자의 프로필 완성 여부를 확인합니다. 첫 로그인 사용자 판별에 사용됩니다.")
     @GetMapping("/profile/status")
     public ResponseEntity<ApiResponse> getProfileStatus(
             @AuthenticationPrincipal(expression = "id") Long userId) {

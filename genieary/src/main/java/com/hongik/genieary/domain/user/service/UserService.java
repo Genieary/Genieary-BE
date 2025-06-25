@@ -1,5 +1,7 @@
 package com.hongik.genieary.domain.user.service;
 
+import com.hongik.genieary.common.exception.GeneralException;
+import com.hongik.genieary.common.status.ErrorStatus;
 import com.hongik.genieary.domain.enums.Gender;
 import com.hongik.genieary.domain.enums.Personality;
 import com.hongik.genieary.domain.user.dto.request.ProfileCompleteRequest;
@@ -24,10 +26,10 @@ public class UserService {
     // 프로필 완성 (첫 로그인 시)
     public ProfileResponse completeProfile(Long userId, ProfileCompleteRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         if (user.getIsProfileCompleted()) {
-            throw new IllegalStateException("이미 프로필이 완성된 사용자입니다.");
+            throw new GeneralException(ErrorStatus.PROFILE_ALREADY_COMPLETED);
         }
 
         // 성격 선택 개수 검증 (최소1개 최대3개)
@@ -48,7 +50,7 @@ public class UserService {
     //TODO : 프로필 이미지도 업데이트 가능
     public ProfileResponse updateProfile(Long userId, ProfileUpdateRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         // 성격 개수 검증 (성격이 변경되는 경우에만)
         if (request.getPersonalities() != null) {
@@ -70,7 +72,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public ProfileResponse getProfile(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         return ProfileResponse.from(user);
     }
@@ -79,7 +81,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public boolean isProfileCompleted(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         return user.getIsProfileCompleted();
     }
@@ -87,10 +89,10 @@ public class UserService {
     // ----- method -----
     private void validatePersonalities(Set<Personality> personalities) {
         if (personalities == null || personalities.isEmpty()) {
-            throw new IllegalArgumentException("성격을 최소 1개는 선택해야 합니다.");
+            throw new GeneralException(ErrorStatus.PERSONALITY_REQUIRED);
         }
         if (personalities.size() > 3) {
-            throw new IllegalArgumentException("성격은 최대 3개까지만 선택할 수 있습니다.");
+            throw new GeneralException(ErrorStatus.PERSONALITY_LIMIT_EXCEEDED);
         }
     }
 }
