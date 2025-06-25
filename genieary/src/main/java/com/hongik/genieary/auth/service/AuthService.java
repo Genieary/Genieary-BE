@@ -5,6 +5,7 @@ import com.hongik.genieary.auth.dto.request.SignupRequest;
 import com.hongik.genieary.auth.dto.response.TokenResponse;
 import com.hongik.genieary.auth.entity.RefreshToken;
 import com.hongik.genieary.auth.jwt.JwtUtil;
+import com.hongik.genieary.auth.repository.JwtBlacklistRepository;
 import com.hongik.genieary.auth.repository.RefreshTokenRepository;
 import com.hongik.genieary.common.exception.GeneralException;
 import com.hongik.genieary.common.status.ErrorStatus;
@@ -23,6 +24,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtBlacklistRepository jwtBlacklistRepository;
 
     /**
      회원가입
@@ -117,5 +119,11 @@ public class AuthService {
 
         // Redis에서 RefreshToken 삭제
         refreshTokenRepository.deleteByEmail(email);
+
+        // accessToken 만료 시간 계산
+        long expirationMillis = jwtUtil.getExpiration(accessToken) - System.currentTimeMillis();
+        if (expirationMillis > 0) {
+            jwtBlacklistRepository.save(accessToken, expirationMillis);
+        }
     }
 }
