@@ -33,6 +33,7 @@ public enum ErrorStatus {
     FRIEND_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "FRIEND4001", "이미 친구인 사용자입니다."),
     FRIEND_NOT_FOUND(HttpStatus.NOT_FOUND, "FRIEND4002", "친구 관계가 존재하지 않습니다."),
     FRIEND_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "FRIEND4003", "상대 유저가 존재하지 않습니다."),
+    INVALID_SEARCH_KEYWORD(HttpStatus.BAD_REQUEST, "FRIEND4004", "닉네임 검색어는 공백일 수 없습니다."),
 
     // FriendRequest
     FRIEND_REQUEST_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST4001", "이미 친구 요청을 보냈습니다."),

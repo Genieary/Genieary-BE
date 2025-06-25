@@ -4,7 +4,9 @@ import com.hongik.genieary.auth.service.CustomUserDetails;
 import com.hongik.genieary.common.response.ApiResponse;
 import com.hongik.genieary.common.status.SuccessStatus;
 import com.hongik.genieary.common.swagger.FriendNotFoundApiResponse;
+import com.hongik.genieary.common.swagger.FriendSearchSuccessApiResponse;
 import com.hongik.genieary.common.swagger.FriendUserNotFoundApiResponse;
+import com.hongik.genieary.common.swagger.InvalidSearchKeywordApiResponse;
 import com.hongik.genieary.domain.friend.dto.FriendResponseDto;
 import com.hongik.genieary.domain.friend.service.FriendService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,7 +69,8 @@ public class FriendController {
     @GetMapping("/search")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "친구 검색", description = "닉네임에 해당하는 유저를 검색합니다.")
-    @FriendNotFoundApiResponse
+    @FriendSearchSuccessApiResponse
+    @InvalidSearchKeywordApiResponse
     public ResponseEntity<ApiResponse> searchFriends(
             @RequestParam String nickname,
             @ParameterObject @PageableDefault(size = 10, sort = "nickname", direction = Sort.Direction.ASC) Pageable pageable) {

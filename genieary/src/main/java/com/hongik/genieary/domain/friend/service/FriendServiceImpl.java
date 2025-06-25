@@ -73,6 +73,11 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public Page<FriendResponseDto.FriendSearchResultDto> searchFriends(String nickname, Pageable pageable) {
+
+        if (nickname == null || nickname.trim().isEmpty()) {
+            throw new GeneralException(ErrorStatus.INVALID_SEARCH_KEYWORD);
+        }
+
         Page<User> friendsPage = userRepository.findByNicknameContaining(nickname, pageable);
         return friendsPage.map(friend ->
                 FriendResponseDto.FriendSearchResultDto.builder()
