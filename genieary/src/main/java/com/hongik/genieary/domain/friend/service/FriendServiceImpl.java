@@ -11,14 +11,18 @@ import com.hongik.genieary.domain.recommend.entity.Recommend;
 import com.hongik.genieary.domain.recommend.repository.RecommendRepository;
 import com.hongik.genieary.domain.user.entity.User;
 import com.hongik.genieary.domain.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class FriendServiceImpl implements FriendService {
 
     private final FriendRepository friendRepository;
@@ -53,7 +57,6 @@ public class FriendServiceImpl implements FriendService {
                 .ifPresent(friendRequestRepository::delete);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public FriendResponseDto.FriendProfileDto getFriendProfile(User requester, Long friendId) {
         User friend = userRepository.findById(friendId)
@@ -66,5 +69,18 @@ public class FriendServiceImpl implements FriendService {
 
         List<Recommend> likedGifts = recommendRepository.findByUserAndIsLikedTrue(friend);
         return FriendConverter.toFriendProfileDto(friend, likedGifts);
+    }
+
+    @Override
+    public Page<FriendResponseDto.FriendSearchResultDto> searchFriends(String nickname, Pageable pageable) {
+        Page<User> friendsPage = userRepository.findByNicknameContaining(nickname, pageable);
+        return friendsPage.map(friend ->
+                FriendResponseDto.FriendSearchResultDto.builder()
+                        .friendId(friend.getId())
+                        .nickname(friend.getNickname())
+                        .profileImage(friend.getProfileImg())
+                        .email(friend.getEmail())
+                        .build()
+        );
     }
 }

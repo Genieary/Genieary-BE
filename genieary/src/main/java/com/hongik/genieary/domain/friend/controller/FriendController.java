@@ -10,6 +10,11 @@ import com.hongik.genieary.domain.friend.service.FriendService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -57,5 +62,17 @@ public class FriendController {
 
         FriendResponseDto.FriendProfileDto profile = friendService.getFriendProfile(userDetails.getUser(), friendId);
         return ApiResponse.onSuccess(SuccessStatus._OK, profile);
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "친구 검색", description = "닉네임에 해당하는 유저를 검색합니다.")
+    @FriendNotFoundApiResponse
+    public ResponseEntity<ApiResponse> searchFriends(
+            @RequestParam String nickname,
+            @ParameterObject @PageableDefault(size = 10, sort = "nickname", direction = Sort.Direction.ASC) Pageable pageable) {
+        Page<FriendResponseDto.FriendSearchResultDto> resultPage = friendService.searchFriends(nickname, pageable);
+
+        return ApiResponse.onSuccess(SuccessStatus._OK, resultPage);
     }
 }
