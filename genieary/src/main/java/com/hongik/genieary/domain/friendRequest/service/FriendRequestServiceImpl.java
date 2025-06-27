@@ -106,7 +106,7 @@ public class FriendRequestServiceImpl implements FriendRequestService {
     @Transactional(readOnly = true)
     @Override
     public List<FriendRequestResponseDto.FriendRequestResultDto> getReceivedRequests(User receiver) {
-        List<FriendRequest> requests = friendRequestRepository.findByReceiver(receiver);
+        List<FriendRequest> requests = friendRequestRepository.findByReceiverAndStatus(receiver, FriendStatus.REQUESTED);
         return FriendRequestConverter.toResponseDtoList(requests);
     }
 }
