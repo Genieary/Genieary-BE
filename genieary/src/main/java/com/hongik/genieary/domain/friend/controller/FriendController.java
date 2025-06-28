@@ -72,9 +72,10 @@ public class FriendController {
     @FriendSearchSuccessApiResponse
     @InvalidSearchKeywordApiResponse
     public ResponseEntity<ApiResponse> searchFriends(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam String nickname,
             @ParameterObject @PageableDefault(size = 10, sort = "nickname", direction = Sort.Direction.ASC) Pageable pageable) {
-        Page<FriendResponseDto.FriendSearchResultDto> resultPage = friendService.searchFriends(nickname, pageable);
+        Page<FriendResponseDto.FriendSearchResultDto> resultPage = friendService.searchFriends(userDetails.getUser(),nickname, pageable);
 
         return ApiResponse.onSuccess(SuccessStatus._OK, resultPage);
     }

@@ -12,6 +12,7 @@ import com.hongik.genieary.domain.recommend.repository.RecommendRepository;
 import com.hongik.genieary.domain.user.entity.User;
 import com.hongik.genieary.domain.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -72,20 +73,24 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Page<FriendResponseDto.FriendSearchResultDto> searchFriends(String nickname, Pageable pageable) {
+    public Page<FriendResponseDto.FriendSearchResultDto> searchFriends(User requester, String nickname, Pageable pageable) {
 
         if (nickname == null || nickname.trim().isEmpty()) {
             throw new GeneralException(ErrorStatus.INVALID_SEARCH_KEYWORD);
         }
 
         Page<User> friendsPage = userRepository.findByNicknameContaining(nickname, pageable);
-        return friendsPage.map(friend ->
-                FriendResponseDto.FriendSearchResultDto.builder()
+
+        List<FriendResponseDto.FriendSearchResultDto> filteredList = friendsPage.getContent().stream()
+                .filter(friend -> !friend.getId().equals(requester.getId()))
+                .map(friend -> FriendResponseDto.FriendSearchResultDto.builder()
                         .friendId(friend.getId())
                         .nickname(friend.getNickname())
                         .profileImage(friend.getProfileImg())
                         .email(friend.getEmail())
-                        .build()
-        );
+                        .build())
+                .toList();
+
+        return new PageImpl<>(filteredList, pageable, filteredList.size());
     }
 }

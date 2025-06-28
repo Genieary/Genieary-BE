@@ -13,5 +13,5 @@ public interface FriendService {
     List<FriendResponseDto.FriendListResultDto> getFriendList(User user);
     void deleteFriend(User user, Long friendId);
     FriendResponseDto.FriendProfileDto getFriendProfile(User requester, Long friendId);
-    Page<FriendResponseDto.FriendSearchResultDto> searchFriends(String nickname, Pageable pageable);
+    Page<FriendResponseDto.FriendSearchResultDto> searchFriends(User requester, String nickname, Pageable pageable);
 }
