@@ -50,4 +50,43 @@ public class SwaggerExamples {
       "result": null
     }
     """;
+
+    public static final String INVALID_SEARCH_KEYWORD_ERROR = """
+    {
+        "isSuccess": false,
+            "code": "FRIEND4004",
+            "message": "닉네임 검색어는 공백일 수 없습니다.",
+            "pageInfo": null,
+            "result": null
+    }
+    """;
+
+    public static final String FRIEND_SEARCH_SUCCESS = """
+        {
+          "isSuccess": true,
+          "code": "COMMON200",
+          "message": "성공입니다.",
+          "pageInfo": {
+            "page": 0,
+            "size": 10,
+            "hasNext": true,
+            "totalElements": 19,
+            "totalPages": 2
+          },
+          "result": [
+            {
+              "friendId": 7,
+              "nickname": "채린",
+              "profileImage": null,
+              "email": "testt@example.com"
+            },
+            {
+              "friendId": 8,
+              "nickname": "채린1",
+              "profileImage": null,
+              "email": "test@example.com"
+            }
+          ]
+        }
+        """;
 }
