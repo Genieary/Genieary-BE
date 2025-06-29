@@ -28,12 +28,12 @@ public class DiaryServiceImpl implements DiaryService{
 
     @Override
     @Transactional
-    public DiaryResponseDto.DiaryResultDto createDiary(CustomUserDetails userDetails, DiaryRequestDto.CreateDto requestDto) {
+    public DiaryResponseDto.DiaryResultDto createDiary(CustomUserDetails userDetails, DiaryRequestDto.DiaryCreateDto requestDto) {
 
         User user = userDetails.getUser();
-        LocalDate today = LocalDate.now();
-        int year = today.getYear();
-        int month = today.getMonthValue();
+        LocalDate diaryDate = requestDto.getDiaryDate();
+        int year = diaryDate.getYear();
+        int month = diaryDate.getMonthValue();
 
         Calendar calendar = calendarRepository.findByUserAndCreatedAtYearAndMonth(user, year, month)
                 .orElseGet(() -> calendarRepository.save(
@@ -43,7 +43,7 @@ public class DiaryServiceImpl implements DiaryService{
                                 .build()
                 ));
 
-        if (diaryRepository.existsByUserAndCreatedAt(user, today)) {
+        if (diaryRepository.existsByUserAndDiaryDate(user, diaryDate)) {
             throw new GeneralException(ErrorStatus.DIARY_DAY_ALREADY_EXISTS);
         }
 
@@ -55,12 +55,28 @@ public class DiaryServiceImpl implements DiaryService{
 
     @Override
     @Transactional
-    public DiaryResponseDto.DiaryResultDto updateDiary(Long diaryId, User user, DiaryRequestDto.UpdateDto dto) {
+    public DiaryResponseDto.DiaryResultDto updateDiary(Long diaryId, User user, DiaryRequestDto.DiaryUpdateDto dto) {
         Diary diary = diaryRepository.findByDiaryIdAndUser(diaryId, user)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.DIARY_NOT_FOUND));
 
         diary.update(dto.getContent(), dto.getIsLiked());
 
+        return DiaryConverter.toResponseDto(diary);
+    }
+
+    @Override
+    @Transactional
+    public void deleteDiary(User user, Long diaryId) {
+        Diary diary = diaryRepository.findByDiaryIdAndUser(diaryId, user)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.DIARY_NOT_FOUND));
+
+        diaryRepository.delete(diary);
+    }
+
+    @Override
+    public DiaryResponseDto.DiaryResultDto getDiary(Long diaryId, User user) {
+        Diary diary = diaryRepository.findByDiaryIdAndUser(diaryId, user)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.DIARY_NOT_FOUND));
         return DiaryConverter.toResponseDto(diary);
     }
 

@@ -3,6 +3,10 @@ package com.hongik.genieary.domain.diary.controller;
 import com.hongik.genieary.auth.dto.request.SignupRequest;
 import com.hongik.genieary.auth.service.CustomUserDetails;
 import com.hongik.genieary.common.status.SuccessStatus;
+import com.hongik.genieary.common.swagger.DiaryAlreadyExists;
+import com.hongik.genieary.common.swagger.DiaryNotFoundApiResponse;
+import com.hongik.genieary.common.swagger.SuccessApiResponse;
+import com.hongik.genieary.common.swagger.SuccessDiaryResponse;
 import com.hongik.genieary.domain.diary.dto.DiaryRequestDto;
 import com.hongik.genieary.domain.diary.dto.DiaryResponseDto;
 import com.hongik.genieary.domain.diary.service.DiaryService;
@@ -33,47 +37,20 @@ public class DiaryController{
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     required = true,
                     content = @Content(
-                            schema = @Schema(implementation = SignupRequest.class),
+                            schema = @Schema(implementation = DiaryRequestDto.DiaryCreateDto.class),
                             examples = @ExampleObject(
                                     name = "일기 예시",
-                                    value = "{\"content\": \"오늘 날씨 쥑인다.\", \"isLiked\": \"false\" }"
+                                    value = "{\"content\": \"오늘 날씨 쥑인다.\", \"isLiked\": \"false\", \"diaryDate\": \"2025-06-13\"  }"
                             )
                     )
-            ),
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "COMMON200",
-                            description = "일기 생성 성공했을 경우 나오는 응답입니다.",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = DiaryResponseDto.DiaryResultDto.class)
-                            )
-                    ),
-
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "DIARY4001",
-                            description = "해당하는 날짜에 일기가 이미 존재하는 경우 나오는 응답입니다.",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    examples = @ExampleObject(
-                                            name = "DIARY_DAY_ALREADY_EXISTS",
-                                            summary = "해당하는 날짜에 일기 이미 존재",
-                                            value = """
-                                                    {
-                                                      "isSuccess": false,
-                                                      "code": "DIARY4001",
-                                                      "message": "해당 날짜에 일기가 이미 존재합니다. 수정API를 사용해주세요."
-                                                    }
-                                                    """
-                                    )
-                            )
-                    )
-            }
+            )
     )
     @PostMapping
     @PreAuthorize("isAuthenticated()")
+    @SuccessDiaryResponse
+    @DiaryAlreadyExists
     public ResponseEntity<ApiResponse> createDiary(@AuthenticationPrincipal CustomUserDetails user,
-                                                   @Valid @RequestBody DiaryRequestDto.CreateDto requestDto) {
+                                                   @Valid @RequestBody DiaryRequestDto.DiaryCreateDto requestDto) {
         DiaryResponseDto.DiaryResultDto response = diaryService.createDiary(user, requestDto);
 
         return ApiResponse.onSuccess(SuccessStatus._OK, response);
@@ -85,26 +62,47 @@ public class DiaryController{
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     required = true,
                     content = @Content(
-                            schema = @Schema(implementation = DiaryRequestDto.UpdateDto.class),
+                            schema = @Schema(implementation = DiaryRequestDto.DiaryUpdateDto.class),
                             examples = @ExampleObject(
                                     name = "일기 수정 예시",
                                     value = "{\"content\": \"수정된 내용입니다.\", \"isLiked\": true }"
                             )
                     )
-            ),
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "일기 수정 성공"),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "4002", description = "존재하지 않는 일기")
-            }
+            )
     )
     @PatchMapping("/{diaryId}")
     @PreAuthorize("isAuthenticated()")
+    @SuccessDiaryResponse
+    @DiaryNotFoundApiResponse
     public ResponseEntity<ApiResponse> updateDiary(@PathVariable Long diaryId,
                                                    @AuthenticationPrincipal CustomUserDetails user,
-                                                   @Valid @RequestBody DiaryRequestDto.UpdateDto requestDto) {
+                                                   @Valid @RequestBody DiaryRequestDto.DiaryUpdateDto requestDto) {
 
         DiaryResponseDto.DiaryResultDto response = diaryService.updateDiary(diaryId, user.getUser(), requestDto);
 
+        return ApiResponse.onSuccess(SuccessStatus._OK, response);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/{diaryId}")
+    @Operation(summary = "일기 삭제", description = "일기 ID에 해당하는 일기를 삭제합니다.")
+    @SuccessApiResponse
+    @DiaryNotFoundApiResponse
+    public ResponseEntity<ApiResponse> deleteDiary(@AuthenticationPrincipal CustomUserDetails user,
+                                                   @PathVariable Long diaryId) {
+        diaryService.deleteDiary(user.getUser(), diaryId);
+        return ApiResponse.onSuccess(SuccessStatus._OK);
+    }
+
+    @GetMapping("/{diaryId}")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "일기 조회", description = "일기 ID에 해당하는 일기를 조회합니다.")
+    @SuccessApiResponse
+    @DiaryNotFoundApiResponse
+    public ResponseEntity<ApiResponse> getDiary(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long diaryId) {
+        DiaryResponseDto.DiaryResultDto response = diaryService.getDiary(diaryId, userDetails.getUser());
         return ApiResponse.onSuccess(SuccessStatus._OK, response);
     }
 

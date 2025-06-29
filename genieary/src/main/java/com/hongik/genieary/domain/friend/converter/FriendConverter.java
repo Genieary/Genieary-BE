@@ -4,6 +4,7 @@ import com.hongik.genieary.domain.diary.dto.DiaryResponseDto;
 import com.hongik.genieary.domain.diary.entity.Diary;
 import com.hongik.genieary.domain.friend.dto.FriendResponseDto;
 import com.hongik.genieary.domain.friend.entity.Friend;
+import com.hongik.genieary.domain.recommend.entity.Recommend;
 import com.hongik.genieary.domain.user.entity.User;
 
 import java.util.List;
@@ -29,6 +30,22 @@ public class FriendConverter {
         return Friend.builder()
                 .user(user)
                 .friend(friend)
+                .build();
+    }
+
+    public static FriendResponseDto.FriendProfileDto toFriendProfileDto(User friend, List<Recommend> likedGifts) {
+        return FriendResponseDto.FriendProfileDto.builder()
+                .friendId(friend.getId())
+                .nickname(friend.getNickname())
+                .email(friend.getEmail())
+                .profileImage(friend.getProfileImg())
+                .giftLikes(likedGifts.stream()
+                        .map(gift -> FriendResponseDto.FriendProfileDto.GiftPreviewDto.builder()
+                                .giftId(gift.getRecommendId())
+                                .name(gift.getContentName())
+                                .imageUrl(gift.getContentImage())
+                                .build())
+                        .collect(Collectors.toList()))
                 .build();
     }
 }

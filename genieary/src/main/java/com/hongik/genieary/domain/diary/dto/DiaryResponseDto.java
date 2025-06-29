@@ -15,5 +15,6 @@ public class DiaryResponseDto {
         private String content;
         private LocalDate createdAt;
         private Boolean isLiked;
+        private LocalDate diaryDate;
     }
 }

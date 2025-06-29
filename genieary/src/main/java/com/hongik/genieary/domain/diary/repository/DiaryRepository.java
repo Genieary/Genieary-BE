@@ -10,6 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
-    boolean existsByUserAndCreatedAt(User user, LocalDate createdAt);
+    boolean existsByUserAndDiaryDate(User user, LocalDate diaryDate);
     Optional<Diary> findByDiaryIdAndUser(Long id, User user);
 }

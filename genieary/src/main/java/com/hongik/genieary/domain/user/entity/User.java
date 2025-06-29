@@ -3,10 +3,13 @@ package com.hongik.genieary.domain.user.entity;
 import com.hongik.genieary.domain.common.BaseEntity;
 import com.hongik.genieary.domain.enums.Gender;
 import com.hongik.genieary.domain.enums.LoginType;
+import com.hongik.genieary.domain.enums.Personality;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -39,4 +42,32 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private LoginType loginType;
+  
+    // 성격을 여러 개 저장하기 위한 컬렉션
+    @ElementCollection(targetClass = Personality.class)
+    @CollectionTable(name = "user_personalities", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "personality")
+    @Builder.Default
+    private Set<Personality> personalities = new HashSet<>();
+
+    //처음에 회원가입 후 정보 받았는지 확인 필드
+    @Column(name = "is_profile_completed", nullable = false)
+    @Builder.Default
+    private Boolean isProfileCompleted = false;
+
+    // ----- method ----
+    // 프로필 업데이트 메서드
+    public void updateProfile(String nickname, LocalDate birthDate, Gender gender, Set<Personality> personalities) {
+        this.nickname = nickname;
+        this.birthDate = birthDate;
+        this.gender = gender;
+        this.personalities = personalities != null ? new HashSet<>(personalities) : new HashSet<>();
+        this.isProfileCompleted = true;
+    }
+
+    // 프로필 이미지 업데이트
+    public void updateProfileImg(String profileImg) {
+        this.profileImg = profileImg;
+    }
 }
