@@ -1,5 +1,6 @@
 package com.hongik.genieary.auth.controller;
 
+import com.hongik.genieary.auth.dto.request.CheckEmailRequest;
 import com.hongik.genieary.auth.dto.request.LoginRequest;
 import com.hongik.genieary.auth.dto.request.SignupRequest;
 import com.hongik.genieary.auth.dto.response.TokenResponse;
@@ -171,6 +172,14 @@ public class AuthController {
         String refreshToken = request.get("refreshToken");
         TokenResponse tokens = authService.refresh(refreshToken);
         return ResponseEntity.ok(tokens);
+    }
+
+
+    @Operation(summary = "이메일 중복 확인", description = "true : 사용가능, false : 사용불가")
+    @PostMapping("/check-email")
+    public ResponseEntity<Boolean> checkEmailDuplicate(@RequestBody CheckEmailRequest request) {
+        boolean isAvailable = authService.checkEmailAvailability(request.getEmail());
+        return ResponseEntity.ok(isAvailable);
     }
 
     @Operation(

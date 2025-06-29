@@ -112,7 +112,18 @@ public class AuthService {
     }
 
     /**
-     로그아웃
+     * 이메일 중복 확인 로직 구현
+     */
+    public boolean checkEmailAvailability(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            throw new GeneralException(ErrorStatus.VALIDATION_ERROR);
+        }
+
+        return !userRepository.existsByEmail(email);
+    }
+  
+    /**
+     *로그아웃
      */
     public void logout(String accessToken) {
         String email = jwtUtil.getEmailFromToken(accessToken);
