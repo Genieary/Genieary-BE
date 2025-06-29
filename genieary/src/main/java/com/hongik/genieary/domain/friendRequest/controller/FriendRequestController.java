@@ -10,6 +10,7 @@ import com.hongik.genieary.common.swagger.FriendRequestNotFoundApiResponse;
 import com.hongik.genieary.common.swagger.FriendUserNotFoundApiResponse;
 import com.hongik.genieary.domain.enums.FriendStatus;
 import com.hongik.genieary.domain.friendRequest.dto.FriendRequestDto;
+import com.hongik.genieary.domain.friendRequest.dto.FriendRequestResponseDto;
 import com.hongik.genieary.domain.friendRequest.dto.FriendRequestStatusUpdateDto;
 import com.hongik.genieary.domain.friendRequest.service.FriendRequestService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,10 +19,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "FriendRequest API", description = "친구 요청 관련 API")
 @RestController
@@ -61,5 +61,13 @@ public class FriendRequestController {
         }
 
         return ApiResponse.onSuccess(SuccessStatus._OK);
+    }
+
+    @GetMapping("/request")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "친구 요청 조희", description = "유저가 받은 친구 요청을 조회합니다.")
+    public ResponseEntity<ApiResponse> getReceivedRequests(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        List<FriendRequestResponseDto.FriendRequestResultDto> requests = friendRequestService.getReceivedRequests(userDetails.getUser());
+        return ApiResponse.onSuccess(SuccessStatus._OK, requests);
     }
 }

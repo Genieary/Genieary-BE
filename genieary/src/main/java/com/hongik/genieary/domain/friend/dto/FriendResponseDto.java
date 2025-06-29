@@ -41,4 +41,15 @@ public class FriendResponseDto {
             private String imageUrl;
         }
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FriendSearchResultDto {
+        private Long friendId;
+        private String nickname;
+        private String profileImage;
+        private String email;
+    }
 }

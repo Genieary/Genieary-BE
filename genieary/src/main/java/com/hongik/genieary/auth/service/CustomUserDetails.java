@@ -25,7 +25,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return getPassword(); // 소셜 로그인은 비밀번호 필요X
+        return user.getPassword(); // 소셜 로그인은 비밀번호 필요X
     }
 
     @Override
