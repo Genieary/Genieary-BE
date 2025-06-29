@@ -1,24 +1,35 @@
 package com.hongik.genieary.auth.repository;
 
-import com.hongik.genieary.auth.entity.RefreshToken;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.stereotype.Repository;
+
+import java.time.Duration;
 import java.util.Optional;
 
-public interface RefreshTokenRepository extends JpaRepository<RefreshToken, String> {
-    Optional<RefreshToken> findByEmail(String email);
+@Repository
+@RequiredArgsConstructor
+public class RefreshTokenRepository {
 
-    @Modifying
-    @Query("update RefreshToken r set r.refreshToken = :token where r.email = :email")
-    void updateToken(@Param("email") String email, @Param("token") String token);
+    private final RedisTemplate<String, String> redisTemplate;
 
-    default void saveOrUpdate(String email, String token) {
-        findByEmail(email).ifPresentOrElse(
-                r -> updateToken(email, token),
-                () -> save(new RefreshToken(email, token))
-        );
+    // 저장
+    public void save(String email, String refreshToken, long expirationMillis) {
+        ValueOperations<String, String> ops = redisTemplate.opsForValue();
+        ops.set(email, refreshToken, Duration.ofMillis(expirationMillis));
+    }
+
+    // 조회
+    public Optional<String> findByEmail(String email) {
+        ValueOperations<String, String> ops = redisTemplate.opsForValue();
+        String token = ops.get(email);
+        return Optional.ofNullable(token);
+    }
+
+    // 삭제
+    public void deleteByEmail(String email) {
+        redisTemplate.delete(email);
     }
 }
