@@ -17,4 +17,13 @@ public class DiaryResponseDto {
         private Boolean isLiked;
         private LocalDate diaryDate;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DiaryFaceImageResultDto {
+        private Long diaryId;
+        private String url;
+    }
 }

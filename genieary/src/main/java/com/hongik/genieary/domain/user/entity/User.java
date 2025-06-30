@@ -21,8 +21,9 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "profile_img", length = 2083)
-    private String profileImg;
+    @Column(name = "image_file_name", length = 2083)
+    @Setter
+    private String imageFileName;
 
     @Column(name = "nickname", length = 50)
     private String nickname;
@@ -54,16 +55,12 @@ public class User extends BaseEntity {
 
     // ----- method ----
     // 프로필 업데이트 메서드
-    public void updateProfile(String nickname, LocalDate birthDate, Gender gender, Set<Personality> personalities) {
+    public void updateProfile(String nickname, LocalDate birthDate, Gender gender, Set<Personality> personalities, String imageFileName) {
         this.nickname = nickname;
         this.birthDate = birthDate;
         this.gender = gender;
         this.personalities = personalities != null ? new HashSet<>(personalities) : new HashSet<>();
         this.isProfileCompleted = true;
-    }
-
-    // 프로필 이미지 업데이트
-    public void updateProfileImg(String profileImg) {
-        this.profileImg = profileImg;
+        this.imageFileName = imageFileName;
     }
 }

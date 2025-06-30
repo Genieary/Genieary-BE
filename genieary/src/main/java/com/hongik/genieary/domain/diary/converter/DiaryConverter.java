@@ -29,4 +29,11 @@ public class DiaryConverter {
                 .build();
     }
 
+    public static DiaryResponseDto.DiaryFaceImageResultDto toFaceImageResponseDto(Long diaryId, String url) {
+        return DiaryResponseDto.DiaryFaceImageResultDto.builder()
+                .diaryId(diaryId)
+                .url(url)
+                .build();
+    }
+
 }

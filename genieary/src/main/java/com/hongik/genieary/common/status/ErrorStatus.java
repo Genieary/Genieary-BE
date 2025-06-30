@@ -36,6 +36,7 @@ public enum ErrorStatus {
     // Diary
     DIARY_DAY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "DIARY4001", "해당 날짜에 일기가 이미 존재합니다. 수정API를 사용해주세요."),
     DIARY_NOT_FOUND(HttpStatus.NOT_FOUND, "DIARY4002", "일기가 존재하지 않습니다. 먼저 생성해주세요."),
+    IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "DIARY4003", "이미지가 존재하지 않습니다. 먼저 업로드해주세요."),
 
     //Friend
     FRIEND_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "FRIEND4001", "이미 친구인 사용자입니다."),

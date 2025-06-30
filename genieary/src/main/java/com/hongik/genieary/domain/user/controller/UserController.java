@@ -3,6 +3,7 @@ package com.hongik.genieary.domain.user.controller;
 import com.hongik.genieary.auth.service.CustomUserDetails;
 import com.hongik.genieary.common.response.ApiResponse;
 import com.hongik.genieary.common.status.SuccessStatus;
+import com.hongik.genieary.domain.diary.dto.DiaryResponseDto;
 import com.hongik.genieary.domain.user.dto.request.ProfileCompleteRequest;
 import com.hongik.genieary.domain.user.dto.request.ProfileUpdateRequest;
 import com.hongik.genieary.domain.user.dto.response.ProfileResponse;
@@ -80,5 +81,26 @@ public class UserController {
 
         boolean isCompleted = userService.isProfileCompleted(userId);
         return ApiResponse.onSuccess(SuccessStatus.PROFILE_STATUS_RETRIEVED, isCompleted);
+    }
+
+    // 프로필 이미지 presigned url 발급 api
+    @Operation(
+            summary = "프로필 이미지 presigned url 발급",
+            description = "사용자의 프로필 이미지를 저장할 presigned url을 발급합니다. 발급받은 url으로 put요청하여 s3에 저장합니다.")
+    @GetMapping("/profile-image")
+    public ResponseEntity<ApiResponse> generatePresignedProfileImageUrl(
+            @AuthenticationPrincipal(expression = "id") Long userId) {
+        ProfileResponse.ProfilePresignedUrlResponse dto  = userService.uploadProfileImage(userId);
+        return ApiResponse.onSuccess(SuccessStatus._OK, dto);
+    }
+
+    // 프로필 이미지 presigned url 발급 api
+    @Operation(
+            summary = "프로필 이미지 presigned url 발급",
+            description = "사용자의 프로필 이미지를 저장할 presigned url을 발급합니다. 발급받은 url으로 put요청하여 s3에 저장합니다.")
+    @GetMapping("/profile-image-url")
+    public ResponseEntity<ApiResponse> getPresignedProfileImageUrl(@AuthenticationPrincipal (expression = "id") Long userId) {
+        String url = userService.getProfileImageUrl(userId);
+        return ApiResponse.onSuccess(SuccessStatus._OK, url);
     }
 }

@@ -25,4 +25,20 @@ public class Calendar extends BaseEntity {
 
     @Column(name = "summary", length=500)
     private String summary;
+
+    @Column(name = "year", length=4)
+    private int year;
+
+    @Column(name = "month", length=2)
+    private int month;
+
+    public static Calendar of(User user, int year, int month) {
+        System.out.println(month+"이게 뭐냐능!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        return Calendar.builder()
+                .user(user)
+                .year(year)
+                .month(month)
+                .build();
+    }
+
 }

@@ -2,6 +2,7 @@ package com.hongik.genieary.domain.friend.service;
 
 import com.hongik.genieary.common.exception.GeneralException;
 import com.hongik.genieary.common.status.ErrorStatus;
+import com.hongik.genieary.domain.enums.ImageType;
 import com.hongik.genieary.domain.friend.converter.FriendConverter;
 import com.hongik.genieary.domain.friend.dto.FriendResponseDto;
 import com.hongik.genieary.domain.friend.entity.Friend;
@@ -11,6 +12,7 @@ import com.hongik.genieary.domain.recommend.entity.Recommend;
 import com.hongik.genieary.domain.recommend.repository.RecommendRepository;
 import com.hongik.genieary.domain.user.entity.User;
 import com.hongik.genieary.domain.user.repository.UserRepository;
+import com.hongik.genieary.s3.S3Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,11 +33,26 @@ public class FriendServiceImpl implements FriendService {
     private final UserRepository userRepository;
     private final FriendRequestRepository friendRequestRepository;
     private final RecommendRepository recommendRepository;
+    private final S3Service s3Service;
 
+    @Override
     public List<FriendResponseDto.FriendListResultDto> getFriendList(User user) {
         List<Friend> friends = friendRepository.findAllByUser(user);
-        return FriendConverter.toFriendListResultDtoList(friends);
+
+        // Presigned URL 발급
+        Map<Long, String> friendIdToUrlMap = friends.stream()
+                .map(Friend::getFriend)
+                .collect(Collectors.toMap(
+                        User::getId,
+                        friendUser -> {
+                            String key = friendUser.getImageFileName();
+                            return key != null ? s3Service.generatePresignedDownloadUrl(key, ImageType.PROFILE) : null;
+                        }
+                ));
+
+        return FriendConverter.toFriendListResultDtoList(friends, friendIdToUrlMap);
     }
+
 
     @Transactional
     @Override
@@ -69,7 +87,13 @@ public class FriendServiceImpl implements FriendService {
         }
 
         List<Recommend> likedGifts = recommendRepository.findByUserAndIsLikedTrue(friend);
-        return FriendConverter.toFriendProfileDto(friend, likedGifts);
+
+        String presignedUrl = null;
+        if (friend.getImageFileName() != null) {
+            presignedUrl = s3Service.generatePresignedDownloadUrl(friend.getImageFileName(), ImageType.PROFILE);
+        }
+
+        return FriendConverter.toFriendProfileDto(friend, presignedUrl, likedGifts);
     }
 
     @Override
@@ -81,16 +105,17 @@ public class FriendServiceImpl implements FriendService {
 
         Page<User> friendsPage = userRepository.findByNicknameContaining(nickname, pageable);
 
-        List<FriendResponseDto.FriendSearchResultDto> filteredList = friendsPage.getContent().stream()
+        Map<Long, String> userIdToPresignedUrlMap = friendsPage.getContent().stream()
                 .filter(friend -> !friend.getId().equals(requester.getId()))
-                .map(friend -> FriendResponseDto.FriendSearchResultDto.builder()
-                        .friendId(friend.getId())
-                        .nickname(friend.getNickname())
-                        .profileImage(friend.getProfileImg())
-                        .email(friend.getEmail())
-                        .build())
-                .toList();
+                .collect(Collectors.toMap(
+                        User::getId,
+                        user -> {
+                            String key = user.getImageFileName();
+                            return key != null ? s3Service.generatePresignedDownloadUrl(key, ImageType.PROFILE) : "";
+                        },
+                        (v1, v2) -> v1
+                ));
 
-        return new PageImpl<>(filteredList, pageable, filteredList.size());
+        return FriendConverter.toFriendSearchResultPage(friendsPage, requester, userIdToPresignedUrlMap, pageable);
     }
 }

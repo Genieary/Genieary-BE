@@ -2,19 +2,24 @@ package com.hongik.genieary.domain.user.service;
 
 import com.hongik.genieary.common.exception.GeneralException;
 import com.hongik.genieary.common.status.ErrorStatus;
+import com.hongik.genieary.domain.diary.dto.DiaryResponseDto;
+import com.hongik.genieary.domain.diary.entity.Diary;
 import com.hongik.genieary.domain.enums.Gender;
+import com.hongik.genieary.domain.enums.ImageType;
 import com.hongik.genieary.domain.enums.Personality;
 import com.hongik.genieary.domain.user.dto.request.ProfileCompleteRequest;
 import com.hongik.genieary.domain.user.dto.request.ProfileUpdateRequest;
 import com.hongik.genieary.domain.user.dto.response.ProfileResponse;
 import com.hongik.genieary.domain.user.entity.User;
 import com.hongik.genieary.domain.user.repository.UserRepository;
+import com.hongik.genieary.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +27,7 @@ import java.util.Set;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final S3Service s3Service;
 
     // 프로필 완성 (첫 로그인 시)
     public ProfileResponse completeProfile(Long userId, ProfileCompleteRequest request) {
@@ -39,7 +45,8 @@ public class UserService {
                 request.getNickname(),
                 request.getBirthDate(),
                 request.getGender(),
-                request.getPersonalities()
+                request.getPersonalities(),
+                request.getImageFileName()
         );
 
         User savedUser = userRepository.save(user);
@@ -47,7 +54,6 @@ public class UserService {
     }
 
     // 프로필 수정
-    //TODO : 프로필 이미지도 업데이트 가능
     public ProfileResponse updateProfile(Long userId, ProfileUpdateRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
@@ -62,8 +68,9 @@ public class UserService {
         LocalDate birthDate = request.getBirthDate() != null ? request.getBirthDate() : user.getBirthDate();
         Gender gender = request.getGender() != null ? request.getGender() : user.getGender();
         Set<Personality> personalities = request.getPersonalities() != null ? request.getPersonalities() : user.getPersonalities();
+        String imageFileName = request.getImageFileName() != null ? request.getImageFileName() : user.getImageFileName();
 
-        user.updateProfile(nickname, birthDate, gender, personalities);
+        user.updateProfile(nickname, birthDate, gender, personalities, imageFileName);
         User savedUser = userRepository.save(user);
         return ProfileResponse.from(savedUser);
     }
@@ -95,4 +102,29 @@ public class UserService {
             throw new GeneralException(ErrorStatus.PERSONALITY_LIMIT_EXCEEDED);
         }
     }
+
+    // 프로필 이미지 presigned url 발급
+    public ProfileResponse.ProfilePresignedUrlResponse uploadProfileImage(Long userId) {
+        String fileName = "profile_" + userId + "_" + UUID.randomUUID() + ".jpg";
+        String url = s3Service.generatePresignedUploadUrl(fileName, ImageType.PROFILE);
+
+        return ProfileResponse.ProfilePresignedUrlResponse.builder()
+                .fileName(fileName)
+                .url(url)
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public String getProfileImageUrl(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        String fileName = user.getImageFileName();
+        if (fileName == null || fileName.isBlank()) {
+            throw new GeneralException(ErrorStatus.IMAGE_NOT_FOUND);
+        }
+
+        return s3Service.generatePresignedDownloadUrl(fileName, ImageType.PROFILE);
+    }
+
 }
