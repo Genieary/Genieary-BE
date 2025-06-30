@@ -73,4 +73,19 @@ public class JwtUtil {
             return false;
         }
     }
+
+    public long getRefreshTokenExpirationMillis() {
+        return this.jwtRefreshExpirationMs;
+    }
+
+    public long getExpiration(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration()
+                .getTime();
+    }
+
 }

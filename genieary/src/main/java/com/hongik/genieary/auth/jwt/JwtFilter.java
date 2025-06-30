@@ -1,5 +1,6 @@
 package com.hongik.genieary.auth.jwt;
 
+import com.hongik.genieary.auth.repository.JwtBlacklistRepository;
 import com.hongik.genieary.auth.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,6 +22,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
+    private final JwtBlacklistRepository jwtBlacklistRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -35,6 +37,14 @@ public class JwtFilter extends OncePerRequestFilter {
         // "Bearer {token}" 형식 체크
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
+
+            // 블랙리스트 체크
+            if (jwtBlacklistRepository.exists(token)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("로그아웃된 토큰입니다.");
+                return;
+            }
+
             if (jwtUtil.validateToken(token)) {
                 email = jwtUtil.getEmailFromToken(token);
             }
