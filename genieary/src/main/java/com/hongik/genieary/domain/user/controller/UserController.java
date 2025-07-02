@@ -85,8 +85,8 @@ public class UserController {
 
     // 프로필 이미지 presigned url 발급 api
     @Operation(
-            summary = "프로필 이미지 presigned url 발급",
-            description = "사용자의 프로필 이미지를 저장할 presigned url을 발급합니다. 발급받은 url으로 put요청하여 s3에 저장합니다.")
+            summary = "프로필 이미지 Presigned Upload URL 발급",
+            description = "사용자의 프로필 이미지를 저장할 presigned upload url을 발급합니다. 발급받은 url으로 put요청하여 s3에 저장합니다.")
     @GetMapping("/profile-image")
     public ResponseEntity<ApiResponse> generatePresignedProfileImageUrl(
             @AuthenticationPrincipal(expression = "id") Long userId) {
@@ -94,10 +94,10 @@ public class UserController {
         return ApiResponse.onSuccess(SuccessStatus._OK, dto);
     }
 
-    // 프로필 이미지 presigned url 발급 api
+    // 프로필 이미지 presigned url 조회 api
     @Operation(
-            summary = "프로필 이미지 presigned url 발급",
-            description = "사용자의 프로필 이미지를 저장할 presigned url을 발급합니다. 발급받은 url으로 put요청하여 s3에 저장합니다.")
+            summary = "프로필 이미지 Presigned Download URL 발급",
+            description = "사용자의 프로필 이미지를 바로 볼 수 있는 presigned download url을 발급합니다.")
     @GetMapping("/profile-image-url")
     public ResponseEntity<ApiResponse> getPresignedProfileImageUrl(@AuthenticationPrincipal (expression = "id") Long userId) {
         String url = userService.getProfileImageUrl(userId);
