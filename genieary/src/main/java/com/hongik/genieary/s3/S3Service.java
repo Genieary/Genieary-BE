@@ -1,13 +1,13 @@
 package com.hongik.genieary.s3;
 
+import com.hongik.genieary.common.exception.GeneralException;
+import com.hongik.genieary.common.status.ErrorStatus;
 import com.hongik.genieary.domain.enums.ImageType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
@@ -44,6 +44,17 @@ public class S3Service {
     // 다운로드 url 생성
     public String generatePresignedDownloadUrl(String fileName, ImageType imageType) {
         String key = imageType.getDirectory() + "/" + fileName;
+
+        try {
+            HeadObjectRequest headRequest = HeadObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build();
+            s3Client.headObject(headRequest); // 없으면 여기서 예외 던짐
+
+        } catch (S3Exception e) {
+            throw new GeneralException(ErrorStatus.S3_FILE_NOT_FOUND);
+        }
 
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)

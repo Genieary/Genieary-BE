@@ -49,8 +49,10 @@ public enum ErrorStatus {
     FRIEND_REQUEST_SELF(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST4002", "자기 자신에게는 친구 요청을 보낼 수 없습니다."),
     FRIEND_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "FRIEND_REQUEST4003", "해당 친구 요청을 찾을 수 없습니다."),
     FRIEND_REQUEST_ACCESS_FORBIDDEN(HttpStatus.FORBIDDEN, "FRIEND_REQUEST4004", "해당 친구 요청에 접근할 수 없습니다."),
-    FRIEND_REQUEST_ALREADY_HANDLED(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST4005", "이미 처리된 친구 요청입니다.");
+    FRIEND_REQUEST_ALREADY_HANDLED(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST4005", "이미 처리된 친구 요청입니다."),
 
+    //S3
+    S3_FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "S34001", "요청한 S3 파일이 존재하지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
