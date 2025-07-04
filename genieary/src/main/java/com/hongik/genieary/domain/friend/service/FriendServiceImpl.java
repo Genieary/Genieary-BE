@@ -42,13 +42,12 @@ public class FriendServiceImpl implements FriendService {
         // Presigned URL 발급
         Map<Long, String> friendIdToUrlMap = friends.stream()
                 .map(Friend::getFriend)
+                .filter(friendUser -> friendUser.getId() != null && friendUser.getImageFileName() != null)
                 .collect(Collectors.toMap(
                         User::getId,
-                        friendUser -> {
-                            String key = friendUser.getImageFileName();
-                            return key != null ? s3Service.generatePresignedDownloadUrl(key, ImageType.PROFILE) : null;
-                        }
+                        friendUser -> s3Service.generatePresignedDownloadUrl(friendUser.getImageFileName(), ImageType.PROFILE)
                 ));
+
 
         return FriendConverter.toFriendListResultDtoList(friends, friendIdToUrlMap);
     }
