@@ -84,7 +84,7 @@ public class DiaryServiceImpl implements DiaryService{
 
     @Override
     @Transactional
-    public DiaryResponseDto.DiaryFaceImageResultDto uploadDiaryFaceImage(Long userId, LocalDate date) {
+    public DiaryResponseDto.DiaryFaceImageResultDto uploadDiaryFaceImage(Long userId, LocalDate date, String contentType) {
 
         int year = date.getYear();
         int month = date.getMonthValue();
@@ -104,12 +104,12 @@ public class DiaryServiceImpl implements DiaryService{
                 .isLiked(false)
                 .build());
 
-        String fileName = "diary_" + userId + "_" + date + "_" + UUID.randomUUID() + ".jpg";
+        String fileName = "diary_" + userId + "_" + date + "_" + UUID.randomUUID();
         diary.uploadImageFileName(fileName);
 
         diaryRepository.save(diary);
 
-        String url = s3Service.generatePresignedUploadUrl(fileName, ImageType.DIARY);
+        String url = s3Service.generatePresignedUploadUrl(fileName, ImageType.DIARY, contentType);
 
         return DiaryConverter.toFaceImageResponseDto(diary.getDiaryId(), url);
     }

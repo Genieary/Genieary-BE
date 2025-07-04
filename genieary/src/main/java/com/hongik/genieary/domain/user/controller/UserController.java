@@ -89,8 +89,9 @@ public class UserController {
             description = "사용자의 프로필 이미지를 저장할 presigned upload url을 발급합니다. 발급받은 url으로 put요청하여 s3에 저장합니다.")
     @GetMapping("/profile-image")
     public ResponseEntity<ApiResponse> generatePresignedProfileImageUrl(
-            @AuthenticationPrincipal(expression = "id") Long userId) {
-        ProfileResponse.ProfilePresignedUrlResponse dto  = userService.uploadProfileImage(userId);
+            @AuthenticationPrincipal(expression = "id") Long userId,
+            @RequestParam String contentType) {
+        ProfileResponse.ProfilePresignedUrlResponse dto  = userService.uploadProfileImage(userId, contentType);
         return ApiResponse.onSuccess(SuccessStatus._OK, dto);
     }
 

@@ -13,6 +13,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 
 import java.time.Duration;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -25,13 +26,17 @@ public class S3Service {
     private String bucketName;
 
     // 업로드 url 생성
-    public String generatePresignedUploadUrl(String fileName, ImageType imageType) {
+    public String generatePresignedUploadUrl(String fileName, ImageType imageType, String contentType) {
+        if (!Set.of("image/jpeg", "image/png").contains(contentType)) {
+            throw new GeneralException(ErrorStatus.INVALID_IMAGE_CONTENT_TYPE);
+        }
+
         String key = imageType.getDirectory() + "/" + fileName;
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
-                .contentType("image/jpeg")
+                .contentType(contentType)
                 .build();
 
         PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(builder -> builder

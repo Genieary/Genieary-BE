@@ -113,8 +113,11 @@ public class DiaryController{
             summary = "일기 얼굴 사진 Presigned Upload URL 발급",
             description = "사용자의 일기 얼굴 사진을 저장할 presigned upload url을 발급합니다. 발급받은 url으로 put요청하여 s3에 저장합니다.")
     @PostMapping("/{date}/diary-face")
-    public ResponseEntity<ApiResponse> uploadDiaryFaceImage(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        DiaryResponseDto.DiaryFaceImageResultDto dto  = diaryService.uploadDiaryFaceImage(userDetails.getUser().getId(), date);
+    public ResponseEntity<ApiResponse> uploadDiaryFaceImage(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam String contentType) {
+        DiaryResponseDto.DiaryFaceImageResultDto dto  = diaryService.uploadDiaryFaceImage(userDetails.getUser().getId(), date, contentType);
         return ApiResponse.onSuccess(SuccessStatus._OK, dto);
     }
 
@@ -123,7 +126,7 @@ public class DiaryController{
             summary = "일기 얼굴 사진 Presigned Download URL 발급",
             description = "사용자의 일기 얼굴 사진을 바로 볼 수 있는 presigned download url을 발급합니다.")
     @GetMapping("/{diaryId}/diary-face-url")
-    public ResponseEntity<String> getDiaryFacemageUrl(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long diaryId) {
+    public ResponseEntity<String> getDiaryFaceImageUrl(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long diaryId) {
         String url = diaryService.getDiaryFaceImageUrl(userDetails.getUser().getId(), diaryId);
         return ResponseEntity.ok(url);
     }

@@ -12,6 +12,6 @@ public interface DiaryService {
     DiaryResponseDto.DiaryResultDto updateDiary(Long diaryId, Long userId, DiaryRequestDto.DiaryUpdateDto dto);
     void deleteDiary(Long userId, Long diaryId);
     DiaryResponseDto.DiaryResultDto getDiary(Long diaryId, Long userId);
-    DiaryResponseDto.DiaryFaceImageResultDto uploadDiaryFaceImage(Long userId, LocalDate date);
+    DiaryResponseDto.DiaryFaceImageResultDto uploadDiaryFaceImage(Long userId, LocalDate date, String contentType);
     String getDiaryFaceImageUrl(Long userId, Long diaryId);
 }

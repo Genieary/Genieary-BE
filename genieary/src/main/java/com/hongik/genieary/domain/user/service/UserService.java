@@ -2,8 +2,6 @@ package com.hongik.genieary.domain.user.service;
 
 import com.hongik.genieary.common.exception.GeneralException;
 import com.hongik.genieary.common.status.ErrorStatus;
-import com.hongik.genieary.domain.diary.dto.DiaryResponseDto;
-import com.hongik.genieary.domain.diary.entity.Diary;
 import com.hongik.genieary.domain.enums.Gender;
 import com.hongik.genieary.domain.enums.ImageType;
 import com.hongik.genieary.domain.enums.Personality;
@@ -19,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Set;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -104,9 +101,9 @@ public class UserService {
     }
 
     // 프로필 이미지 presigned url 발급
-    public ProfileResponse.ProfilePresignedUrlResponse uploadProfileImage(Long userId) {
-        String fileName = "profile_" + userId + "_" + UUID.randomUUID() + ".jpg";
-        String url = s3Service.generatePresignedUploadUrl(fileName, ImageType.PROFILE);
+    public ProfileResponse.ProfilePresignedUrlResponse uploadProfileImage(Long userId,String contentType) {
+        String fileName = "profile_" + userId;
+        String url = s3Service.generatePresignedUploadUrl(fileName, ImageType.PROFILE, contentType);
 
         return ProfileResponse.ProfilePresignedUrlResponse.builder()
                 .fileName(fileName)
