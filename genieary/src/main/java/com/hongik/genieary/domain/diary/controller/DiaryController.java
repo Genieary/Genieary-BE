@@ -108,9 +108,9 @@ public class DiaryController{
         return ApiResponse.onSuccess(SuccessStatus._OK, response);
     }
 
-    // 프로필 이미지 presigned url 발급 api
+    // 일기 얼굴 presigned url 발급 api
     @Operation(
-            summary = "일기 얼굴 분석 사진 Presigned Upload URL 발급",
+            summary = "일기 얼굴 사진 Presigned Upload URL 발급",
             description = "사용자의 일기 얼굴 사진을 저장할 presigned upload url을 발급합니다. 발급받은 url으로 put요청하여 s3에 저장합니다.")
     @PostMapping("/{date}/diary-face")
     public ResponseEntity<ApiResponse> uploadDiaryFaceImage(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -118,9 +118,9 @@ public class DiaryController{
         return ApiResponse.onSuccess(SuccessStatus._OK, dto);
     }
 
-    // 프로필 이미지 presigned url 발급 api
+    // 일기 얼굴 presigned url 발급 api
     @Operation(
-            summary = "일기 얼굴 분석 사진 Presigned Download URL 발급",
+            summary = "일기 얼굴 사진 Presigned Download URL 발급",
             description = "사용자의 일기 얼굴 사진을 바로 볼 수 있는 presigned download url을 발급합니다.")
     @GetMapping("/{diaryId}/diary-face-url")
     public ResponseEntity<String> getDiaryFacemageUrl(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long diaryId) {

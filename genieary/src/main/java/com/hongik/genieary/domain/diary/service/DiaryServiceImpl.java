@@ -105,7 +105,7 @@ public class DiaryServiceImpl implements DiaryService{
                 .build());
 
         String fileName = "diary_" + userId + "_" + date + "_" + UUID.randomUUID() + ".jpg";
-        diary.setImageFileName(fileName);
+        diary.uploadImageFileName(fileName);
 
         diaryRepository.save(diary);
 

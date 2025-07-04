@@ -37,7 +37,6 @@ public class Diary extends BaseEntity{
     @Column(name = "diaryDate")
     private LocalDate diaryDate;
 
-    @Setter
     @Column(name = "imageFileName")
     private String imageFileName;
 
@@ -46,4 +45,7 @@ public class Diary extends BaseEntity{
         if (isLiked != null) this.isLiked = isLiked;
     }
 
+    public void uploadImageFileName(String fileName) {
+        this.imageFileName = fileName;
+    }
 }
