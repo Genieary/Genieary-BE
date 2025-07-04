@@ -43,7 +43,6 @@ public class ProfileResponse {
     @Builder
     @AllArgsConstructor
     public static class ProfilePresignedUrlResponse {
-        private String fileName;
         private String url;
     }
 }

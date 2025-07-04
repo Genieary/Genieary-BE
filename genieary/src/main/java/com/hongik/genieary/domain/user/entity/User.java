@@ -23,7 +23,6 @@ public class User extends BaseEntity {
     private Long id;
 
     @Column(name = "image_file_name", length = 2083)
-    @Setter
     private String imageFileName;
 
     @Column(name = "nickname", length = 50)
@@ -59,12 +58,18 @@ public class User extends BaseEntity {
 
     // ----- method ----
     // 프로필 업데이트 메서드
-    public void updateProfile(String nickname, LocalDate birthDate, Gender gender, Set<Personality> personalities, String imageFileName) {
+    public void updateProfile(String nickname, LocalDate birthDate, Gender gender, Set<Personality> personalities) {
         this.nickname = nickname;
         this.birthDate = birthDate;
         this.gender = gender;
         this.personalities = personalities != null ? new HashSet<>(personalities) : new HashSet<>();
         this.isProfileCompleted = true;
+    }
+
+    // 프로필 사진 업데이트 메서드
+    public void updateImageFileName(String imageFileName) {
         this.imageFileName = imageFileName;
     }
+
+
 }

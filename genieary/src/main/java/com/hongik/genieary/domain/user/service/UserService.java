@@ -42,8 +42,7 @@ public class UserService {
                 request.getNickname(),
                 request.getBirthDate(),
                 request.getGender(),
-                request.getPersonalities(),
-                request.getImageFileName()
+                request.getPersonalities()
         );
 
         User savedUser = userRepository.save(user);
@@ -65,9 +64,8 @@ public class UserService {
         LocalDate birthDate = request.getBirthDate() != null ? request.getBirthDate() : user.getBirthDate();
         Gender gender = request.getGender() != null ? request.getGender() : user.getGender();
         Set<Personality> personalities = request.getPersonalities() != null ? request.getPersonalities() : user.getPersonalities();
-        String imageFileName = request.getImageFileName() != null ? request.getImageFileName() : user.getImageFileName();
 
-        user.updateProfile(nickname, birthDate, gender, personalities, imageFileName);
+        user.updateProfile(nickname, birthDate, gender, personalities);
         User savedUser = userRepository.save(user);
         return ProfileResponse.from(savedUser);
     }
@@ -100,13 +98,18 @@ public class UserService {
         }
     }
 
+    @Transactional
     // 프로필 이미지 presigned url 발급
     public ProfileResponse.ProfilePresignedUrlResponse uploadProfileImage(Long userId,String contentType) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
         String fileName = "profile_" + userId;
         String url = s3Service.generatePresignedUploadUrl(fileName, ImageType.PROFILE, contentType);
 
+        user.updateImageFileName(fileName);
+
         return ProfileResponse.ProfilePresignedUrlResponse.builder()
-                .fileName(fileName)
                 .url(url)
                 .build();
     }
