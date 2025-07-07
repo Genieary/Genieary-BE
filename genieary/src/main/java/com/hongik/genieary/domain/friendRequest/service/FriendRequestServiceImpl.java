@@ -3,6 +3,7 @@ package com.hongik.genieary.domain.friendRequest.service;
 import com.hongik.genieary.common.exception.GeneralException;
 import com.hongik.genieary.common.status.ErrorStatus;
 import com.hongik.genieary.domain.enums.FriendStatus;
+import com.hongik.genieary.domain.enums.ImageType;
 import com.hongik.genieary.domain.friend.converter.FriendConverter;
 import com.hongik.genieary.domain.friend.entity.Friend;
 import com.hongik.genieary.domain.friend.repository.FriendRepository;
@@ -12,11 +13,14 @@ import com.hongik.genieary.domain.friendRequest.entity.FriendRequest;
 import com.hongik.genieary.domain.friendRequest.repository.FriendRequestRepository;
 import com.hongik.genieary.domain.user.entity.User;
 import com.hongik.genieary.domain.user.repository.UserRepository;
+import com.hongik.genieary.s3.S3Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,7 @@ public class FriendRequestServiceImpl implements FriendRequestService {
     private final FriendRequestRepository friendRequestRepository;
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
+    private final S3Service s3Service;
 
     @Override
     public void sendRequest(User requester, Long receiverId) {
@@ -107,6 +112,19 @@ public class FriendRequestServiceImpl implements FriendRequestService {
     @Override
     public List<FriendRequestResponseDto.FriendRequestResultDto> getReceivedRequests(User receiver) {
         List<FriendRequest> requests = friendRequestRepository.findByReceiverAndStatus(receiver, FriendStatus.REQUESTED);
-        return FriendRequestConverter.toResponseDtoList(requests);
+
+        Map<Long, String> userIdToUrlMap = requests.stream()
+                .map(FriendRequest::getRequester)
+                .distinct()
+                .collect(Collectors.toMap(
+                        User::getId,
+                        requester -> {
+                            String key = requester.getImageFileName();
+                            return key != null ? s3Service.generatePresignedDownloadUrl(key, ImageType.PROFILE) : "";
+                        },
+                        (v1, v2) -> v1
+                ));
+
+        return FriendRequestConverter.toResponseDtoList(requests, userIdToUrlMap);
     }
 }

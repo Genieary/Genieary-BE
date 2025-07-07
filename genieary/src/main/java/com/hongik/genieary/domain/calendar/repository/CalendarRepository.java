@@ -9,7 +9,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface CalendarRepository extends JpaRepository<Calendar, Long> {
-    @Query("SELECT c FROM Calendar c WHERE c.user = :user AND FUNCTION('YEAR', c.createdAt) = :year AND FUNCTION('MONTH', c.createdAt) = :month")
-    Optional<Calendar> findByUserAndCreatedAtYearAndMonth(@Param("user") User user, @Param("year") int year, @Param("month") int month);
+    @Query("SELECT c FROM Calendar c WHERE c.user = :user AND c.year = :year AND c.month = :month")
+    Optional<Calendar> findByUserAndYearAndMonth(@Param("user") User user,
+                                                 @Param("year") int year,
+                                                 @Param("month") int month);
 
 }

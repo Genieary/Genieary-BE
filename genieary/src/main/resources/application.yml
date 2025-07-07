@@ -27,6 +27,18 @@ jwt:
   secret: ${access_token_secret}
   expiration: ${expiration}
   refresh-expiration: ${refresh_expiration}
+
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: genieary
+
 kakao:
   client-id: ${REST_API_KEY}
   client-secret: ${KAKAO_SECRET}
