@@ -1,9 +1,7 @@
 package com.hongik.genieary.domain.user.controller;
 
-import com.hongik.genieary.auth.service.CustomUserDetails;
 import com.hongik.genieary.common.response.ApiResponse;
 import com.hongik.genieary.common.status.SuccessStatus;
-import com.hongik.genieary.domain.diary.dto.DiaryResponseDto;
 import com.hongik.genieary.domain.user.dto.request.ProfileCompleteRequest;
 import com.hongik.genieary.domain.user.dto.request.ProfileUpdateRequest;
 import com.hongik.genieary.domain.user.dto.response.ProfileResponse;
