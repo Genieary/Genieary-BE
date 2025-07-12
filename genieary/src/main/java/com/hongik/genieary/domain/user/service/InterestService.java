@@ -29,11 +29,13 @@ public class InterestService {
         List<Interest> interests = interestRepository.findByIsActiveTrueOrderByCategoryAscNameAsc();
 
         return interests.stream()
-                .map(InterestResponse::from)
                 .collect(Collectors.groupingBy(
-                        InterestResponse::getCategory,
+                        Interest::getCategory,
                         LinkedHashMap::new,
-                        Collectors.toList()
+                        Collectors.mapping(
+                                InterestResponse::fromWithoutCategory,
+                                Collectors.toList()
+                        )
                 ));
     }
 
