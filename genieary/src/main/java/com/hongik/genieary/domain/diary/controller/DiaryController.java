@@ -1,6 +1,5 @@
 package com.hongik.genieary.domain.diary.controller;
 
-import com.hongik.genieary.auth.dto.request.SignupRequest;
 import com.hongik.genieary.auth.service.CustomUserDetails;
 import com.hongik.genieary.common.status.SuccessStatus;
 import com.hongik.genieary.common.swagger.DiaryAlreadyExists;
@@ -18,10 +17,13 @@ import com.hongik.genieary.common.response.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @Tag(name = "Diary API", description = "일기 CRUD API")
 @RestController
@@ -78,7 +80,7 @@ public class DiaryController{
                                                    @AuthenticationPrincipal CustomUserDetails user,
                                                    @Valid @RequestBody DiaryRequestDto.DiaryUpdateDto requestDto) {
 
-        DiaryResponseDto.DiaryResultDto response = diaryService.updateDiary(diaryId, user.getUser(), requestDto);
+        DiaryResponseDto.DiaryResultDto response = diaryService.updateDiary(diaryId, user.getUser().getId(), requestDto);
 
         return ApiResponse.onSuccess(SuccessStatus._OK, response);
     }
@@ -90,7 +92,7 @@ public class DiaryController{
     @DiaryNotFoundApiResponse
     public ResponseEntity<ApiResponse> deleteDiary(@AuthenticationPrincipal CustomUserDetails user,
                                                    @PathVariable Long diaryId) {
-        diaryService.deleteDiary(user.getUser(), diaryId);
+        diaryService.deleteDiary(user.getUser().getId(), diaryId);
         return ApiResponse.onSuccess(SuccessStatus._OK);
     }
 
@@ -102,8 +104,31 @@ public class DiaryController{
     public ResponseEntity<ApiResponse> getDiary(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long diaryId) {
-        DiaryResponseDto.DiaryResultDto response = diaryService.getDiary(diaryId, userDetails.getUser());
+        DiaryResponseDto.DiaryResultDto response = diaryService.getDiary(diaryId, userDetails.getUser().getId());
         return ApiResponse.onSuccess(SuccessStatus._OK, response);
+    }
+
+    // 일기 얼굴 presigned url 발급 api
+    @Operation(
+            summary = "일기 얼굴 사진 Presigned Upload URL 발급",
+            description = "사용자의 일기 얼굴 사진을 저장할 presigned upload url을 발급합니다. 발급받은 url으로 put요청하여 s3에 저장합니다.")
+    @PostMapping("/{date}/diary-face")
+    public ResponseEntity<ApiResponse> uploadDiaryFaceImage(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam String contentType) {
+        DiaryResponseDto.DiaryFaceImageResultDto dto  = diaryService.uploadDiaryFaceImage(userDetails.getUser().getId(), date, contentType);
+        return ApiResponse.onSuccess(SuccessStatus._OK, dto);
+    }
+
+    // 일기 얼굴 presigned url 발급 api
+    @Operation(
+            summary = "일기 얼굴 사진 Presigned Download URL 발급",
+            description = "사용자의 일기 얼굴 사진을 바로 볼 수 있는 presigned download url을 발급합니다.")
+    @GetMapping("/{diaryId}/diary-face-url")
+    public ResponseEntity<String> getDiaryFaceImageUrl(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long diaryId) {
+        String url = diaryService.getDiaryFaceImageUrl(userDetails.getUser().getId(), diaryId);
+        return ResponseEntity.ok(url);
     }
 
 }

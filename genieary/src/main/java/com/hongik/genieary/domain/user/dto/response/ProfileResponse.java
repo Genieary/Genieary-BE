@@ -29,7 +29,7 @@ public class ProfileResponse {
     public static ProfileResponse from(User user) {
         return ProfileResponse.builder()
                 .id(user.getId())
-                .profileImg(user.getProfileImg())
+                .profileImg(user.getImageFileName())
                 .nickname(user.getNickname())
                 .email(user.getEmail())
                 .birthDate(user.getBirthDate())
@@ -37,5 +37,12 @@ public class ProfileResponse {
                 .personalities(user.getPersonalities())
                 .isProfileCompleted(user.getIsProfileCompleted())
                 .build();
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class ProfilePresignedUrlResponse {
+        private String url;
     }
 }
