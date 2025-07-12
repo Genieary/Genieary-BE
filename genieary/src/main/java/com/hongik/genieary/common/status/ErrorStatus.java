@@ -48,7 +48,11 @@ public enum ErrorStatus {
     FRIEND_REQUEST_SELF(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST4002", "자기 자신에게는 친구 요청을 보낼 수 없습니다."),
     FRIEND_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "FRIEND_REQUEST4003", "해당 친구 요청을 찾을 수 없습니다."),
     FRIEND_REQUEST_ACCESS_FORBIDDEN(HttpStatus.FORBIDDEN, "FRIEND_REQUEST4004", "해당 친구 요청에 접근할 수 없습니다."),
-    FRIEND_REQUEST_ALREADY_HANDLED(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST4005", "이미 처리된 친구 요청입니다.");
+    FRIEND_REQUEST_ALREADY_HANDLED(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST4005", "이미 처리된 친구 요청입니다."),
+
+    // Schedule
+    SCHEDULE_CALENDAR_NOT_FOUND(HttpStatus.NOT_FOUND, "SCHEDULE4001", "해당 캘린더를 찾을 수 없습니다."),
+    SCHEDULE_DUPLICATED(HttpStatus.BAD_REQUEST, "SCHEDULE4002", "해당 날짜에 동일한 일정이 이미 존재합니다.");
 
 
     private final HttpStatus httpStatus;
