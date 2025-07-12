@@ -50,7 +50,7 @@ public class UserController {
             @Valid @RequestBody ProfileCompleteRequest request) {
 
         ProfileResponse response = userService.completeProfile(userId, request);
-        return ApiResponse.onSuccess(SuccessStatus.PROFILE_COMPLETED, response);
+        return ApiResponse.onSuccess(SuccessStatus._OK, response);
     }
 
     // 프로필 수정
@@ -63,7 +63,7 @@ public class UserController {
             @Valid @RequestBody ProfileUpdateRequest request) {
 
         ProfileResponse response = userService.updateProfile(userId, request);
-        return ApiResponse.onSuccess(SuccessStatus.PROFILE_UPDATED, response);
+        return ApiResponse.onSuccess(SuccessStatus._OK, response);
     }
 
     // 프로필 조회
@@ -75,7 +75,7 @@ public class UserController {
             @AuthenticationPrincipal(expression = "id") Long userId) {
 
         ProfileResponse response = userService.getProfile(userId);
-        return ApiResponse.onSuccess(SuccessStatus.PROFILE_RETRIEVED, response);
+        return ApiResponse.onSuccess(SuccessStatus._OK, response);
     }
 
     // 프로필 완성 여부 확인
@@ -87,7 +87,7 @@ public class UserController {
             @AuthenticationPrincipal(expression = "id") Long userId) {
 
         boolean isCompleted = userService.isProfileCompleted(userId);
-        return ApiResponse.onSuccess(SuccessStatus.PROFILE_STATUS_RETRIEVED, isCompleted);
+        return ApiResponse.onSuccess(SuccessStatus._OK, isCompleted);
     }
 
     // ===== 관심사 관련 API =====
