@@ -27,7 +27,9 @@ public enum ErrorStatus {
 
     //USER
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER001", "사용자를 찾을 수 없습니다"),
-    PROFILE_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "USER003", "이미 프로필이 등록된 사용자입니다"),
+    PROFILE_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "USER002", "이미 프로필이 등록된 사용자입니다"),
+    BASIC_PROFILE_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "USER003", "기본 프로필을 먼저 완성해주세요"),
+    INTEREST_PROFILE_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "USER004", "이미 관심사 프로필이 완성되었습니다"),
 
     //USER_PERSONALITY
     PERSONALITY_REQUIRED(HttpStatus.BAD_REQUEST, "P001", "성격을 최소 1개는 선택해야 합니다"),

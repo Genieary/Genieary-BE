@@ -3,6 +3,7 @@ package com.hongik.genieary.domain.user.dto.response;
 import com.hongik.genieary.domain.enums.Gender;
 import com.hongik.genieary.domain.enums.Personality;
 import com.hongik.genieary.domain.user.entity.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,7 +25,16 @@ public class ProfileResponse {
     private LocalDate birthDate;
     private Gender gender;
     private Set<Personality> personalities;
+
+    @Schema(description = "기본 프로필 완성 여부", example = "true")
+    private Boolean basicProfileCompleted;
+
+    @Schema(description = "관심사 프로필 완성 여부", example = "true")
+    private Boolean interestProfileCompleted;
+
+    @Schema(description = "전체 프로필 완성 여부", example = "true")
     private Boolean isProfileCompleted;
+
 
     public static ProfileResponse from(User user) {
         return ProfileResponse.builder()
@@ -35,7 +45,9 @@ public class ProfileResponse {
                 .birthDate(user.getBirthDate())
                 .gender(user.getGender())
                 .personalities(user.getPersonalities())
-                .isProfileCompleted(user.getBasicProfileCompleted())
+                .basicProfileCompleted(user.getBasicProfileCompleted())
+                .interestProfileCompleted(user.getInterestProfileCompleted())
+                .isProfileCompleted(user.isProfileCompleted())
                 .build();
     }
 
