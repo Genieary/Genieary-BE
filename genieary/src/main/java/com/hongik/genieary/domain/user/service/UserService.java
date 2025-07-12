@@ -31,7 +31,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-        if (user.getIsProfileCompleted()) {
+        if (user.getBasicProfileCompleted()) {
             throw new GeneralException(ErrorStatus.PROFILE_ALREADY_COMPLETED);
         }
 
@@ -85,7 +85,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-        return user.getIsProfileCompleted();
+        return user.getBasicProfileCompleted();
     }
 
     // ----- method -----

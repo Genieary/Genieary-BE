@@ -35,7 +35,7 @@ public class ProfileResponse {
                 .birthDate(user.getBirthDate())
                 .gender(user.getGender())
                 .personalities(user.getPersonalities())
-                .isProfileCompleted(user.getIsProfileCompleted())
+                .isProfileCompleted(user.getBasicProfileCompleted())
                 .build();
     }
 

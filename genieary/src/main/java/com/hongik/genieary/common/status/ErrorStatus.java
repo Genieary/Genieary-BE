@@ -33,6 +33,12 @@ public enum ErrorStatus {
     PERSONALITY_REQUIRED(HttpStatus.BAD_REQUEST, "P001", "성격을 최소 1개는 선택해야 합니다"),
     PERSONALITY_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "P002", "성격은 최대 3개까지만 선택할 수 있습니다"),
 
+    //USER_INTEREST
+    INTEREST_NOT_FOUND(HttpStatus.NOT_FOUND, "I001", "관심사를 찾을 수 없습니다"),
+    INTEREST_REQUIRED(HttpStatus.BAD_REQUEST, "I002", "관심사를 최소 1개는 선택해야 합니다"),
+    INTEREST_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "I003", "관심사는 최대 5개까지만 선택할 수 있습니다"),
+    DUPLICATE_INTEREST_SELECTED(HttpStatus.BAD_REQUEST, "I004", "중복된 관심사를 선택할 수 없습니다"),
+
     // Diary
     DIARY_DAY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "DIARY4001", "해당 날짜에 일기가 이미 존재합니다. 수정API를 사용해주세요."),
     DIARY_NOT_FOUND(HttpStatus.NOT_FOUND, "DIARY4002", "일기가 존재하지 않습니다. 먼저 생성해주세요."),

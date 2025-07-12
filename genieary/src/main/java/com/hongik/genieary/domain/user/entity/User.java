@@ -51,10 +51,13 @@ public class User extends BaseEntity {
     @Builder.Default
     private Set<Personality> personalities = new HashSet<>();
 
-    //처음에 회원가입 후 정보 받았는지 확인 필드
-    @Column(name = "is_profile_completed", nullable = false)
+    @Column(name = "basic_profile_completed", nullable = false)
     @Builder.Default
-    private Boolean isProfileCompleted = false;
+    private Boolean basicProfileCompleted = false;
+
+    @Column(name = "interest_profile_completed", nullable = false)
+    @Builder.Default
+    private Boolean interestProfileCompleted = false;
 
     // ----- method ----
     // 프로필 업데이트 메서드
@@ -63,7 +66,17 @@ public class User extends BaseEntity {
         this.birthDate = birthDate;
         this.gender = gender;
         this.personalities = personalities != null ? new HashSet<>(personalities) : new HashSet<>();
-        this.isProfileCompleted = true;
+        this.basicProfileCompleted = true;
+    }
+
+    // 관심사 프로필 완성
+    public void completeInterestProfile() {
+        this.interestProfileCompleted = true;
+    }
+
+    // 전체 프로필 완성 여부 확인
+    public boolean isProfileCompleted() {
+        return this.basicProfileCompleted && this.interestProfileCompleted;
     }
 
     // 프로필 사진 업데이트 메서드
