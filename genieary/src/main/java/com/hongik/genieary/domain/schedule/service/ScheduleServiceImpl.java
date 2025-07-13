@@ -54,4 +54,16 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .map(ScheduleResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void deleteSchedule(User user, Long scheduleId) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.SCHEDULE_NOT_FOUND));
+
+        if (!schedule.getCalendar().getUser().getId().equals(user.getId())) {
+            throw new GeneralException(ErrorStatus.SCHEDULE_ACCESS_FORBIDDEN);
+        }
+
+        scheduleRepository.delete(schedule);
+    }
 }

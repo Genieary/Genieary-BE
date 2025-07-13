@@ -47,4 +47,15 @@ public class ScheduleController {
         List<ScheduleResponseDto> schedules = scheduleService.getSchedules(userDetails.getUser(), date);
         return ApiResponse.onSuccess(SuccessStatus._OK, schedules);
     }
+
+    @DeleteMapping("/{scheduleId}")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "일정 삭제", description = "스케줄 ID로 일정을 삭제합니다.")
+    public ResponseEntity<ApiResponse> deleteSchedule(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long scheduleId) {
+
+        scheduleService.deleteSchedule(userDetails.getUser(), scheduleId);
+        return ApiResponse.onSuccess(SuccessStatus._OK);
+    }
 }

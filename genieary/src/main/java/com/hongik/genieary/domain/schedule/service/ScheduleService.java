@@ -10,4 +10,5 @@ import java.util.List;
 public interface ScheduleService {
     void addSchedule(ScheduleRequestDto dto);
     List<ScheduleResponseDto> getSchedules(User user, LocalDate date);
+    void deleteSchedule(User user, Long scheduleId);
 }
