@@ -53,7 +53,7 @@ public enum ErrorStatus {
 
     // Schedule
     SCHEDULE_CALENDAR_NOT_FOUND(HttpStatus.NOT_FOUND, "SCHEDULE4001", "해당 캘린더를 찾을 수 없습니다."),
-    SCHEDULE_DUPLICATED(HttpStatus.BAD_REQUEST, "SCHEDULE4002", "해당 날짜에 동일한 일정이 이미 존재합니다.");
+    SCHEDULE_DUPLICATED(HttpStatus.BAD_REQUEST, "SCHEDULE4002", "해당 날짜에 동일한 일정이 이미 존재합니다."),
 
     //S3
     S3_FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "S34001", "요청한 S3 파일이 존재하지 않습니다."),
