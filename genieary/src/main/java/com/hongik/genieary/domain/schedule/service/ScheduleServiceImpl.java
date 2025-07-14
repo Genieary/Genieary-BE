@@ -7,10 +7,12 @@ import com.hongik.genieary.domain.calendar.repository.CalendarRepository;
 import com.hongik.genieary.domain.schedule.converter.ScheduleConverter;
 import com.hongik.genieary.domain.schedule.dto.ScheduleRequestDto;
 import com.hongik.genieary.domain.schedule.dto.ScheduleResponseDto;
+import com.hongik.genieary.domain.schedule.dto.ScheduleUpdateDto;
 import com.hongik.genieary.domain.schedule.entity.Schedule;
 import com.hongik.genieary.domain.schedule.repository.ScheduleRepository;
 import com.hongik.genieary.domain.user.entity.User;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -65,5 +67,33 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
 
         scheduleRepository.delete(schedule);
+    }
+
+    @Transactional
+    @Override
+    public void updateSchedule(User user, Long scheduleId, ScheduleUpdateDto dto) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.SCHEDULE_NOT_FOUND));
+
+        if (!schedule.getCalendar().getUser().getId().equals(user.getId())) {
+            throw new GeneralException(ErrorStatus.SCHEDULE_ACCESS_FORBIDDEN);
+        }
+
+        if (dto.getName() == null && dto.getIsEvent() == null && dto.getDate() == null) {
+            throw new GeneralException(ErrorStatus.SCHEDULE_INVALID_REQUEST);
+        }
+
+        String updatedName = dto.getName() != null ? dto.getName() : schedule.getName();
+        LocalDate updatedDate = dto.getDate() != null ? dto.getDate() : schedule.getDate();
+
+        boolean isDuplicate = scheduleRepository.existsByCalendarAndDateAndNameAndScheduleIdNot(
+                schedule.getCalendar(), updatedDate, updatedName, scheduleId);
+        if (isDuplicate) {
+            throw new GeneralException(ErrorStatus.SCHEDULE_DUPLICATED);
+        }
+
+        if (dto.getName() != null) schedule.updateName(dto.getName());
+        if (dto.getIsEvent() != null) schedule.updateIsEvent(dto.getIsEvent());
+        if (dto.getDate() != null) schedule.updateDate(dto.getDate());
     }
 }

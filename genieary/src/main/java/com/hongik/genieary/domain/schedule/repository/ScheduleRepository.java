@@ -11,4 +11,5 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     boolean existsByCalendarAndDateAndName(Calendar calendar, LocalDate date, String name);
     List<Schedule> findByCalendarAndDate(Calendar calendar, LocalDate date);
+    boolean existsByCalendarAndDateAndNameAndScheduleIdNot(Calendar calendar, LocalDate date, String name, Long scheduleId);
 }

@@ -5,6 +5,7 @@ import com.hongik.genieary.common.response.ApiResponse;
 import com.hongik.genieary.common.status.SuccessStatus;
 import com.hongik.genieary.domain.schedule.dto.ScheduleRequestDto;
 import com.hongik.genieary.domain.schedule.dto.ScheduleResponseDto;
+import com.hongik.genieary.domain.schedule.dto.ScheduleUpdateDto;
 import com.hongik.genieary.domain.schedule.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -56,6 +57,18 @@ public class ScheduleController {
             @PathVariable Long scheduleId) {
 
         scheduleService.deleteSchedule(userDetails.getUser(), scheduleId);
+        return ApiResponse.onSuccess(SuccessStatus._OK);
+    }
+
+    @PatchMapping("/{scheduleId}")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "일정 수정", description = "일정의 이름, 날짜, 이벤트 여부 중 원하는 항목만 수정합니다.")
+    public ResponseEntity<ApiResponse> updateSchedule(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long scheduleId,
+            @RequestBody ScheduleUpdateDto dto) {
+
+        scheduleService.updateSchedule(userDetails.getUser(), scheduleId, dto);
         return ApiResponse.onSuccess(SuccessStatus._OK);
     }
 }
