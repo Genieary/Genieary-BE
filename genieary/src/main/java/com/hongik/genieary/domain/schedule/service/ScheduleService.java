@@ -13,4 +13,5 @@ public interface ScheduleService {
     List<ScheduleResponseDto> getSchedules(User user, LocalDate date);
     void deleteSchedule(User user, Long scheduleId);
     void updateSchedule(User user, Long scheduleId, ScheduleUpdateDto dto);
+    List<ScheduleResponseDto> getMonthlyEvents(User user, int year, int month);
 }

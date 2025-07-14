@@ -56,7 +56,7 @@ public enum ErrorStatus {
     SCHEDULE_DUPLICATED(HttpStatus.BAD_REQUEST, "SCHEDULE4002", "해당 날짜에 동일한 일정이 이미 존재합니다."),
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "SCHEDULE4003", "일정이 존재하지 않습니다."),
     SCHEDULE_ACCESS_FORBIDDEN(HttpStatus.FORBIDDEN, "SCHEDULE4004", "해당 일정을 삭제할 권한이 없습니다."),
-    SCHEDULE_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "SCHEDULE4005", "수정할 항목이 없습니다."),
+    SCHEDULE_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "SCHEDULE4005", "요청 값이 유효하지 않습니다."),
 
     //S3
     S3_FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "S34001", "요청한 S3 파일이 존재하지 않습니다."),

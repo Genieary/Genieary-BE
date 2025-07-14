@@ -71,4 +71,16 @@ public class ScheduleController {
         scheduleService.updateSchedule(userDetails.getUser(), scheduleId, dto);
         return ApiResponse.onSuccess(SuccessStatus._OK);
     }
+
+    @GetMapping("/events")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "월별 이벤트 조회", description = "특정 월에 등록된 이벤트를 조회합니다.")
+    public ResponseEntity<ApiResponse> getMonthlyEvents(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam int year,
+            @RequestParam int month) {
+
+        List<ScheduleResponseDto> events = scheduleService.getMonthlyEvents(userDetails.getUser(), year, month);
+        return ApiResponse.onSuccess(SuccessStatus._OK, events);
+    }
 }

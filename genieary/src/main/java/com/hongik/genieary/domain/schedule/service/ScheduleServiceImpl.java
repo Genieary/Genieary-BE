@@ -96,4 +96,19 @@ public class ScheduleServiceImpl implements ScheduleService {
         if (dto.getIsEvent() != null) schedule.updateIsEvent(dto.getIsEvent());
         if (dto.getDate() != null) schedule.updateDate(dto.getDate());
     }
+
+    @Override
+    public List<ScheduleResponseDto> getMonthlyEvents(User user, int year, int month) {
+        if (month < 1 || month > 12) {
+            throw new GeneralException(ErrorStatus.SCHEDULE_INVALID_REQUEST);
+        }
+
+        Calendar calendar = calendarRepository.findByUserAndYearAndMonth(user, year, month)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.SCHEDULE_CALENDAR_NOT_FOUND));
+
+        List<Schedule> events = scheduleRepository.findByCalendarAndIsEventTrue(calendar);
+        return events.stream()
+                .map(ScheduleResponseDto::fromEntity)
+                .collect(Collectors.toList());
+    }
 }
