@@ -32,15 +32,10 @@ public class Schedule {
     @Column(nullable = false)
     private LocalDate date;
 
-    public void updateName(String name) {
-        this.name = name;
-    }
-
-    public void updateIsEvent(Boolean isEvent) {
-        this.isEvent = isEvent;
-    }
-
-    public void updateDate(LocalDate date) {
-        this.date = date;
+    public void update(String name, Boolean isEvent, LocalDate date, Calendar calendar) {
+        if (name != null) this.name = name;
+        if (isEvent != null) this.isEvent = isEvent;
+        if (date != null) this.date = date;
+        if (calendar != null) this.calendar = calendar;
     }
 }

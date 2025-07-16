@@ -29,13 +29,13 @@ public class ScheduleController {
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "일정 추가", description = "캘린더에 일정을 추가합니다.")
+    @Operation(summary = "일정 추가", description = "일정을 생성합니다.")
     public ResponseEntity<ApiResponse> addSchedule(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody ScheduleRequestDto dto) {
 
-        scheduleService.addSchedule(dto);
-        return ApiResponse.onSuccess(SuccessStatus._CREATED);
+        ScheduleResponseDto responseDto = scheduleService.addSchedule(userDetails.getUser(), dto);
+        return ApiResponse.onSuccess(SuccessStatus._CREATED, responseDto);
     }
 
     @GetMapping
