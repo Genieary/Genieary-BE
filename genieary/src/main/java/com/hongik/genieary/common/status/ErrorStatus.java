@@ -27,11 +27,19 @@ public enum ErrorStatus {
 
     //USER
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER001", "사용자를 찾을 수 없습니다"),
-    PROFILE_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "USER003", "이미 프로필이 등록된 사용자입니다"),
+    PROFILE_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "USER002", "이미 프로필이 등록된 사용자입니다"),
+    BASIC_PROFILE_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "USER003", "기본 프로필을 먼저 완성해주세요"),
+    INTEREST_PROFILE_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "USER004", "이미 관심사 프로필이 완성되었습니다"),
 
     //USER_PERSONALITY
     PERSONALITY_REQUIRED(HttpStatus.BAD_REQUEST, "P001", "성격을 최소 1개는 선택해야 합니다"),
     PERSONALITY_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "P002", "성격은 최대 3개까지만 선택할 수 있습니다"),
+
+    //USER_INTEREST
+    INTEREST_NOT_FOUND(HttpStatus.NOT_FOUND, "I001", "관심사를 찾을 수 없습니다"),
+    INTEREST_REQUIRED(HttpStatus.BAD_REQUEST, "I002", "관심사를 최소 1개는 선택해야 합니다"),
+    INTEREST_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "I003", "관심사는 최대 5개까지만 선택할 수 있습니다"),
+    DUPLICATE_INTEREST_SELECTED(HttpStatus.BAD_REQUEST, "I004", "중복된 관심사를 선택할 수 없습니다"),
 
     // Diary
     DIARY_DAY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "DIARY4001", "해당 날짜에 일기가 이미 존재합니다. 수정API를 사용해주세요."),
