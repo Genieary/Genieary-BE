@@ -22,7 +22,8 @@ public class WebSocketController {
             @Payload WebSocketMessage message,
             Principal principal
     ) {
-        Long senderId = Long.parseLong(principal.getName());
+        Long senderId = message.getSenderId();
+//        Long senderId = Long.parseLong(principal.getName());
         chatService.sendMessage(roomId, senderId, message.getMessage());
     }
 

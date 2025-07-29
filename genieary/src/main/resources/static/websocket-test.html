@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .user-panel {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 5px;
+            display: inline-block;
+            width: 400px;
+            vertical-align: top;
+        }
+        .messages {
+            height: 250px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            margin: 10px 0;
+        }
+        input, button {
+            padding: 8px;
+            margin: 3px;
+        }
+        .status {
+            padding: 8px;
+            border-radius: 3px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        .connected { background: #d4edda; color: #155724; }
+        .disconnected { background: #f8d7da; color: #721c24; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover { background: #0056b3; }
+        .message-input { width: 250px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>WebSocket Chat Test - Existing Data</h2>
+
+    <div>
+        <strong>Room ID:</strong>
+        <input type="text" id="roomId" value="548eed61-65ab-4544-b7b8-ed80290d10ed" style="width: 350px;">
+    </div>
+
+    <div style="display: flex; gap: 20px;">
+        <!-- User 1 (dong2) -->
+        <div class="user-panel">
+            <h3>User 1 - dong2 (ID: 1)</h3>
+            <div id="status1" class="status disconnected">Disconnected</div>
+            <button onclick="connect(1)">Connect</button>
+            <button onclick="disconnect(1)">Disconnect</button>
+            <div class="messages" id="messages1"></div>
+            <input type="text" id="input1" class="message-input" placeholder="Type message..." onkeypress="sendOnEnter(event, 1)">
+            <button onclick="sendMessage(1)">Send</button>
+        </div>
+
+        <!-- User 2 (dong3) -->
+        <div class="user-panel">
+            <h3>User 2 - dong3 (ID: 2)</h3>
+            <div id="status2" class="status disconnected">Disconnected</div>
+            <button onclick="connect(2)">Connect</button>
+            <button onclick="disconnect(2)">Disconnect</button>
+            <div class="messages" id="messages2"></div>
+            <input type="text" id="input2" class="message-input" placeholder="Type message..." onkeypress="sendOnEnter(event, 2)">
+            <button onclick="sendMessage(2)">Send</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let clients = {};
+
+    // Connect user to WebSocket
+    function connect(userNum) {
+        const socket = new SockJS('/ws');
+        const client = Stomp.over(socket);
+        const roomId = document.getElementById('roomId').value;
+
+        addMessage(userNum, `Connecting user ${userNum}...`);
+
+        // Connect with user ID in headers
+        client.connect({
+            userId: userNum.toString(),
+            userName: userNum === 1 ? 'dong2' : 'dong3'
+        }, function(frame) {
+            clients[userNum] = client;
+            updateStatus(userNum, 'connected');
+            addMessage(userNum, `✅ Connected successfully!`);
+
+            // Subscribe to chat room
+            client.subscribe(`/topic/chat/${roomId}`, function(message) {
+                try {
+                    const data = JSON.parse(message.body);
+                    handleMessage(userNum, data);
+                } catch (error) {
+                    addMessage(userNum, `Error: ${error.message}`);
+                }
+            });
+
+            addMessage(userNum, `📡 Subscribed to room: ${roomId}`);
+
+        }, function(error) {
+            addMessage(userNum, `❌ Connection failed: ${error}`);
+            updateStatus(userNum, 'disconnected');
+        });
+    }
+
+    // Disconnect user
+    function disconnect(userNum) {
+        if (clients[userNum]) {
+            clients[userNum].disconnect();
+            delete clients[userNum];
+        }
+        updateStatus(userNum, 'disconnected');
+        addMessage(userNum, `❌ Disconnected`);
+    }
+
+    // Send message
+    function sendMessage(userNum) {
+        const client = clients[userNum];
+        const input = document.getElementById(`input${userNum}`);
+        const roomId = document.getElementById('roomId').value;
+        const message = input.value.trim();
+
+        if (!client) {
+            addMessage(userNum, '⚠️ Not connected!');
+            return;
+        }
+
+        if (!message) {
+            addMessage(userNum, '⚠️ Enter a message!');
+            return;
+        }
+
+        const messageData = {
+            type: 'CHAT',
+            roomId: roomId,
+            senderId: userNum,
+            message: message,
+            timestamp: new Date().toISOString()
+        };
+
+        try {
+            client.send(`/app/chat/${roomId}`, {}, JSON.stringify(messageData));
+            addMessage(userNum, `📤 You: ${message}`);
+            input.value = '';
+        } catch (error) {
+            addMessage(userNum, `❌ Send failed: ${error.message}`);
+        }
+    }
+
+    // Handle received message
+    function handleMessage(userNum, data) {
+        if (data.type === 'READ') {
+            addMessage(userNum, '👁️ Message read');
+        } else if (data.message && data.senderId != userNum) {
+            const senderName = data.senderNickname || `User ${data.senderId}`;
+            addMessage(userNum, `📨 ${senderName}: ${data.message}`);
+        }
+    }
+
+    // Send message on Enter key
+    function sendOnEnter(event, userNum) {
+        if (event.key === 'Enter') {
+            sendMessage(userNum);
+        }
+    }
+
+    // Add message to display
+    function addMessage(userNum, message) {
+        const messagesDiv = document.getElementById(`messages${userNum}`);
+        const time = new Date().toLocaleTimeString();
+        const messageElement = document.createElement('div');
+        messageElement.innerHTML = `<small>${time}</small> ${message}`;
+        messagesDiv.appendChild(messageElement);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Update connection status
+    function updateStatus(userNum, status) {
+        const statusDiv = document.getElementById(`status${userNum}`);
+        statusDiv.textContent = status === 'connected' ? '🟢 Connected' : '🔴 Disconnected';
+        statusDiv.className = `status ${status}`;
+    }
+
+    // Initialize
+    window.onload = function() {
+        addMessage(1, '💬 Ready to test chat');
+        addMessage(2, '💬 Ready to test chat');
+    };
+</script>
+</body>
+</html>
