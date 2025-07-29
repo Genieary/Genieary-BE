@@ -16,24 +16,26 @@ public class WebSocketController {
 
     private final ChatService chatService;
 
-    @MessageMapping("/chat/{roomId}")
+    //채팅 전송
+    @MessageMapping("/chat/{roomUuid}")
     public void sendMessage(
-            @DestinationVariable String roomId,
+            @DestinationVariable String roomUuid,
             @Payload WebSocketMessage message,
             Principal principal
     ) {
-        Long senderId = message.getSenderId();
-//        Long senderId = Long.parseLong(principal.getName());
-        chatService.sendMessage(roomId, senderId, message.getMessage());
+//        Long senderId = message.getSenderId();
+        Long senderId = Long.parseLong(principal.getName());
+        chatService.sendMessage(roomUuid, senderId, message.getMessage());
     }
 
-    @MessageMapping("/chat/{roomId}/read")
+    //채팅 읽음 처리
+    @MessageMapping("/chat/{roomUuid}/read")
     public void markAsRead(
-            @DestinationVariable String roomId,
+            @DestinationVariable String roomUuid,
             Principal principal
     ) {
         Long userId = Long.parseLong(principal.getName());
-        chatService.markMessagesAsRead(roomId, userId);
+        chatService.markMessagesAsRead(roomUuid, userId);
     }
 }
 

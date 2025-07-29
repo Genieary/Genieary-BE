@@ -1,5 +1,7 @@
 package com.hongik.genieary.domain.chat.service;
 
+import com.hongik.genieary.common.exception.GeneralException;
+import com.hongik.genieary.common.status.ErrorStatus;
 import com.hongik.genieary.domain.chat.converter.ChatConverter;
 import com.hongik.genieary.domain.chat.dto.response.ChatMessageResponse;
 import com.hongik.genieary.domain.chat.dto.response.ChatRoomResponse;
@@ -37,6 +39,11 @@ public class ChatService {
 
     // 채팅방 생성 또는 조회
     public ChatRoomResponse createOrGetChatRoom(Long user1Id, Long user2Id) {
+
+        if (user1Id.equals(user2Id)) {
+            throw new GeneralException(ErrorStatus.SELF_CHAT_NOT_ALLOWED);
+        }
+
         // 기존 채팅방 확인
         Optional<ChatRoom> existingRoom = chatRoomRepository.findByTwoUsers(user1Id, user2Id);
 
@@ -47,14 +54,14 @@ public class ChatService {
 
         // 새 채팅방 생성
         User user1 = userRepository.findById(user1Id)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() ->  new GeneralException(ErrorStatus.USER_NOT_FOUND));
         User user2 = userRepository.findById(user2Id)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() ->  new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-        String roomId = UUID.randomUUID().toString();
+        String roomUuId = UUID.randomUUID().toString();
 
         ChatRoom chatRoom = ChatRoom.builder()
-                .roomId(roomId)
+                .roomUuid(roomUuId )
                 .user1(user1)
                 .user2(user2)
                 .build();
@@ -70,12 +77,12 @@ public class ChatService {
     }
 
     // 채팅 메시지 전송
-    public ChatMessageResponse sendMessage(String roomId, Long senderId, String message) {
-        ChatRoom chatRoom = chatRoomRepository.findByRoomId(roomId)
-                .orElseThrow(() -> new EntityNotFoundException("채팅방을 찾을 수 없습니다."));
+    public ChatMessageResponse sendMessage(String roomUuid, Long senderId, String message) {
+        ChatRoom chatRoom = chatRoomRepository.findByRoomUuid(roomUuid)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.CHAT_ROOM_NOT_FOUND));
 
         User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         LocalDateTime now = LocalDateTime.now();
 
@@ -96,15 +103,15 @@ public class ChatService {
         ChatMessageResponse messageResponse = chatConverter.convertToChatMessageResponse(chatMessage);
 
         // WebSocket으로 실시간 전송
-        messagingTemplate.convertAndSend("/topic/chat/" + roomId, messageResponse);
+        messagingTemplate.convertAndSend("/topic/chat/" + roomUuid, messageResponse);
 
         return messageResponse;
     }
 
     // 채팅 상세 메시지 조회
-    public Page<ChatMessageResponse> getChatMessages(String roomId, Long userId, Pageable pageable) {
-        ChatRoom chatRoom = chatRoomRepository.findByRoomId(roomId)
-                .orElseThrow(() -> new EntityNotFoundException("채팅방을 찾을 수 없습니다."));
+    public Page<ChatMessageResponse> getChatMessages(String roomUuid, Long userId, Pageable pageable) {
+        ChatRoom chatRoom = chatRoomRepository.findByRoomUuid(roomUuid)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.CHAT_ROOM_NOT_FOUND));
 
         // 사용자가 해당 채팅방에 참여하고 있는지 확인
         validateUserAccess(chatRoom, userId);
@@ -116,22 +123,22 @@ public class ChatService {
     }
 
     // 메시지 읽음 처리
-    public void markMessagesAsRead(String roomId, Long userId) {
-        ChatRoom chatRoom = chatRoomRepository.findByRoomId(roomId)
-                .orElseThrow(() -> new EntityNotFoundException("채팅방을 찾을 수 없습니다."));
+    public void markMessagesAsRead(String roomUuid, Long userId) {
+        ChatRoom chatRoom = chatRoomRepository.findByRoomUuid(roomUuid)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.CHAT_ROOM_NOT_FOUND));
 
         chatMessageRepository.markMessagesAsRead(chatRoom.getId(), userId);
 
         // 읽음 상태 변경 알림
         WebSocketMessage readMessage = new WebSocketMessage(
-                "READ", roomId, userId, null, LocalDateTime.now());
-        messagingTemplate.convertAndSend("/topic/chat/" + roomId, readMessage);
+                "READ", roomUuid, userId, null, LocalDateTime.now());
+        messagingTemplate.convertAndSend("/topic/chat/" + roomUuid, readMessage);
     }
 
     // ------ private method -------
     private void validateUserAccess(ChatRoom chatRoom, Long userId) {
         if (!chatRoom.getUser1().getId().equals(userId) && !chatRoom.getUser2().getId().equals(userId)) {
-            throw new IllegalArgumentException("채팅방에 접근할 권한이 없습니다.");
+            throw new GeneralException(ErrorStatus.CHAT_ROOM_ACCESS_DENIED);
         }
     }
 }

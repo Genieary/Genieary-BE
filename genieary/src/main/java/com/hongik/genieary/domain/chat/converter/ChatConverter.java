@@ -27,7 +27,7 @@ public class ChatConverter {
 
         return ChatRoomResponse.builder()
                 .id(chatRoom.getId())
-                .roomId(chatRoom.getRoomId())
+                .roomUuid(chatRoom.getRoomUuid())
                 .otherUser(convertToUserResponse(otherUser))
                 .lastMessage(chatRoom.getLastMessage())
                 .lastMessageTime(chatRoom.getLastMessageTime())
@@ -47,7 +47,7 @@ public class ChatConverter {
     public ChatMessageResponse convertToChatMessageResponse(ChatMessage chatMessage) {
         return ChatMessageResponse.builder()
                 .id(chatMessage.getId())
-                .roomId(chatMessage.getChatRoom().getRoomId())
+                .roomUuid(chatMessage.getChatRoom().getRoomUuid())
                 .senderId(chatMessage.getSender().getId())
                 .senderNickname(chatMessage.getSender().getNickname())
                 .message(chatMessage.getMessage())

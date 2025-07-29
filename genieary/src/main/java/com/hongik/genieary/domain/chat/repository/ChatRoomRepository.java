@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
-    Optional<ChatRoom> findByRoomId(String roomId);
+    Optional<ChatRoom> findByRoomUuid(String roomId);
 
     @Query("SELECT cr FROM ChatRoom cr " +
             "WHERE (cr.user1.id = :userId OR cr.user2.id = :userId) " +

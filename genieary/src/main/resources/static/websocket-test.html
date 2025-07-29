@@ -55,7 +55,7 @@
 
     <div>
         <strong>Room ID:</strong>
-        <input type="text" id="roomId" value="548eed61-65ab-4544-b7b8-ed80290d10ed" style="width: 350px;">
+        <input type="text" id="roomUuid" value="c82fc829-fc32-4eb1-9ac0-cb9dee574bb6" style="width: 350px;">
     </div>
 
     <div style="display: flex; gap: 20px;">
@@ -90,7 +90,7 @@
     function connect(userNum) {
         const socket = new SockJS('/ws');
         const client = Stomp.over(socket);
-        const roomId = document.getElementById('roomId').value;
+        const roomUuid = document.getElementById('roomUuid').value;
 
         addMessage(userNum, `Connecting user ${userNum}...`);
 
@@ -104,7 +104,7 @@
             addMessage(userNum, `✅ Connected successfully!`);
 
             // Subscribe to chat room
-            client.subscribe(`/topic/chat/${roomId}`, function(message) {
+            client.subscribe(`/topic/chat/${roomUuid}`, function(message) {
                 try {
                     const data = JSON.parse(message.body);
                     handleMessage(userNum, data);
@@ -113,7 +113,7 @@
                 }
             });
 
-            addMessage(userNum, `📡 Subscribed to room: ${roomId}`);
+            addMessage(userNum, `📡 Subscribed to room: ${roomUuid}`);
 
         }, function(error) {
             addMessage(userNum, `❌ Connection failed: ${error}`);
@@ -135,7 +135,7 @@
     function sendMessage(userNum) {
         const client = clients[userNum];
         const input = document.getElementById(`input${userNum}`);
-        const roomId = document.getElementById('roomId').value;
+        const roomUuid = document.getElementById('roomUuid').value;
         const message = input.value.trim();
 
         if (!client) {
@@ -150,14 +150,14 @@
 
         const messageData = {
             type: 'CHAT',
-            roomId: roomId,
+            roomUuid: roomUuid,
             senderId: userNum,
             message: message,
             timestamp: new Date().toISOString()
         };
 
         try {
-            client.send(`/app/chat/${roomId}`, {}, JSON.stringify(messageData));
+            client.send(`/app/chat/${roomUuid}`, {}, JSON.stringify(messageData));
             addMessage(userNum, `📤 You: ${message}`);
             input.value = '';
         } catch (error) {
