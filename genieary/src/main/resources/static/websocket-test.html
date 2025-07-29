@@ -59,9 +59,9 @@
     </div>
 
     <div style="display: flex; gap: 20px;">
-        <!-- User 1 (dong2) -->
+        <!-- User 1  -->
         <div class="user-panel">
-            <h3>User 1 - dong2 (ID: 1)</h3>
+            <h3>User 1 </h3>
             <div id="status1" class="status disconnected">Disconnected</div>
             <button onclick="connect(1)">Connect</button>
             <button onclick="disconnect(1)">Disconnect</button>
@@ -70,9 +70,9 @@
             <button onclick="sendMessage(1)">Send</button>
         </div>
 
-        <!-- User 2 (dong3) -->
+        <!-- User 2  -->
         <div class="user-panel">
-            <h3>User 2 - dong3 (ID: 2)</h3>
+            <h3>User 2 </h3>
             <div id="status2" class="status disconnected">Disconnected</div>
             <button onclick="connect(2)">Connect</button>
             <button onclick="disconnect(2)">Disconnect</button>
@@ -97,7 +97,7 @@
         // Connect with user ID in headers
         client.connect({
             userId: userNum.toString(),
-            userName: userNum === 1 ? 'dong2' : 'dong3'
+            userName: userNum === 1 ? 'user1' : 'user2'
         }, function(frame) {
             clients[userNum] = client;
             updateStatus(userNum, 'connected');
