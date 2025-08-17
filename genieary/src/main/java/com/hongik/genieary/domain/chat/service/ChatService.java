@@ -10,6 +10,7 @@ import com.hongik.genieary.domain.chat.entity.ChatMessage;
 import com.hongik.genieary.domain.chat.entity.ChatRoom;
 import com.hongik.genieary.domain.chat.repository.ChatMessageRepository;
 import com.hongik.genieary.domain.chat.repository.ChatRoomRepository;
+import com.hongik.genieary.domain.friend.repository.FriendRepository;
 import com.hongik.genieary.domain.user.entity.User;
 import com.hongik.genieary.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -34,6 +35,7 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
+    private final FriendRepository friendRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatConverter chatConverter;
 
@@ -57,6 +59,8 @@ public class ChatService {
                 .orElseThrow(() ->  new GeneralException(ErrorStatus.USER_NOT_FOUND));
         User user2 = userRepository.findById(user2Id)
                 .orElseThrow(() ->  new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        validateFriendship(user1Id, user2Id);
 
         String roomUuId = UUID.randomUUID().toString();
 
@@ -139,6 +143,12 @@ public class ChatService {
     private void validateUserAccess(ChatRoom chatRoom, Long userId) {
         if (!chatRoom.getUser1().getId().equals(userId) && !chatRoom.getUser2().getId().equals(userId)) {
             throw new GeneralException(ErrorStatus.CHAT_ROOM_ACCESS_DENIED);
+        }
+    }
+    private void validateFriendship(Long user1Id, Long user2Id) {
+        boolean isFriend = friendRepository.existsByUserIdAndFriendId(user1Id, user2Id);
+        if (!isFriend) {
+            throw new GeneralException(ErrorStatus.NOT_FRIEND_RELATIONSHIP);
         }
     }
 }
