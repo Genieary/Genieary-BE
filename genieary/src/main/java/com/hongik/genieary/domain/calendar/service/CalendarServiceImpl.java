@@ -10,6 +10,7 @@ import com.hongik.genieary.domain.ai.service.OpenAiService;
 import com.hongik.genieary.domain.user.entity.User;
 import com.hongik.genieary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,11 +26,11 @@ public class CalendarServiceImpl implements CalendarService{
     private final UserRepository userRepository;
     private final DiaryRepository diaryRespository;
     private final OpenAiService openAiService;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Override
+    @Transactional
     public String getSummary(Long userId, Long calendarId){
-
-        List<Diary> diaries = diaryRespository.findAllByUserIdAndCalendar_CalendarId(userId, calendarId);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
@@ -37,6 +38,22 @@ public class CalendarServiceImpl implements CalendarService{
         Calendar calendar = calendarRepository.findById(calendarId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.DIARY_NOT_FOUND));
 
+        List<Diary> diaries = diaryRespository.findAllByUserIdAndCalendar_CalendarId(userId, calendarId);
+        
+        String key = "summary:" + userId + ":" + calendarId;
+        String cached = redisTemplate.opsForValue().get(key);
+
+        // Redis 캐시 확인
+        if (cached != null) return cached;
+
+        // DB 확인
+        String summary = calendar.getSummary();
+        if (summary != null) {
+            redisTemplate.opsForValue().set(key, summary);
+            return summary;
+        }
+
+        // 저장된 게 없으면 한 달 일기 요약 생성
         String name = user.getNickname();
         String year = String.valueOf(calendar.getYear());
         String month = String.valueOf(calendar.getMonth());
@@ -45,8 +62,14 @@ public class CalendarServiceImpl implements CalendarService{
                 .map(diary -> diary.getDiaryDate() + "\n" + diary.getContent())
                 .collect(Collectors.joining("\n\n"));
 
-        String summary = openAiService.summarizeMonthlyDiary(name, year, month, combinedText);
+        String newSummary = openAiService.summarizeMonthlyDiary(name, year, month, combinedText);
 
-        return summary;
+        calendar.updateSummary(newSummary);
+        calendarRepository.save(calendar);
+
+        // Redis도 업데이트
+        redisTemplate.opsForValue().set(key, newSummary);
+
+        return newSummary;
     }
 }
