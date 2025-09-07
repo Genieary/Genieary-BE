@@ -43,3 +43,8 @@ kakao:
   client-id: ${REST_API_KEY}
   client-secret: ${KAKAO_SECRET}
   redirect-uri: ${REDIRECT_URI}
+
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY}
