@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+
+    environment {
+        APP_IMAGE = "genieary/genieary:latest"
+        EC2_HOST = "ubuntu@genieary.site"
+        SSH_CREDENTIALS = "ec2-ssh-key"   // Jenkins에 등록한 SSH Key ID
+    }
+
+    stages {
+        stage('Build & Push Docker Image') {
+            steps {
+                sh './gradlew clean build -x test'
+                sh 'docker build -t $APP_IMAGE .'
+                sh 'docker push $APP_IMAGE'
+            }
+        }
+
+        stage('Deploy to EC2 with Blue/Green Switch') {
+            steps {
+                sshagent([env.SSH_CREDENTIALS]) {
+                    sh '''
+                    ssh -o StrictHostKeyChecking=no $EC2_HOST << 'EOF'
+                    cd /home/ubuntu/genieary
+
+                    docker-compose pull
+
+                    if grep -q "server blue:8080" nginx.conf; then
+                      echo "Blue에서 → Green으로"
+                      docker-compose up -d green
+                      for i in {1..10}; do
+                        curl -fs http://localhost:8082/actuator/health && break
+                        echo "Waiting for Green..."
+                        sleep 3
+                      done || exit 1
+                      sed -i 's/server blue:8080/server green:8080/' nginx.conf
+                    else
+                      echo "Green에서 → Blue로"
+                      docker-compose up -d blue
+                      for i in {1..10}; do
+                        curl -fs http://localhost:8081/actuator/health && break
+                        echo "Waiting for Blue..."
+                        sleep 3
+                      done || exit 1
+                      sed -i 's/server green:8080/server blue:8080/' nginx.conf
+                    fi
+
+                    docker exec genieary-nginx nginx -s reload
+                    EOF
+                    '''
+                }
+            }
+        }
+
+    }
+}
