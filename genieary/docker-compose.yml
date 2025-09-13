@@ -1,0 +1,70 @@
+version: "3.8"
+
+services:
+  blue:
+    image: genieary/genieary:latest
+    container_name: genieary-app-blue
+    restart: always
+    ports:
+      - "8081:8080"
+    env_file:
+      - .env.prod
+    networks:
+      - genieary-network
+
+  green:
+    image: genieary/genieary:latest
+    container_name: genieary-app-green
+    restart: always
+    ports:
+      - "8082:8080"
+    env_file:
+      - .env.prod
+    networks:
+      - genieary-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: genieary-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - genieary-network
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: genieary-jenkins
+    restart: always
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - genieary-network
+
+  nginx:
+    image: nginx:latest
+    container_name: genieary-nginx
+    restart: always
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - genieary-network
+
+volumes:
+  redis-data:
+  jenkins_home:
+
+networks:
+  genieary-network:
+    driver: bridge
