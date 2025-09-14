@@ -24,7 +24,7 @@ kakao:
   client-id: ${REST_API_KEY}
   client-secret: ${KAKAO_SECRET}
   redirect-uri: ${REDIRECT_URI}
-
+  
 management:
   endpoint:
     health:
