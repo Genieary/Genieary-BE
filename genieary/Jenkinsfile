@@ -31,7 +31,7 @@ pipeline {
         stage('Deploy to EC2 with Blue/Green Switch') {
             steps {
                 sshagent([env.SSH_CREDENTIALS]) {
-                    sh """
+                    sh '''
                     ssh -o StrictHostKeyChecking=no $EC2_HOST << 'EOF'
                     # 현재 서비스 중인 컨테이너 확인
                     CURRENT_CONTAINER=$(grep "container_name: genieary-app-" ${DOCKER_COMPOSE_PATH} | awk '{print $2}')
@@ -74,7 +74,7 @@ pipeline {
 
                     echo "배포 완료"
                     EOF
-                    """
+                    '''
                 }
             }
         }
