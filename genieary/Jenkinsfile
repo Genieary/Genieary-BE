@@ -10,9 +10,12 @@ pipeline {
     stages {
         stage('Build & Push Docker Image') {
             steps {
-                sh './gradlew clean build -x test'
-                sh 'docker build -t $APP_IMAGE .'
-                sh 'docker push $APP_IMAGE'
+                dir('genieary') {   // genieary 폴더 안으로 들어감
+                    sh 'chmod +x gradlew'
+                    sh './gradlew clean build -x test'
+                    sh 'docker build -t $APP_IMAGE .'
+                    sh 'docker push $APP_IMAGE'
+                }
             }
         }
 
