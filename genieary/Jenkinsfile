@@ -10,18 +10,14 @@ pipeline {
 
     stages {
         stage('Checkout Code') {
-                    steps {
-                        dir('genieary') {
-                            git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/Genieary/Genieary-BE.git'
-                        }
-                    }
-                }
+            steps {
+                git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/Genieary/Genieary-BE.git'
+            }
+        }
 
         stage('Build & Push Docker Image') {
             steps {
                 dir('genieary') {   // genieary 폴더 안으로 들어감
-                    sh 'chmod +x gradlew'
-                    sh './gradlew clean build -x test'
                     sh 'docker build -t $APP_IMAGE .'
                     sh 'docker push $APP_IMAGE'
                 }
