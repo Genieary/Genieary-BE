@@ -9,17 +9,16 @@ pipeline {
     }
 
     stages {
-        stage('Checkout Code') {
-            steps {
-                git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/Genieary/Genieary-BE.git'
-            }
-        }
-
         stage('Build & Push Docker Image') {
             steps {
                 dir('genieary') {   // genieary 폴더 안으로 들어감
-                    sh 'docker build -t $APP_IMAGE .'
-                    sh 'docker push $APP_IMAGE'
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub',
+                                                      usernameVariable: 'DOCKER_USER',
+                                                      passwordVariable: 'DOCKER_PASS')]) {
+                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                        sh 'docker build -t $APP_IMAGE .'
+                        sh 'docker push $APP_IMAGE'
+                    }
                 }
             }
         }
@@ -27,50 +26,7 @@ pipeline {
         stage('Deploy to EC2 with Blue/Green Switch') {
             steps {
                 sshagent([env.SSH_CREDENTIALS]) {
-                    sh '''
-                    ssh -o StrictHostKeyChecking=no $EC2_HOST << 'EOF'
-                    # 현재 서비스 중인 컨테이너 확인
-                    CURRENT_CONTAINER=$(grep "container_name: genieary-app-" ${DOCKER_COMPOSE_PATH} | awk '{print $2}')
-
-                    if [ "${CURRENT_CONTAINER}" = "genieary-app-blue" ]; then
-                      echo "Blue에서 → Green으로 전환"
-                      docker-compose -f ${DOCKER_COMPOSE_PATH} up -d --build --no-deps green
-                      TARGET_PORT=8082
-                      TARGET_CONTAINER="genieary-app-green"
-                    else
-                      echo "Green에서 → Blue로 전환"
-                      docker-compose -f ${DOCKER_COMPOSE_PATH} up -d --build --no-deps blue
-                      TARGET_PORT=8081
-                      TARGET_CONTAINER="genieary-app-blue"
-                    fi
-
-                    # 새로운 컨테이너가 준비될 때까지 헬스 체크
-                    for i in {1..20}; do
-                      curl -fs http://localhost:${TARGET_PORT}/actuator/health && break
-                      echo "Waiting for new container (${TARGET_CONTAINER})..."
-                      sleep 5
-                    done || { echo "New container failed to start."; exit 1; }
-
-                    # NGINX 라우팅 전환
-                    if [ "${TARGET_CONTAINER}" = "genieary-app-blue" ]; then
-                      sed -i 's/server green:8080/server blue:8080/' /home/ubuntu/genieary/nginx.conf
-                    else
-                      sed -i 's/server blue:8080/server green:8080/' /home/ubuntu/genieary/nginx.conf
-                    fi
-
-                    # NGINX 설정 리로드
-                    docker exec genieary-nginx nginx -s reload
-
-                    echo "전환 완료, 이전 컨테이너를 중지"
-                    if [ "${CURRENT_CONTAINER}" = "genieary-app-blue" ]; then
-                      docker-compose -f ${DOCKER_COMPOSE_PATH} down --remove-orphans blue
-                    else
-                      docker-compose -f ${DOCKER_COMPOSE_PATH} down --remove-orphans green
-                    fi
-
-                    echo "배포 완료"
-                    EOF
-                    '''
+                    sh "ssh -o StrictHostKeyChecking=no $EC2_HOST 'bash /home/ubuntu/deploy.sh'"
                 }
             }
         }
