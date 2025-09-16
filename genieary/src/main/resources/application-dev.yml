@@ -1,0 +1,25 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/genieary
+    username: root
+    password: ${DB_password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+
+kakao:
+  client-id: ${REST_API_KEY}
+  client-secret: ${KAKAO_SECRET}
+  redirect-uri: ${REDIRECT_URI}
+
+management:
+  endpoint:
+    health:
+      show-details: always

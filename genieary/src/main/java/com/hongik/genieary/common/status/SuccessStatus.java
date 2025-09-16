@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum SuccessStatus {
 
     _OK(HttpStatus.OK, "COMMON200", "성공입니다."),
+    _CREATED(HttpStatus.CREATED, "COMMON201", "리소스가 성공적으로 생성되었습니다."),
 
     //프로필 관련
     PROFILE_COMPLETED(HttpStatus.OK, "S101", "프로필이 성공적으로 완성되었습니다"),
