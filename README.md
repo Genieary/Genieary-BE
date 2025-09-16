@@ -2,14 +2,13 @@
 홍익대학교 졸업프로젝트 - 얼굴 분석을 통한 본인 이해 다이어리 선물 추천 서비스
 
 ## 👶🏼 Backend Members 👶🏼
-<img width="160px" alt="스크린샷 2025-09-17 오전 1 49 40" src="https://github.com/user-attachments/assets/928b8400-0ff1-40d9-9383-f03c92fc1b0f" /> | <img width="160px" src="https://avatars.githubusercontent.com/u/106726806?v=4"/> | <img width="160px" src="https://avatars.githubusercontent.com/u/151193867?v=4"/> | 
+<img width="160px" alt="스크린샷 2025-09-17 오전 1 49 40" src="https://github.com/user-attachments/assets/928b8400-0ff1-40d9-9383-f03c92fc1b0f" /> | <img width="160px" alt="image" src="https://github.com/user-attachments/assets/0e6bc9fe-8c18-453e-b97f-934f92efa433" />| <img width="160px" src="https://github.com/user-attachments/assets/0a2d857c-7ca2-425c-a4af-770b88527c51" />| 
 |:-----:|:-----:|:-----:|
 |[정원희](https://github.com/oneeee822)|[원동희](https://github.com/ddhi7)|[권아림](https://github.com/dkfla)|
 | 정원희 👩🏻‍💻| 원동희 👩🏻‍💻| 권아림 👩🏻‍💻|
 </div>
 <br/>
-
----
+<br>
 
 ## 🌟 프로젝트 소개
 
@@ -54,8 +53,8 @@
    - **AWS EC2 및 DockerCompose를 활용한 무중단 배포**  
    - **Docker & Nginx를 활용한 컨테이너 기반 배포 환경 구성**  
    - **배포 단계에서 보안 강화를 위한 환경 변수 관리 및 접근 제한 적용**  
-
----
+<br>
+<br>
 
 ## 🛠️ 기술 스택
 
@@ -65,7 +64,8 @@
 - **API Documentation**: Swagger, Notion
 - **Version Control**: GitHub
 
----
+<br>
+<br>
 
 ## 🖥️ 프로젝트 구조
 
@@ -76,7 +76,7 @@
 
 ### 인프라 구성도
 
-
+<br>
 
 ## 🌟 프로젝트 배경 및 아이디어
 
@@ -85,15 +85,16 @@
 1. **문제**: 많은 현대인들은 자신의 감정과 상태를 제대로 인지하지 못한 채 무기력하게 생활
 2. **목표**: 얼굴과 일기를 기반으로 사용자의 감정을 분석하여, 개인에게 맞는 해결책과 맞춤형 선물을 제안
 3. **해결책**: 얼굴 사진을 통한 감정 인식과 일기 분석을 결합하여, 사용자가 자신의 상태를 이해하고 적절한 대응을 할 수 있도록 도움
-
----
+<br>
+<br>
 
 ## 🤖 자체 AI모델 구축
 - 얼굴이미지를 분석하여 angry, disgust, fear, happy, neutral, sad, surprise 감정 분류를 수행하며, 각 클래스의 데이터 비율과 약 50% 정확도를 가진 감정 인식 모델 구축
 - 사용한 데이터셋 : [FER-2013](https://www.kaggle.com/datasets/msambare/fer2013)
 
----
+<br>
+<br>
 
 ## 🌐 API 명세서
-<img width="992" alt="image" src="https://genieary.site/swagger-ui/index.html" />
+[Swagger](https://genieary.site/swagger-ui/index.html)
 
