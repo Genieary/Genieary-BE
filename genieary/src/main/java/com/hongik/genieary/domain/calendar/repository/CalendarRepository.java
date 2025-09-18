@@ -13,5 +13,4 @@ public interface CalendarRepository extends JpaRepository<Calendar, Long> {
     Optional<Calendar> findByUserAndYearAndMonth(@Param("user") User user,
                                                  @Param("year") int year,
                                                  @Param("month") int month);
-
 }

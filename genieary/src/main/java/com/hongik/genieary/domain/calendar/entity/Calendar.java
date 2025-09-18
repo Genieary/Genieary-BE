@@ -5,6 +5,8 @@ import com.hongik.genieary.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 
 @Entity
@@ -32,6 +34,8 @@ public class Calendar extends BaseEntity {
     @Column(name = "month", length=2)
     private int month;
 
+    private LocalDateTime modifiedAt;
+
     public static Calendar of(User user, int year, int month) {
         System.out.println(month+"이게 뭐냐능!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         return Calendar.builder()
@@ -39,6 +43,18 @@ public class Calendar extends BaseEntity {
                 .year(year)
                 .month(month)
                 .build();
+    }
+
+    public void updateModifiedAt() {
+        this.modifiedAt = LocalDateTime.now();
+    }
+
+    public void updateSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public void clearSummary() {
+        this.summary = null;
     }
 
 }
