@@ -3,6 +3,9 @@ package com.hongik.genieary.domain.calendar.controller;
 import com.hongik.genieary.auth.service.CustomUserDetails;
 import com.hongik.genieary.common.response.ApiResponse;
 import com.hongik.genieary.common.status.SuccessStatus;
+import com.hongik.genieary.common.swagger.DiaryNotFoundApiResponse;
+import com.hongik.genieary.common.swagger.SuccessApiResponse;
+import com.hongik.genieary.common.swagger.SuccessSummaryResponse;
 import com.hongik.genieary.domain.calendar.service.CalendarService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,6 +30,8 @@ public class CalendarController {
             summary = "한 달 일기 내용을 요약",
             description = "사용자의 한 달 일기 내용을 요약해주는 api입니다.")
     @GetMapping("/summary/{calendarId}")
+    @SuccessSummaryResponse
+    @DiaryNotFoundApiResponse
     public ResponseEntity<ApiResponse> getDiarySummary(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long calendarId) {
         String summary = calendarService.getSummary(userDetails.getUser().getId(), calendarId);
         return ApiResponse.onSuccess(SuccessStatus._OK, summary);

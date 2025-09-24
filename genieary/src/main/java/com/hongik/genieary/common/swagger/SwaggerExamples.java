@@ -1,6 +1,9 @@
 package com.hongik.genieary.common.swagger;
 
 public class SwaggerExamples {
+    /*
+    일기 및 캘린더 관련 응답
+     */
     public static final String DIARY_NOT_FOUND_ERROR = """
         {
           "isSuccess": false,
@@ -11,6 +14,18 @@ public class SwaggerExamples {
         }
         """;
 
+    public static final String CALENDAR_SUMMARY_SUCCESS = """
+        {
+          "isSuccess": true,
+          "code": "COMMON200",
+          "message": "성공입니다.",
+          "result": "string 씨, 7월에는 여행을 떠나 새로운 도시에서의 경험을 즐기셨군요. 그리고 가족과 함께한 소중한 시간도 있었네요. 다음 달에는 더 많은 행복한 순간들을 만들어보세요."
+        }
+        """;
+
+    /*
+    친구 관련 응답
+     */
     public static final String FRIEND_NOT_FOUND_ERROR = """
         {
           "isSuccess": false,
