@@ -4,7 +4,6 @@ import com.hongik.genieary.auth.service.CustomUserDetails;
 import com.hongik.genieary.common.response.ApiResponse;
 import com.hongik.genieary.common.status.SuccessStatus;
 import com.hongik.genieary.common.swagger.DiaryNotFoundApiResponse;
-import com.hongik.genieary.common.swagger.SuccessApiResponse;
 import com.hongik.genieary.common.swagger.SuccessSummaryResponse;
 import com.hongik.genieary.domain.calendar.service.CalendarService;
 import io.swagger.v3.oas.annotations.Operation;
