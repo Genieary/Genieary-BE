@@ -51,7 +51,11 @@ public class SecurityConfig {
     // CORS 설정
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // 허용할 Origin
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:3000",
+                "https://genieary.site"
+
+        )); // 허용할 Origin
         configuration.setAllowedMethods(Arrays.asList("*")); //모든 HTTP메서드 허용
         configuration.setAllowedHeaders(Arrays.asList("*")); //모든 헤더값 적용
         configuration.setExposedHeaders(List.of("*"));
