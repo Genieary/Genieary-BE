@@ -3,6 +3,8 @@ package com.hongik.genieary.domain.ai.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hongik.genieary.common.exception.GeneralException;
+import com.hongik.genieary.common.status.ErrorStatus;
 import com.hongik.genieary.common.util.PromptLoader;
 import com.hongik.genieary.domain.recommend.Category;
 import com.hongik.genieary.domain.recommend.dto.RecommendResponseDto;
@@ -50,7 +52,7 @@ public class OpenAiService {
                     new TypeReference<List<RecommendResponseDto.GiftResultDto>>() {}
             );
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("AI응답 파싱에 실패", e);
+            throw new GeneralException(ErrorStatus.JSON_PARSE_ERROR);
         }
 
     }

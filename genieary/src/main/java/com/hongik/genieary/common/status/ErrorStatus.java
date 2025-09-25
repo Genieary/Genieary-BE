@@ -69,7 +69,11 @@ public enum ErrorStatus {
 
     //S3
     S3_FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "S34001", "요청한 S3 파일이 존재하지 않습니다."),
-    INVALID_IMAGE_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "S34002", "image/jpeg, image/png 확장만 지원됩니다.");
+    INVALID_IMAGE_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "S34002", "image/jpeg, image/png 확장만 지원됩니다."),
+
+    //Recommend
+    JSON_PARSE_ERROR(HttpStatus.BAD_REQUEST, "RECOMMEND4001", "AI응답 파싱에 실패했습니다. 프롬프트를 확인해주세요.");
+
 
     private final HttpStatus httpStatus;
     private final String code;
