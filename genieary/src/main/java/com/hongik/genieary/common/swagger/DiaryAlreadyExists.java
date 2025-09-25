@@ -13,15 +13,15 @@ import java.lang.annotation.*;
 @Documented
 @ApiResponses({
         @ApiResponse(
-                responseCode = "4002",
-                description = "존재하지 않는 일기를 요청했을 때 발생하는 에러입니다.",
+                responseCode = "400",
+                description = "존재하는 일기를 요청했을 때 발생하는 에러입니다.",
                 content = @Content(
                         mediaType = "application/json",
                         schema = @Schema(implementation = com.hongik.genieary.common.response.ApiResponse.class),
                         examples = @ExampleObject(
-                                name = "DiaryNotFound",
-                                summary = "존재하지 않는 일기",
-                                value = SwaggerExamples.DIARY_NOT_FOUND_ERROR
+                                name = "DiaryAlreadyExists",
+                                summary = "이미 존재하는 일기",
+                                value = SwaggerExamples.DIARY_ALREADY_EXISTS_ERROR
                         )
                 )
         )
