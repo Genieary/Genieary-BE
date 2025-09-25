@@ -35,7 +35,7 @@ public class RecommendServiceImpl implements RecommendService{
 
     @Override
     @Transactional
-    public List<RecommendResponseDto.GiftResultDto> getRecommendations(Long userId, Category category){
+    public List<RecommendResponseDto.GiftResultDto> getRecommendations(Long userId, Category category, String event){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
@@ -55,10 +55,11 @@ public class RecommendServiceImpl implements RecommendService{
                 .map(Interest::getName)
                 .collect(Collectors.joining(", "));
 
-        System.out.println(interests);
-        System.out.println(personalities);
+        String eventText = (event != null && !event.isBlank())
+                ? "The event is " + event + "."
+                : "There is no specific event.";
 
-        List<RecommendResponseDto.GiftResultDto> recommendations = openAiService.getRecommendations(personalities, interests, category);
+        List<RecommendResponseDto.GiftResultDto> recommendations = openAiService.getRecommendations(personalities, interests, category, eventText);
 
         List<Recommend> entities = recommendations.stream()
                 .map(dto -> Recommend.builder()
@@ -72,6 +73,4 @@ public class RecommendServiceImpl implements RecommendService{
 
         return recommendations;
     }
-
-
 }

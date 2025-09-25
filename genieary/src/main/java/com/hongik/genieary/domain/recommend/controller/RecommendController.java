@@ -25,11 +25,11 @@ public class RecommendController {
     @PostMapping
     public ResponseEntity<ApiResponse> recommendGifts(
             @AuthenticationPrincipal(expression = "id") Long userId,
-            @RequestParam Category category){
+            @RequestParam Category category,
+            @RequestParam(required = false) String event){
 
-        List<RecommendResponseDto.GiftResultDto> gifts = recommendService.getRecommendations(userId, category);
+        List<RecommendResponseDto.GiftResultDto> gifts = recommendService.getRecommendations(userId, category, event);
 
         return ApiResponse.onSuccess(SuccessStatus._OK, gifts);
     }
-
 }
