@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Documented
 @ApiResponses({
         @ApiResponse(
-                responseCode = "4004",
+                responseCode = "400",
                 description = "검색어가 공백이거나 유효하지 않은 경우 발생하는 에러입니다.",
                 content = @Content(
                         mediaType = "application/json",

@@ -1,5 +1,6 @@
 package com.hongik.genieary.domain.recommend.entity;
 
+import com.hongik.genieary.domain.common.BaseEntity;
 import com.hongik.genieary.domain.diary.entity.Diary;
 import com.hongik.genieary.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -10,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Recommend {
+public class Recommend extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

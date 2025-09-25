@@ -13,17 +13,17 @@ import java.lang.annotation.*;
 @Documented
 @ApiResponses({
         @ApiResponse(
-                responseCode = "404",
-                description = "상대 유저가 존재하지 않을 때 발생하는 에러입니다.",
+                responseCode = "400",
+                description = "AI응답 파싱 에러입니다.",
                 content = @Content(
                         mediaType = "application/json",
                         schema = @Schema(implementation = com.hongik.genieary.common.response.ApiResponse.class),
                         examples = @ExampleObject(
-                                name = "FriendUserNotFound",
-                                summary = "존재하지 않는 유저",
-                                value = SwaggerExamples.FRIEND_USER_NOT_FOUND_ERROR
+                                name = "RecommendParseError",
+                                summary = "Json 응답 parse 실패",
+                                value = SwaggerExamples.JSON_PARSE_ERROR
                         )
                 )
         )
 })
-public @interface FriendUserNotFoundApiResponse {}
+public @interface RecommendParseErrorApiResponse {}
