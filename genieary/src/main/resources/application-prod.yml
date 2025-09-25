@@ -14,6 +14,10 @@ spring:
       host: ${REDIS_HOST}
       port: 6379
 
+openai:
+  api:
+    key: ${OPENAI_API_KEY}
+
 jwt:
   #geniearyecretaccesstokengeniearyecretaccesstokengeniearyecretaccesstoken
   secret: ${access_token_secret}
