@@ -31,7 +31,6 @@ public class ChatConverter {
                 .otherUser(convertToUserResponse(otherUser))
                 .lastMessage(chatRoom.getLastMessage())
                 .lastMessageTime(chatRoom.getLastMessageTime())
-                .unreadCount(unreadCount)
                 .isActive(chatRoom.getIsActive())
                 .build();
     }

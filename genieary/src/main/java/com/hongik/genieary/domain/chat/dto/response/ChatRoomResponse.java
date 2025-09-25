@@ -13,7 +13,6 @@ public class ChatRoomResponse {
     private UserResponse otherUser;
     private String lastMessage;
     private LocalDateTime lastMessageTime;
-    private Long unreadCount;
     private Boolean isActive;
 
     @Getter
