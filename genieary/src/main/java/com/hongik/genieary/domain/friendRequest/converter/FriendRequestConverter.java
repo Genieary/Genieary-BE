@@ -39,4 +39,26 @@ public class FriendRequestConverter {
                 })
                 .collect(Collectors.toList());
     }
+
+    public static FriendRequestResponseDto.SentFriendRequestResultDto toSentResponseDto(
+            FriendRequest request, String presignedUrl) {
+        User receiver = request.getReceiver();
+        return FriendRequestResponseDto.SentFriendRequestResultDto.builder()
+                .requestId(request.getRequestId())
+                .receiverId(receiver.getId())
+                .nickname(receiver.getNickname())
+                .profileImage(presignedUrl)
+                .build();
+    }
+
+    public static List<FriendRequestResponseDto.SentFriendRequestResultDto> toSentResponseDtoList(
+            List<FriendRequest> requests, Map<Long, String> userIdToUrlMap) {
+        return requests.stream()
+                .map(req -> {
+                    User receiver = req.getReceiver();
+                    String url = userIdToUrlMap.get(receiver.getId());
+                    return toSentResponseDto(req, url);
+                })
+                .collect(Collectors.toList());
+    }
 }

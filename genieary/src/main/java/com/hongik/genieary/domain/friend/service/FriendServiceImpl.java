@@ -52,27 +52,23 @@ public class FriendServiceImpl implements FriendService {
         return FriendConverter.toFriendListResultDtoList(friends, friendIdToUrlMap);
     }
 
-
     @Transactional
     @Override
     public void deleteFriend(User user, Long friendId) {
         User friend = userRepository.findById(friendId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.FRIEND_USER_NOT_FOUND));
 
-        boolean exists = friendRepository.existsByUserAndFriend(user, friend) ||
-                friendRepository.existsByUserAndFriend(friend, user);
+        boolean exists = friendRepository.existsByUserAndFriend(user, friend)
+                || friendRepository.existsByUserAndFriend(friend, user);
         if (!exists) {
             throw new GeneralException(ErrorStatus.FRIEND_NOT_FOUND);
         }
 
-        friendRepository.deleteByUserAndFriend(user, friend);
-        friendRepository.deleteByUserAndFriend(friend, user);
+        // 1) 친구요청(보낸/받은) 흔적 일괄 삭제
+        friendRequestRepository.deleteRequestsBetween(user.getId(), friend.getId());
 
-        friendRequestRepository.findByRequesterAndReceiver(user, friend)
-                .ifPresent(friendRequestRepository::delete);
-
-        friendRequestRepository.findByRequesterAndReceiver(friend, user)
-                .ifPresent(friendRequestRepository::delete);
+        // 2) 친구관계 양방향 한 번에 삭제
+        friendRepository.deletePair(user.getId(), friend.getId());
     }
 
     @Override
