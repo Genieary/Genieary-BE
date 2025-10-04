@@ -53,4 +53,17 @@ public class RecommendController {
 
         return ApiResponse.onSuccess(SuccessStatus._OK, dto);
     }
+
+    @Operation(
+            summary = "추천받은 선물 싫어요",
+            description = "추천 받은 선물 중에 싫어하는 선물에 싫어요를 남깁니다. 싫어요를 누르면 당일에는 같은 선물을 다시 추천받지 않습니다.")
+    @PostMapping("{recommendId}/dislike")
+    public ResponseEntity<ApiResponse> togleHateGift(
+            @AuthenticationPrincipal(expression = "id") Long userId,
+            @PathVariable Long recommendId){
+
+        RecommendResponseDto.HateResultDto dto = recommendService.togleHateGift(userId, recommendId);
+
+        return ApiResponse.onSuccess(SuccessStatus._OK, dto);
+    }
 }

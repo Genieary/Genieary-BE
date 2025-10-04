@@ -24,4 +24,13 @@ public class RecommendResponseDto {
         private Long recommendId;
         private Boolean isLiked;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class HateResultDto {
+        private Long recommendId;
+        private Boolean isHated;
+    }
 }

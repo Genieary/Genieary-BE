@@ -73,7 +73,9 @@ public enum ErrorStatus {
 
     //Recommend
     JSON_PARSE_ERROR(HttpStatus.BAD_REQUEST, "RECOMMEND4001", "AI응답 파싱에 실패했습니다. 프롬프트를 확인해주세요."),
-    RECOMMEND_NOT_FOUND(HttpStatus.NOT_FOUND, "RECOMMEND4002", "선물추천 결과를 찾을 수 없습니다");
+    RECOMMEND_NOT_FOUND(HttpStatus.NOT_FOUND, "RECOMMEND4002", "선물추천 결과를 찾을 수 없습니다"),
+    ALREADY_DISLIKED(HttpStatus.BAD_REQUEST, "RECOMMEND4003","현재 싫어요가 눌려 있어 좋아요를 누를 수 없습니다."),
+    ALREADY_LIKED(HttpStatus.BAD_REQUEST, "RECOMMEND4004","현재 좋아요가 눌려 있어 싫어요를 누를 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

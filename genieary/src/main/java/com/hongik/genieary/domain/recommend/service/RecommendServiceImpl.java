@@ -82,11 +82,36 @@ public class RecommendServiceImpl implements RecommendService{
         Recommend recommend = recommendRepository.findByRecommendIdAndUser(recommendId, user)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.RECOMMEND_NOT_FOUND));
 
+        if(recommend.isHated())
+            throw new GeneralException(ErrorStatus.ALREADY_DISLIKED);
+
+
         boolean isLiked = recommend.togleLike();
 
         return RecommendResponseDto.LikeResultDto.builder()
                 .recommendId(recommendId)
                 .isLiked(isLiked)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public RecommendResponseDto.HateResultDto togleHateGift(Long userId, Long recommendId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        Recommend recommend = recommendRepository.findByRecommendIdAndUser(recommendId, user)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.RECOMMEND_NOT_FOUND));
+
+        if(recommend.isLiked())
+            throw new GeneralException(ErrorStatus.ALREADY_LIKED);
+
+
+        boolean isHated = recommend.togleHate();
+
+        return RecommendResponseDto.HateResultDto.builder()
+                .recommendId(recommendId)
+                .isHated(isHated)
                 .build();
     }
 }
