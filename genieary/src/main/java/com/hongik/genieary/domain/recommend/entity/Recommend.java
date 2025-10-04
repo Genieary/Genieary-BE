@@ -34,4 +34,9 @@ public class Recommend extends BaseEntity {
     private boolean isLiked;
 
     private boolean isHated;
+
+    public boolean togleLike() {
+        this.isLiked = !this.isLiked; // 논리 반전
+        return this.isLiked;
+    }
 }

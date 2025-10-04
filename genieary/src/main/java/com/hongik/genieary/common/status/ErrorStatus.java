@@ -72,8 +72,8 @@ public enum ErrorStatus {
     INVALID_IMAGE_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "S34002", "image/jpeg, image/png 확장만 지원됩니다."),
 
     //Recommend
-    JSON_PARSE_ERROR(HttpStatus.BAD_REQUEST, "RECOMMEND4001", "AI응답 파싱에 실패했습니다. 프롬프트를 확인해주세요.");
-
+    JSON_PARSE_ERROR(HttpStatus.BAD_REQUEST, "RECOMMEND4001", "AI응답 파싱에 실패했습니다. 프롬프트를 확인해주세요."),
+    RECOMMEND_NOT_FOUND(HttpStatus.NOT_FOUND, "RECOMMEND4002", "선물추천 결과를 찾을 수 없습니다");
 
     private final HttpStatus httpStatus;
     private final String code;

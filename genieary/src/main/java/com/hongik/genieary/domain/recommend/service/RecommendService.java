@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface RecommendService {
     List<RecommendResponseDto.GiftResultDto> getRecommendations(Long userId, Category category, String event);
+
+    RecommendResponseDto.LikeResultDto togleLikeGift(Long userId, Long recommendId);
 }

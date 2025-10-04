@@ -40,4 +40,17 @@ public class RecommendController {
 
         return ApiResponse.onSuccess(SuccessStatus._OK, gifts);
     }
+
+    @Operation(
+            summary = "추천받은 선물 좋아요",
+            description = "추천 받은 선물 중에 원하는 선물에 좋아요를 남깁니다. 좋아요를 누른 선물을 저장된 선물 페이지에서 볼 수 있습니다.")
+    @PostMapping("{recommendId}/like")
+    public ResponseEntity<ApiResponse> togleLikeGift(
+            @AuthenticationPrincipal(expression = "id") Long userId,
+            @PathVariable Long recommendId){
+
+        RecommendResponseDto.LikeResultDto dto = recommendService.togleLikeGift(userId, recommendId);
+
+        return ApiResponse.onSuccess(SuccessStatus._OK, dto);
+    }
 }

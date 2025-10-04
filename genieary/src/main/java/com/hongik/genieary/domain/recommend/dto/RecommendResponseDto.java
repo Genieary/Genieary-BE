@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 public class RecommendResponseDto {
 
     @Getter
@@ -16,5 +14,14 @@ public class RecommendResponseDto {
     public static class GiftResultDto {
         private String name;
         private String description;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LikeResultDto {
+        private Long recommendId;
+        private Boolean isLiked;
     }
 }
