@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 public class RecommendResponseDto {
 
     @Getter
@@ -32,5 +34,14 @@ public class RecommendResponseDto {
     public static class HateResultDto {
         private Long recommendId;
         private Boolean isHated;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class VisibilityResultDto {
+        private Long recommendId;
+        private boolean isPublic;
     }
 }

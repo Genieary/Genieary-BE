@@ -6,10 +6,8 @@ import com.hongik.genieary.common.swagger.*;
 import com.hongik.genieary.domain.recommend.Category;
 import com.hongik.genieary.domain.recommend.dto.RecommendResponseDto;
 import com.hongik.genieary.domain.recommend.service.RecommendService;
-import com.hongik.genieary.domain.user.dto.request.ProfileCompleteRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -66,6 +64,19 @@ public class RecommendController {
             @PathVariable Long recommendId){
 
         RecommendResponseDto.HateResultDto dto = recommendService.togleHateGift(userId, recommendId);
+
+        return ApiResponse.onSuccess(SuccessStatus._OK, dto);
+    }
+
+    @Operation(
+            summary = "저장한 선물 비공개 처리",
+            description = "저장한 선물을 비공개 처리합니다. 상대방에게는 보이지 않고 본인에게만 보입니다.")
+    @PatchMapping("{recommendId}/visibility")
+    public ResponseEntity<ApiResponse> toggleGiftVisibility(
+            @AuthenticationPrincipal(expression = "id") Long userId,
+            @PathVariable Long recommendId){
+
+        RecommendResponseDto.VisibilityResultDto dto = recommendService.togleGiftvisibilty(userId, recommendId);
 
         return ApiResponse.onSuccess(SuccessStatus._OK, dto);
     }

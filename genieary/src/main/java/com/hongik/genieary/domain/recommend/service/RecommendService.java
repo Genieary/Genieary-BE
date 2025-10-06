@@ -11,4 +11,6 @@ public interface RecommendService {
     RecommendResponseDto.LikeResultDto togleLikeGift(Long userId, Long recommendId);
 
     RecommendResponseDto.HateResultDto togleHateGift(Long userId, Long recommendId);
+
+    RecommendResponseDto.VisibilityResultDto togleGiftvisibilty(Long userId, Long recommendId);
 }
