@@ -112,4 +112,38 @@ public class SwaggerExamples {
           ]
         }
         """;
+
+    /*
+    선물 관련 응답
+     */
+    public static final String RECOMMEND_GIFT_SUCCESS = """
+            {
+              "isSuccess": true,
+              "code": "COMMON200",
+              "message": "성공입니다.",
+              "result": [
+                {
+                  "name": "유튜브 코미디 스케치 영상",
+                  "description": "인기 유튜버의 웃긴 코미디 스케치를 시청해보세요: https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                },
+                {
+                  "name": "웃긴 인터넷 밈",
+                  "description": "인터넷에서 유행하는 웃긴 밈들을 즐겨보세요: https://knowyourmeme.com/memes/distracted-boyfriend"
+                },
+                {
+                  "name": "유머 영상 컬렉션",
+                  "description": "다양한 유머 영상들을 모아놓은 컬렉션을 즐겨보세요: https://www.youtube.com/watch?v=5qap5aO4i9A"
+                }
+              ]
+            }
+    """;
+
+    public static final String JSON_PARSE_ERROR= """
+            {
+              "isSuccess": false,
+              "code": "RECOMMEND4001",
+              "message": "AI응답 파싱에 실패했습니다. 프롬프트를 확인해주세요."
+            }
+            """;
+
 }

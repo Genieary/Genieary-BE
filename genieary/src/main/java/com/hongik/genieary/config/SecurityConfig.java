@@ -39,7 +39,12 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-resources/**",
-                                "/swagger-ui.html"
+                                "/swagger-ui.html",
+                                "/ws/**",           // WebSocket 엔드포인트
+
+                                //테스트용
+                                "/websocket-test.html", // 테스트 페이지
+                                "/static/**"       // 정적 리소스
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
