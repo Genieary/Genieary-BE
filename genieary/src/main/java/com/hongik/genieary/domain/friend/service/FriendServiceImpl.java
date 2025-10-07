@@ -6,6 +6,7 @@ import com.hongik.genieary.domain.enums.ImageType;
 import com.hongik.genieary.domain.friend.converter.FriendConverter;
 import com.hongik.genieary.domain.friend.dto.FriendResponseDto;
 import com.hongik.genieary.domain.friend.entity.Friend;
+import com.hongik.genieary.domain.friend.repository.FriendRecommendationRepository;
 import com.hongik.genieary.domain.friend.repository.FriendRepository;
 import com.hongik.genieary.domain.friendRequest.repository.FriendRequestRepository;
 import com.hongik.genieary.domain.recommend.entity.Recommend;
@@ -34,6 +35,8 @@ public class FriendServiceImpl implements FriendService {
     private final FriendRequestRepository friendRequestRepository;
     private final RecommendRepository recommendRepository;
     private final S3Service s3Service;
+    private final com.hongik.genieary.domain.friend.repository.FriendRecommendationRepository friendRecommendationRepository;
+
 
     @Override
     public List<FriendResponseDto.FriendListResultDto> getFriendList(User user) {
@@ -112,5 +115,37 @@ public class FriendServiceImpl implements FriendService {
                 ));
 
         return FriendConverter.toFriendSearchResultPage(friendsPage, requester, userIdToPresignedUrlMap, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<FriendResponseDto.RecommendItem> getFriendRecommendationsRandom(User me, int maxCount) {
+        int minOverlap = 2;                           // 정책 고정
+        int cap = Math.min(Math.max(maxCount, 1), 5); // 1~5로 캡핑
+
+        List<FriendRecommendationRepository.Row> rows =
+                friendRecommendationRepository.findRandomCandidates(me.getId(), minOverlap, cap);
+
+        List<Long> ids = rows.stream().map(FriendRecommendationRepository.Row::getUserId).toList();
+
+        Map<Long, User> usersById = userRepository.findAllById(ids).stream()
+                .collect(Collectors.toMap(User::getId, u -> u));
+
+        Map<Long, String> urlMap = usersById.values().stream()
+                .filter(u -> u.getImageFileName() != null)
+                .collect(Collectors.toMap(
+                        User::getId,
+                        u -> s3Service.generatePresignedDownloadUrl(u.getImageFileName(), ImageType.PROFILE)
+                ));
+
+        // 프로젝트 컨버터/DTO에 맞게 매핑
+        return rows.stream()
+                .map(r -> FriendConverter.toRecommendItem(
+                        usersById.get(r.getUserId()),
+                        urlMap.get(r.getUserId()),
+                        r.getTotalOverlap(),
+                        r.getPersonalityOverlap(),
+                        r.getInterestOverlap()
+                ))
+                .toList();
     }
 }

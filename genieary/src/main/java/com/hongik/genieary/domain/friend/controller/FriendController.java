@@ -79,4 +79,17 @@ public class FriendController {
 
         return ApiResponse.onSuccess(SuccessStatus._OK, resultPage);
     }
+
+    @GetMapping("/recommendations")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "랜덤 친구 추천", description = "관심사/성격 2개 이상 겹치는 후보 중 랜덤으로 최대 5명 반환")
+    public ResponseEntity<ApiResponse> recommendFriendsRandom(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @RequestParam(name = "max", defaultValue = "5") int max) {
+
+        List<FriendResponseDto.RecommendItem> list =
+                friendService.getFriendRecommendationsRandom(user.getUser(), max);
+
+        return ApiResponse.onSuccess(SuccessStatus._OK, list);
+    }
 }
