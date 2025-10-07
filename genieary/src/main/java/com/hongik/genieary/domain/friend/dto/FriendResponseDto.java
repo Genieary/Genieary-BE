@@ -60,7 +60,7 @@ public class FriendResponseDto {
     public static class RecommendItem {
         private Long userId;
         private String nickname;
-        private String imageUrl;            // presigned URL
+        private String profileImage;            // presigned URL
         private Integer totalOverlap;       // 성격+관심사 겹침 수
         private Integer personalityOverlap; // 성격 겹침 수
         private Integer interestOverlap;    // 관심사 겹침 수

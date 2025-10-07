@@ -89,7 +89,7 @@ public class FriendConverter {
         return FriendResponseDto.RecommendItem.builder()
                 .userId(user.getId())
                 .nickname(user.getNickname())
-                .imageUrl(imageUrl)
+                .profileImage(imageUrl)
                 .totalOverlap(totalOverlap == null ? 0 : totalOverlap.intValue())
                 .personalityOverlap(personalityOverlap == null ? 0 : personalityOverlap.intValue())
                 .interestOverlap(interestOverlap == null ? 0 : interestOverlap.intValue())
