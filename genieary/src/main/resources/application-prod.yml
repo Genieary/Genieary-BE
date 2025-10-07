@@ -1,0 +1,35 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY}
+
+jwt:
+  #geniearyecretaccesstokengeniearyecretaccesstokengeniearyecretaccesstoken
+  secret: ${access_token_secret}
+  expiration: ${expiration}
+  refresh-expiration: ${refresh_expiration}
+
+kakao:
+  client-id: ${REST_API_KEY}
+  client-secret: ${KAKAO_SECRET}
+  redirect-uri: ${REDIRECT_URI}
+  
+management:
+  endpoint:
+    health:
+      show-details: never

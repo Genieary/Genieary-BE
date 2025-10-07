@@ -1,6 +1,9 @@
 package com.hongik.genieary.common.swagger;
 
 public class SwaggerExamples {
+    /*
+    일기 및 캘린더 관련 응답
+     */
     public static final String DIARY_NOT_FOUND_ERROR = """
         {
           "isSuccess": false,
@@ -11,6 +14,26 @@ public class SwaggerExamples {
         }
         """;
 
+    public static final String DIARY_ALREADY_EXISTS_ERROR = """
+        {
+          "isSuccess": false,
+          "code": "DIARY4001",
+          "message": "해당 날짜에 일기가 이미 존재합니다. 수정API를 사용해주세요."
+        }
+        """;
+
+    public static final String CALENDAR_SUMMARY_SUCCESS = """
+        {
+          "isSuccess": true,
+          "code": "COMMON200",
+          "message": "성공입니다.",
+          "result": "string 씨, 7월에는 여행을 떠나 새로운 도시에서의 경험을 즐기셨군요. 그리고 가족과 함께한 소중한 시간도 있었네요. 다음 달에는 더 많은 행복한 순간들을 만들어보세요."
+        }
+        """;
+
+    /*
+    친구 관련 응답
+     */
     public static final String FRIEND_NOT_FOUND_ERROR = """
         {
           "isSuccess": false,
@@ -89,4 +112,38 @@ public class SwaggerExamples {
           ]
         }
         """;
+
+    /*
+    선물 관련 응답
+     */
+    public static final String RECOMMEND_GIFT_SUCCESS = """
+            {
+              "isSuccess": true,
+              "code": "COMMON200",
+              "message": "성공입니다.",
+              "result": [
+                {
+                  "name": "유튜브 코미디 스케치 영상",
+                  "description": "인기 유튜버의 웃긴 코미디 스케치를 시청해보세요: https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                },
+                {
+                  "name": "웃긴 인터넷 밈",
+                  "description": "인터넷에서 유행하는 웃긴 밈들을 즐겨보세요: https://knowyourmeme.com/memes/distracted-boyfriend"
+                },
+                {
+                  "name": "유머 영상 컬렉션",
+                  "description": "다양한 유머 영상들을 모아놓은 컬렉션을 즐겨보세요: https://www.youtube.com/watch?v=5qap5aO4i9A"
+                }
+              ]
+            }
+    """;
+
+    public static final String JSON_PARSE_ERROR= """
+            {
+              "isSuccess": false,
+              "code": "RECOMMEND4001",
+              "message": "AI응답 파싱에 실패했습니다. 프롬프트를 확인해주세요."
+            }
+            """;
+
 }

@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Documented
 @ApiResponses({
         @ApiResponse(
-                responseCode = "4002",
+                responseCode = "404",
                 description = "존재하지 않는 일기를 요청했을 때 발생하는 에러입니다.",
                 content = @Content(
                         mediaType = "application/json",

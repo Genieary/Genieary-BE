@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    environment {
+        APP_IMAGE = "genieary/genieary:latest"
+        EC2_HOST = "ubuntu@genieary.site"
+        SSH_CREDENTIALS = "ec2-ssh-key"
+        DOCKER_COMPOSE_PATH = "/home/ubuntu/genieary/docker-compose.yml"
+    }
+
+    stages {
+        stage('Build & Push Docker Image') {
+            steps {
+                dir('genieary') {   // genieary 폴더 안으로 들어감
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub',
+                                                      usernameVariable: 'DOCKER_USER',
+                                                      passwordVariable: 'DOCKER_PASS')]) {
+                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                        sh 'docker build -t $APP_IMAGE .'
+                        sh 'docker push $APP_IMAGE'
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to EC2 with Blue/Green Switch') {
+            steps {
+                sshagent([env.SSH_CREDENTIALS]) {
+                    sh "ssh -o StrictHostKeyChecking=no $EC2_HOST 'bash /home/ubuntu/deploy.sh'"
+                }
+            }
+        }
+
+    }
+}

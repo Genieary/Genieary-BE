@@ -1,9 +1,4 @@
 spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/genieary
-    username: root
-    password: ${DB_password}
-    driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
       mode: never
@@ -22,6 +17,10 @@ spring:
       host: ${REDIS_HOST}
       port: 6379
 
+openai:
+  api:
+    key: ${OPENAI_API_KEY}
+
 jwt:
   #geniearyecretaccesstokengeniearyecretaccesstokengeniearyecretaccesstoken
   secret: ${access_token_secret}
@@ -39,7 +38,9 @@ cloud:
     s3:
       bucket: genieary
 
-kakao:
-  client-id: ${REST_API_KEY}
-  client-secret: ${KAKAO_SECRET}
-  redirect-uri: ${REDIRECT_URI}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

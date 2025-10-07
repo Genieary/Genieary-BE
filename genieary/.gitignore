@@ -41,3 +41,9 @@ out/
 ._.DS_Store
 **/.DS_Store
 **/._.DS_Store
+
+### prompts ###
+src/main/resources/prompts/
+
+### env ###
+.env*

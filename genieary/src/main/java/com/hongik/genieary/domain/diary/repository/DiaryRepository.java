@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,4 +19,7 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     Optional<Diary> findByDiaryIdAndUserId(@Param("diaryId") Long diaryId, @Param("userId") Long userId);
 
     Optional<Diary> findByUserIdAndDiaryDate(Long userId, LocalDate date);
+
+    List<Diary> findAllByUserIdAndCalendar_CalendarId(Long userId, Long calendarId);
+
 }

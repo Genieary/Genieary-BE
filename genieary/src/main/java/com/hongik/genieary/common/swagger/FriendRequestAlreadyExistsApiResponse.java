@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Documented
 @ApiResponses({
         @ApiResponse(
-                responseCode = "4001",
+                responseCode = "409",
                 description = "이미 친구 요청을 보낸 경우 발생하는 에러입니다.",
                 content = @Content(
                         mediaType = "application/json",
