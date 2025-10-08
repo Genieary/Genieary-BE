@@ -11,15 +11,15 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class JwtBlacklistRepository {
 
-    private final StringRedisTemplate stringRedisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
 
     // 블랙리스트에 토큰 저장 (만료시간은 accessToken 남은 시간과 동일하게)
     public void save(String accessToken, long expirationMillis) {
-        stringRedisTemplate.opsForValue().set(accessToken, "blacklisted", Duration.ofMillis(expirationMillis));
+        redisTemplate.opsForValue().set(accessToken, "blacklisted", Duration.ofMillis(expirationMillis));
     }
 
     // 블랙리스트에 해당 토큰이 있는지 확인
     public boolean exists(String accessToken) {
-        return stringRedisTemplate.hasKey(accessToken);
+        return redisTemplate.hasKey(accessToken);
     }
 }
