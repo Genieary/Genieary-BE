@@ -2,8 +2,7 @@ package com.hongik.genieary.domain.recommend.controller;
 
 import com.hongik.genieary.common.response.ApiResponse;
 import com.hongik.genieary.common.status.SuccessStatus;
-import com.hongik.genieary.common.swagger.RecommendParseErrorApiResponse;
-import com.hongik.genieary.common.swagger.SuccessRecommendResponse;
+import com.hongik.genieary.common.swagger.*;
 import com.hongik.genieary.domain.recommend.Category;
 import com.hongik.genieary.domain.recommend.dto.RecommendResponseDto;
 import com.hongik.genieary.domain.recommend.service.RecommendService;
@@ -39,5 +38,35 @@ public class RecommendController {
         List<RecommendResponseDto.GiftResultDto> gifts = recommendService.getRecommendations(userId, category, event);
 
         return ApiResponse.onSuccess(SuccessStatus._OK, gifts);
+    }
+
+    @Operation(
+            summary = "추천받은 선물 좋아요",
+            description = "추천 받은 선물 중에 원하는 선물에 좋아요를 남깁니다. 좋아요를 누른 선물을 저장된 선물 페이지에서 볼 수 있습니다.")
+    @PatchMapping("{recommendId}/like")
+    @SuccessRecommendLikeResponse
+    @RecommendAlreadyDislike
+    public ResponseEntity<ApiResponse> togleLikeGift(
+            @AuthenticationPrincipal(expression = "id") Long userId,
+            @PathVariable Long recommendId){
+
+        RecommendResponseDto.LikeResultDto dto = recommendService.togleLikeGift(userId, recommendId);
+
+        return ApiResponse.onSuccess(SuccessStatus._OK, dto);
+    }
+
+    @Operation(
+            summary = "추천받은 선물 싫어요",
+            description = "추천 받은 선물 중에 싫어하는 선물에 싫어요를 남깁니다. 싫어요를 누르면 당일에는 같은 선물을 다시 추천받지 않습니다.")
+    @PatchMapping("{recommendId}/dislike")
+    @SuccessRecommendDislikeResponse
+    @RecommendAlreadyLike
+    public ResponseEntity<ApiResponse> togleHateGift(
+            @AuthenticationPrincipal(expression = "id") Long userId,
+            @PathVariable Long recommendId){
+
+        RecommendResponseDto.HateResultDto dto = recommendService.togleHateGift(userId, recommendId);
+
+        return ApiResponse.onSuccess(SuccessStatus._OK, dto);
     }
 }
