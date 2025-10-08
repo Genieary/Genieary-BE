@@ -15,6 +15,7 @@ import com.hongik.genieary.domain.user.entity.User;
 import com.hongik.genieary.domain.user.repository.UserRepository;
 import com.hongik.genieary.s3.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ public class DiaryServiceImpl implements DiaryService{
     final private DiaryRepository diaryRepository;
     final private CalendarRepository calendarRepository;
     private final S3Service s3Service;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Override
     @Transactional
@@ -49,6 +51,9 @@ public class DiaryServiceImpl implements DiaryService{
 
         Diary diary = DiaryConverter.toEntity(user, calendar, requestDto);
         diaryRepository.save(diary);
+
+        updateCalendarModifiedAt(calendar);
+
         return DiaryConverter.toResponseDto(diary);
     }
 
@@ -61,6 +66,8 @@ public class DiaryServiceImpl implements DiaryService{
 
         diary.update(dto.getContent(), dto.getIsLiked());
 
+        updateCalendarModifiedAt(diary.getCalendar());
+
         return DiaryConverter.toResponseDto(diary);
     }
 
@@ -71,6 +78,8 @@ public class DiaryServiceImpl implements DiaryService{
                 .orElseThrow(() -> new GeneralException(ErrorStatus.DIARY_NOT_FOUND));
 
         diaryRepository.delete(diary);
+
+        updateCalendarModifiedAt(diary.getCalendar());
     }
 
     @Override
@@ -123,5 +132,14 @@ public class DiaryServiceImpl implements DiaryService{
         }
 
         return s3Service.generatePresignedDownloadUrl(fileName, ImageType.DIARY);
+    }
+
+
+    // 한 달 일기 요약 공통메서드
+    private void updateCalendarModifiedAt(Calendar calendar) {
+        redisTemplate.delete("summary:" + calendar.getUser().getId() +":"+ calendar.getCalendarId());
+        calendar.clearSummary();
+        calendar.updateModifiedAt();
+        calendarRepository.save(calendar);
     }
 }

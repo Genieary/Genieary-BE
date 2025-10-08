@@ -69,7 +69,16 @@ public enum ErrorStatus {
 
     //S3
     S3_FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "S34001", "요청한 S3 파일이 존재하지 않습니다."),
-    INVALID_IMAGE_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "S34002", "image/jpeg, image/png 확장만 지원됩니다.");
+    INVALID_IMAGE_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "S34002", "image/jpeg, image/png 확장만 지원됩니다."),
+
+    //Recommend
+    JSON_PARSE_ERROR(HttpStatus.BAD_REQUEST, "RECOMMEND4001", "AI응답 파싱에 실패했습니다. 프롬프트를 확인해주세요."),
+
+    //Chat
+    CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4000", "채팅방을 찾을 수 없습니다."),
+    CHAT_ROOM_ACCESS_DENIED(HttpStatus.FORBIDDEN, "CHAT4001", "채팅방에 접근할 권한이 없습니다."),
+    SELF_CHAT_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "CHAT4002", "자기 자신과는 채팅방을 생성할 수 없습니다."),
+    NOT_FRIEND_RELATIONSHIP(HttpStatus.BAD_REQUEST, "CHAT4003", "두 유저는 친구관계가 아닙니다");
 
     private final HttpStatus httpStatus;
     private final String code;
