@@ -7,6 +7,9 @@ import com.hongik.genieary.domain.recommend.Category;
 import com.hongik.genieary.domain.recommend.dto.RecommendResponseDto;
 import com.hongik.genieary.domain.recommend.service.RecommendService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -69,8 +72,16 @@ public class RecommendController {
     }
 
     @Operation(
-            summary = "저장한 선물 비공개 처리",
+            summary = "저장한 선물 공개/비공개 토글 기능",
             description = "저장한 선물을 비공개 처리합니다. 상대방에게는 보이지 않고 본인에게만 보입니다.")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = RecommendResponseDto.VisibilityResultDto.class)
+            )
+    )
     @PatchMapping("{recommendId}/visibility")
     public ResponseEntity<ApiResponse> toggleGiftVisibility(
             @AuthenticationPrincipal(expression = "id") Long userId,
