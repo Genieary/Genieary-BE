@@ -8,6 +8,7 @@ import com.hongik.genieary.common.swagger.SuccessApiResponse;
 import com.hongik.genieary.domain.diary.dto.DiaryRequestDto;
 import com.hongik.genieary.domain.diary.dto.DiaryResponseDto;
 import com.hongik.genieary.domain.diary.service.DiaryService;
+import com.hongik.genieary.domain.recommend.dto.RecommendResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -85,6 +86,14 @@ public class DiaryController{
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{diaryId}")
     @Operation(summary = "일기 삭제", description = "일기 ID에 해당하는 일기를 삭제합니다.")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ApiResponse.class)
+            )
+    )
     @SuccessApiResponse
     @DiaryNotFoundApiResponse
     public ResponseEntity<ApiResponse> deleteDiary(@AuthenticationPrincipal CustomUserDetails user,
