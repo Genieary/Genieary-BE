@@ -5,7 +5,6 @@ import com.hongik.genieary.common.status.SuccessStatus;
 import com.hongik.genieary.common.swagger.DiaryAlreadyExists;
 import com.hongik.genieary.common.swagger.DiaryNotFoundApiResponse;
 import com.hongik.genieary.common.swagger.SuccessApiResponse;
-import com.hongik.genieary.common.swagger.SuccessDiaryResponse;
 import com.hongik.genieary.domain.diary.dto.DiaryRequestDto;
 import com.hongik.genieary.domain.diary.dto.DiaryResponseDto;
 import com.hongik.genieary.domain.diary.service.DiaryService;
@@ -49,7 +48,6 @@ public class DiaryController{
     )
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    @SuccessDiaryResponse
     @DiaryAlreadyExists
     public ResponseEntity<ApiResponse> createDiary(@AuthenticationPrincipal CustomUserDetails user,
                                                    @Valid @RequestBody DiaryRequestDto.DiaryCreateDto requestDto) {
@@ -74,7 +72,6 @@ public class DiaryController{
     )
     @PatchMapping("/{diaryId}")
     @PreAuthorize("isAuthenticated()")
-    @SuccessDiaryResponse
     @DiaryNotFoundApiResponse
     public ResponseEntity<ApiResponse> updateDiary(@PathVariable Long diaryId,
                                                    @AuthenticationPrincipal CustomUserDetails user,
@@ -99,7 +96,14 @@ public class DiaryController{
     @GetMapping("/{diaryId}")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "일기 조회", description = "일기 ID에 해당하는 일기를 조회합니다.")
-    @SuccessApiResponse
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = DiaryResponseDto.DiaryResultDto.class)
+            )
+    )
     @DiaryNotFoundApiResponse
     public ResponseEntity<ApiResponse> getDiary(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -113,6 +117,14 @@ public class DiaryController{
             summary = "일기 얼굴 사진 Presigned Upload URL 발급",
             description = "사용자의 일기 얼굴 사진을 저장할 presigned upload url을 발급합니다. 발급받은 url으로 put요청하여 s3에 저장합니다.")
     @PostMapping("/{date}/diary-face")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = DiaryResponseDto.DiaryFaceImageResultDto.class)
+            )
+    )
     public ResponseEntity<ApiResponse> uploadDiaryFaceImage(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
@@ -126,9 +138,17 @@ public class DiaryController{
             summary = "일기 얼굴 사진 Presigned Download URL 발급",
             description = "사용자의 일기 얼굴 사진을 바로 볼 수 있는 presigned download url을 발급합니다.")
     @GetMapping("/{diaryId}/diary-face-url")
-    public ResponseEntity<String> getDiaryFaceImageUrl(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long diaryId) {
-        String url = diaryService.getDiaryFaceImageUrl(userDetails.getUser().getId(), diaryId);
-        return ResponseEntity.ok(url);
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = DiaryResponseDto.DiaryFaceImageResultDto.class)
+            )
+    )
+    public ResponseEntity<ApiResponse> getDiaryFaceImageUrl(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long diaryId) {
+        DiaryResponseDto.DiaryFaceImageResultDto dto = diaryService.getDiaryFaceImageUrl(userDetails.getUser().getId(), diaryId);
+        return ApiResponse.onSuccess(SuccessStatus._OK, dto);
     }
 
 }
