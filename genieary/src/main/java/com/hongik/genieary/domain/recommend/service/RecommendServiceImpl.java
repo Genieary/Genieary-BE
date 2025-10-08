@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,5 +71,47 @@ public class RecommendServiceImpl implements RecommendService{
         recommendRepository.saveAll(entities);
 
         return recommendations;
+    }
+
+    @Override
+    @Transactional
+    public RecommendResponseDto.LikeResultDto togleLikeGift(Long userId, Long recommendId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        Recommend recommend = recommendRepository.findByRecommendIdAndUser(recommendId, user)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.RECOMMEND_NOT_FOUND));
+
+        if(recommend.isHated())
+            throw new GeneralException(ErrorStatus.ALREADY_DISLIKED);
+
+
+        boolean isLiked = recommend.togleLike();
+
+        return RecommendResponseDto.LikeResultDto.builder()
+                .recommendId(recommendId)
+                .isLiked(isLiked)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public RecommendResponseDto.HateResultDto togleHateGift(Long userId, Long recommendId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        Recommend recommend = recommendRepository.findByRecommendIdAndUser(recommendId, user)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.RECOMMEND_NOT_FOUND));
+
+        if(recommend.isLiked())
+            throw new GeneralException(ErrorStatus.ALREADY_LIKED);
+
+
+        boolean isHated = recommend.togleHate();
+
+        return RecommendResponseDto.HateResultDto.builder()
+                .recommendId(recommendId)
+                .isHated(isHated)
+                .build();
     }
 }
