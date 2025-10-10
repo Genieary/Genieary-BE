@@ -42,7 +42,7 @@ public class DiaryController{
                             schema = @Schema(implementation = DiaryRequestDto.DiaryCreateDto.class),
                             examples = @ExampleObject(
                                     name = "일기 예시",
-                                    value = "{\"content\": \"오늘 날씨 쥑인다.\", \"isLiked\": \"false\", \"diaryDate\": \"2025-06-13\"  }"
+                                    value = "{\"content\": \"오늘 날씨 쥑인다.\", \"isLiked\": false, \"diaryDate\": \"2025-06-13\"  }"
                             )
                     )
             )
