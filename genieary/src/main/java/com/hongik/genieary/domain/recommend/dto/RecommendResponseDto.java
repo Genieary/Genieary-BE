@@ -33,4 +33,13 @@ public class RecommendResponseDto {
         private Long recommendId;
         private Boolean isHated;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class VisibilityResultDto {
+        private Long recommendId;
+        private boolean isPublic;
+    }
 }
