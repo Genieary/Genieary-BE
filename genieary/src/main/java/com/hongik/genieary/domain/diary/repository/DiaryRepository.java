@@ -22,4 +22,5 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
     List<Diary> findAllByUserIdAndCalendar_CalendarId(Long userId, Long calendarId);
 
+    Optional<Diary> findByDiaryDateAndUserId(LocalDate date, Long userId);
 }

@@ -96,15 +96,15 @@ public class DiaryController{
         return ApiResponse.onSuccess(SuccessStatus._OK);
     }
 
-    @GetMapping("/{diaryId}")
+    @GetMapping
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "일기 조회", description = "일기 ID에 해당하는 일기를 조회합니다.")
+    @Operation(summary = "일기 조회", description = "날짜에 해당하는 일기를 조회합니다.")
     @SuccessApiResponse
     @DiaryNotFoundApiResponse
     public ResponseEntity<ApiResponse> getDiary(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @PathVariable Long diaryId) {
-        DiaryResponseDto.DiaryResultDto response = diaryService.getDiary(diaryId, userDetails.getUser().getId());
+            @RequestParam LocalDate date) {
+        DiaryResponseDto.DiaryResultDto response = diaryService.getDiary(date, userDetails.getUser().getId());
         return ApiResponse.onSuccess(SuccessStatus._OK, response);
     }
 

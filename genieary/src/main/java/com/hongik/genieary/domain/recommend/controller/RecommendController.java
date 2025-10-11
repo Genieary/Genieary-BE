@@ -8,6 +8,9 @@ import com.hongik.genieary.domain.recommend.dto.RecommendResponseDto;
 import com.hongik.genieary.domain.recommend.service.RecommendService;
 import com.hongik.genieary.domain.user.dto.request.ProfileCompleteRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Tag(name = "RECOMMEND API", description = "선물추천 관련 API")
@@ -68,5 +72,26 @@ public class RecommendController {
         RecommendResponseDto.HateResultDto dto = recommendService.togleHateGift(userId, recommendId);
 
         return ApiResponse.onSuccess(SuccessStatus._OK, dto);
+    }
+
+    @Operation(
+            summary = "해당 날짜에 추천받은 선물 목록 조회",
+            description = "해당 날짜에 추천받은 선물 목록을 조회합니다.")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = RecommendResponseDto.GiftResultDto.class))
+            )
+    )
+    @GetMapping
+    public ResponseEntity<ApiResponse> getRecommendGifts(
+            @AuthenticationPrincipal(expression = "id") Long userId,
+            @RequestParam LocalDate date){
+
+        List<RecommendResponseDto.GiftResultDto> gifts = recommendService.getRecommendGifts(userId, date);
+
+        return ApiResponse.onSuccess(SuccessStatus._OK, gifts);
     }
 }
