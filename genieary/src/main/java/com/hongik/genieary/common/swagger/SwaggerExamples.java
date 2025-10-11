@@ -186,5 +186,15 @@ public class SwaggerExamples {
             }
             """;
 
+    /*
+    캘린더 관련 응답
+     */
+    public static final String CALENDAR_NOT_FOUND_ERROR= """
+            {
+              "isSuccess": false,
+              "code": "CALENDAR4001",
+              "message": "캘린더가 존재하지 않습니다. 일기를 먼저 생성해주세요."
+            }
+            """;
 
 }
