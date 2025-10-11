@@ -2,6 +2,7 @@ package com.hongik.genieary.domain.calendar.service;
 
 import com.hongik.genieary.common.exception.GeneralException;
 import com.hongik.genieary.common.status.ErrorStatus;
+import com.hongik.genieary.domain.calendar.dto.CalendarResponseDto;
 import com.hongik.genieary.domain.calendar.entity.Calendar;
 import com.hongik.genieary.domain.calendar.repository.CalendarRepository;
 import com.hongik.genieary.domain.diary.entity.Diary;
@@ -71,5 +72,18 @@ public class CalendarServiceImpl implements CalendarService{
         redisTemplate.opsForValue().set(key, newSummary);
 
         return newSummary;
+    }
+
+    @Override
+    public CalendarResponseDto.CalendarResultDto getCalendar(Long userId, int year, int month) {
+
+        Calendar calendar = calendarRepository.findByUserIdAndYearAndMonth(userId, year, month)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.CALENDAR_NOT_FOUND));
+
+        return CalendarResponseDto.CalendarResultDto.builder()
+                .calendarId(calendar.getCalendarId())
+                .year(calendar.getYear())
+                .month(calendar.getMonth())
+                .build();
     }
 }
