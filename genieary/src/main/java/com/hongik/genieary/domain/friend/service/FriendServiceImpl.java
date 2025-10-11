@@ -6,6 +6,8 @@ import com.hongik.genieary.domain.enums.ImageType;
 import com.hongik.genieary.domain.friend.converter.FriendConverter;
 import com.hongik.genieary.domain.friend.dto.FriendResponseDto;
 import com.hongik.genieary.domain.friend.entity.Friend;
+import com.hongik.genieary.domain.friend.repository.FriendRecommendationRepository;
+import com.hongik.genieary.domain.friend.repository.projection.FriendRecommendationRow;
 import com.hongik.genieary.domain.friend.repository.FriendRepository;
 import com.hongik.genieary.domain.friendRequest.repository.FriendRequestRepository;
 import com.hongik.genieary.domain.recommend.entity.Recommend;
@@ -34,6 +36,8 @@ public class FriendServiceImpl implements FriendService {
     private final FriendRequestRepository friendRequestRepository;
     private final RecommendRepository recommendRepository;
     private final S3Service s3Service;
+    private final FriendRecommendationRepository friendRecommendationRepository;
+
 
     @Override
     public List<FriendResponseDto.FriendListResultDto> getFriendList(User user) {
@@ -52,27 +56,23 @@ public class FriendServiceImpl implements FriendService {
         return FriendConverter.toFriendListResultDtoList(friends, friendIdToUrlMap);
     }
 
-
     @Transactional
     @Override
     public void deleteFriend(User user, Long friendId) {
         User friend = userRepository.findById(friendId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.FRIEND_USER_NOT_FOUND));
 
-        boolean exists = friendRepository.existsByUserAndFriend(user, friend) ||
-                friendRepository.existsByUserAndFriend(friend, user);
+        boolean exists = friendRepository.existsByUserAndFriend(user, friend)
+                || friendRepository.existsByUserAndFriend(friend, user);
         if (!exists) {
             throw new GeneralException(ErrorStatus.FRIEND_NOT_FOUND);
         }
 
-        friendRepository.deleteByUserAndFriend(user, friend);
-        friendRepository.deleteByUserAndFriend(friend, user);
+        // 1) 친구요청(보낸/받은) 흔적 일괄 삭제
+        friendRequestRepository.deleteRequestsBetween(user.getId(), friend.getId());
 
-        friendRequestRepository.findByRequesterAndReceiver(user, friend)
-                .ifPresent(friendRequestRepository::delete);
-
-        friendRequestRepository.findByRequesterAndReceiver(friend, user)
-                .ifPresent(friendRequestRepository::delete);
+        // 2) 친구관계 양방향 한 번에 삭제
+        friendRepository.deletePair(user.getId(), friend.getId());
     }
 
     @Override
@@ -116,5 +116,39 @@ public class FriendServiceImpl implements FriendService {
                 ));
 
         return FriendConverter.toFriendSearchResultPage(friendsPage, requester, userIdToPresignedUrlMap, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<FriendResponseDto.RecommendItem> getFriendRecommendationsRandom(User me, int maxCount) {
+        int minOverlap = 2;                           // 정책 고정
+        int cap = Math.min(Math.max(maxCount, 1), 5); // 1~5 캡핑
+
+        List<FriendRecommendationRow> rows =
+                friendRecommendationRepository.findCandidates(me.getId(), minOverlap, cap);
+
+        List<Long> ids = rows.stream()
+                .map(FriendRecommendationRow::getUserId)
+                .toList();
+
+        Map<Long, User> usersById = userRepository.findAllById(ids).stream()
+                .collect(Collectors.toMap(User::getId, u -> u));
+
+        Map<Long, String> urlMap = usersById.values().stream()
+                .filter(u -> u.getImageFileName() != null)
+                .collect(Collectors.toMap(
+                        User::getId,
+                        u -> s3Service.generatePresignedDownloadUrl(u.getImageFileName(), ImageType.PROFILE)
+                ));
+
+        return rows.stream()
+                .map(r -> FriendConverter.toRecommendItem(
+                        usersById.get(r.getUserId()),
+                        urlMap.get(r.getUserId()),
+                        r.getTotalOverlap(),
+                        r.getPersonalityOverlap(),
+                        r.getInterestOverlap()
+                ))
+                .toList();
     }
 }

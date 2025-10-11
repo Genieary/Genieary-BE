@@ -9,6 +9,7 @@ pipeline {
     }
 
     stages {
+
         stage('Build & Push Docker Image') {
             steps {
                 dir('genieary') {   // genieary 폴더 안으로 들어감

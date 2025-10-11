@@ -38,7 +38,6 @@ cloud:
     s3:
       bucket: genieary
 
-
 management:
   endpoints:
     web:
