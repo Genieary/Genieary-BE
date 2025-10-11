@@ -81,7 +81,10 @@ public enum ErrorStatus {
     CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4000", "채팅방을 찾을 수 없습니다."),
     CHAT_ROOM_ACCESS_DENIED(HttpStatus.FORBIDDEN, "CHAT4001", "채팅방에 접근할 권한이 없습니다."),
     SELF_CHAT_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "CHAT4002", "자기 자신과는 채팅방을 생성할 수 없습니다."),
-    NOT_FRIEND_RELATIONSHIP(HttpStatus.BAD_REQUEST, "CHAT4003", "두 유저는 친구관계가 아닙니다");
+    NOT_FRIEND_RELATIONSHIP(HttpStatus.BAD_REQUEST, "CHAT4003", "두 유저는 친구관계가 아닙니다"),
+
+    //Calendar
+    CALENDAR_NOT_FOUND(HttpStatus.NOT_FOUND, "CALENDAR4001", "캘린더가 존재하지 않습니다. 일기를 먼저 생성해주세요.");
 
     private final HttpStatus httpStatus;
     private final String code;
