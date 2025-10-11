@@ -14,4 +14,5 @@ public interface FriendService {
     void deleteFriend(User user, Long friendId);
     FriendResponseDto.FriendProfileDto getFriendProfile(User requester, Long friendId);
     Page<FriendResponseDto.FriendSearchResultDto> searchFriends(User requester, String nickname, Pageable pageable);
+    List<FriendResponseDto.RecommendItem> getFriendRecommendationsRandom(User me, int maxCount);
 }

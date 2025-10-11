@@ -10,4 +10,7 @@ public interface FriendRequestService {
     void acceptRequest(User receiver, Long requestId);
     void rejectRequest(User receiver, Long requestId);
     List<FriendRequestResponseDto.FriendRequestResultDto> getReceivedRequests(User receiver);
+    List<FriendRequestResponseDto.SentFriendRequestResultDto> getSentRequests(User requester);
+    FriendRequestResponseDto.FriendRequestBoxDto getRequestBox(User me);
+    void cancelSentRequest(User requester, Long requestId);
 }

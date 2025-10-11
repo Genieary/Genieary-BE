@@ -70,4 +70,24 @@ public class FriendRequestController {
         List<FriendRequestResponseDto.FriendRequestResultDto> requests = friendRequestService.getReceivedRequests(userDetails.getUser());
         return ApiResponse.onSuccess(SuccessStatus._OK, requests);
     }
+
+    @GetMapping("/request/box")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "친구 요청 합본 조회", description = "유저가 받은/보낸 친구 요청(대기중)을 한 번에 조회합니다.")
+    public ResponseEntity<ApiResponse> getRequestBox(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        var box = friendRequestService.getRequestBox(userDetails.getUser());
+        return ApiResponse.onSuccess(SuccessStatus._OK, box);
+    }
+
+    @DeleteMapping("/request/{requestId}")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "보낸 친구 요청 취소", description = "내가 보낸(REQUESTED) 친구 요청을 취소합니다.")
+    @FriendRequestNotFoundApiResponse
+    public ResponseEntity<ApiResponse> cancelSentRequest(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable("requestId") Long requestId) {
+
+        friendRequestService.cancelSentRequest(userDetails.getUser(), requestId);
+        return ApiResponse.onSuccess(SuccessStatus._OK);
+    }
 }

@@ -48,7 +48,11 @@ public class SecurityConfig {
 
                                 //테스트용
                                 "/websocket-test.html", // 테스트 페이지
-                                "/static/**"       // 정적 리소스
+                                "/static/**",       // 정적 리소스
+
+                                //헬스체크용
+                                "/actuator/health",
+                                "/actuator/health/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

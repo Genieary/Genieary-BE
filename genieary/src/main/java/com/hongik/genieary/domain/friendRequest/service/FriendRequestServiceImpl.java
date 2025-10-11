@@ -127,4 +127,83 @@ public class FriendRequestServiceImpl implements FriendRequestService {
 
         return FriendRequestConverter.toResponseDtoList(requests, userIdToUrlMap);
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<FriendRequestResponseDto.SentFriendRequestResultDto> getSentRequests(User requester) {
+        List<FriendRequest> requests =
+                friendRequestRepository.findByRequesterAndStatus(requester, FriendStatus.REQUESTED);
+
+        Map<Long, String> userIdToUrlMap = requests.stream()
+                .map(FriendRequest::getReceiver)
+                .distinct()
+                .collect(Collectors.toMap(
+                        User::getId,
+                        r -> {
+                            String key = r.getImageFileName();
+                            return key != null ? s3Service.generatePresignedDownloadUrl(key, ImageType.PROFILE) : "";
+                        },
+                        (v1, v2) -> v1
+                ));
+
+        return FriendRequestConverter.toSentResponseDtoList(requests, userIdToUrlMap);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public FriendRequestResponseDto.FriendRequestBoxDto getRequestBox(User me) {
+
+        // 1) 내가 받은 요청(REQUESTED)
+        List<FriendRequest> receivedEntities =
+                friendRequestRepository.findByReceiverAndStatus(me, FriendStatus.REQUESTED);
+
+        Map<Long, String> requesterIdToUrl = receivedEntities.stream()
+                .map(FriendRequest::getRequester)
+                .distinct()
+                .collect(Collectors.toMap(
+                        User::getId,
+                        u -> {
+                            String key = u.getImageFileName();
+                            return key != null ? s3Service.generatePresignedDownloadUrl(key, ImageType.PROFILE) : "";
+                        },
+                        (a, b) -> a
+                ));
+        List<FriendRequestResponseDto.FriendRequestResultDto> received =
+                FriendRequestConverter.toResponseDtoList(receivedEntities, requesterIdToUrl);
+
+        // 2) 내가 보낸 요청(REQUESTED)
+        List<FriendRequest> sentEntities =
+                friendRequestRepository.findByRequesterAndStatus(me, FriendStatus.REQUESTED);
+
+        Map<Long, String> receiverIdToUrl = sentEntities.stream()
+                .map(FriendRequest::getReceiver)
+                .distinct()
+                .collect(Collectors.toMap(
+                        User::getId,
+                        u -> {
+                            String key = u.getImageFileName();
+                            return key != null ? s3Service.generatePresignedDownloadUrl(key, ImageType.PROFILE) : "";
+                        },
+                        (a, b) -> a
+                ));
+        List<FriendRequestResponseDto.SentFriendRequestResultDto> sent =
+                FriendRequestConverter.toSentResponseDtoList(sentEntities, receiverIdToUrl);
+
+        return FriendRequestResponseDto.FriendRequestBoxDto.builder()
+                .received(received)
+                .sent(sent)
+                .build();
+    }
+
+    @Transactional
+    @Override
+    public void cancelSentRequest(User requester, Long requestId) {
+        long deleted = friendRequestRepository
+                .deleteByRequestIdAndRequesterIdAndStatus(requestId, requester.getId(), FriendStatus.REQUESTED);
+
+        if (deleted == 0) {
+            // 내가 보낸 요청이 아니거나, 이미 수락/거절되었거나, 존재하지 않는 경우
+            throw new GeneralException(ErrorStatus.FRIEND_REQUEST_NOT_FOUND);
+        }
+    }
 }

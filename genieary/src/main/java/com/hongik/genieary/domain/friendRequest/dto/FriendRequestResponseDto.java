@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 public class FriendRequestResponseDto {
 
     @Getter
@@ -16,5 +18,25 @@ public class FriendRequestResponseDto {
         private Long requesterId;
         private String nickname;
         private String profileImage;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SentFriendRequestResultDto {
+        private Long requestId;
+        private Long receiverId;
+        private String nickname;
+        private String profileImage;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FriendRequestBoxDto {
+        private List<FriendRequestResultDto> received;              // 내가 받은(요청자 정보)
+        private List<SentFriendRequestResultDto> sent;              // 내가 보낸(수신자 정보)
     }
 }
