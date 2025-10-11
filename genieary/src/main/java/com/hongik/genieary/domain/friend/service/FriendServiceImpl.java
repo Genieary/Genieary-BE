@@ -118,6 +118,7 @@ public class FriendServiceImpl implements FriendService {
         return FriendConverter.toFriendSearchResultPage(friendsPage, requester, userIdToPresignedUrlMap, pageable);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public List<FriendResponseDto.RecommendItem> getFriendRecommendationsRandom(User me, int maxCount) {
         int minOverlap = 2;                           // 정책 고정
