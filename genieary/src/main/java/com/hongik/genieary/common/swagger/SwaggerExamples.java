@@ -146,4 +146,45 @@ public class SwaggerExamples {
             }
             """;
 
+    public static final String RECOMMEND_LIKE_SUCCESS= """
+            {
+              "isSuccess": true,
+              "code": "COMMON200",
+              "message": "성공입니다.",
+              "result": {
+                "recommendId": 1,
+                "isLiked": true
+              }
+            }
+            """;
+
+    public static final String RECOMMEND_DISLIKE_SUCCESS= """
+            {
+              "isSuccess": true,
+              "code": "COMMON200",
+              "message": "성공입니다.",
+              "result": {
+                "recommendId": 1,
+                "isHated": true
+              }
+            }
+            """;
+
+    public static final String RECOMMEND_LIKE_ERROR= """
+            {
+                "isSuccess": false,
+                "code": "RECOMMEND4003",
+                "message": "현재 싫어요가 눌려 있어 좋아요를 누를 수 없습니다."
+            }
+            """;
+
+    public static final String RECOMMEND_DISLIKE_ERROR= """
+            {
+                "isSuccess": false,
+                "code": "RECOMMEND4004",
+                "message": "현재 좋아요가 눌려 있어 싫어요를 누를 수 없습니다."
+            }
+            """;
+
+
 }
