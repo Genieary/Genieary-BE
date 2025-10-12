@@ -35,6 +35,10 @@ public class Recommend extends BaseEntity {
 
     private boolean isHated;
 
+    @Builder.Default
+    @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 1")
+    private boolean isPublic = true;
+
     public boolean togleLike() {
         this.isLiked = !this.isLiked;
         return this.isLiked;
@@ -43,5 +47,10 @@ public class Recommend extends BaseEntity {
     public boolean togleHate() {
         this.isHated = !this.isHated;
         return this.isHated;
+    }
+
+    public boolean togleVisibilty() {
+        this.isPublic = !this.isPublic;
+        return this.isPublic;
     }
 }

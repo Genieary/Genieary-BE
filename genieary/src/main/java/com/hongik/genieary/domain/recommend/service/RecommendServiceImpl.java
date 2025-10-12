@@ -117,6 +117,27 @@ public class RecommendServiceImpl implements RecommendService{
     }
 
     @Override
+    @Transactional
+    public RecommendResponseDto.VisibilityResultDto togleGiftvisibilty(Long userId, Long recommendId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        Recommend recommend = recommendRepository.findByRecommendIdAndUser(recommendId, user)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.RECOMMEND_NOT_FOUND));
+
+        if(!recommend.isLiked()){
+            throw new GeneralException(ErrorStatus.RECOMMEND_NOT_LIKED);
+        }
+
+        boolean isPublic = recommend.togleVisibilty();
+
+        return RecommendResponseDto.VisibilityResultDto.builder()
+                .recommendId(recommendId)
+                .isPublic(isPublic)
+                .build();
+    }
+  
+    @Override
     public List<RecommendResponseDto.GiftResultDto> getRecommendGifts(Long userId, LocalDate date) {
         List<Recommend> recommends = recommendRepository.findTop3ByUserIdAndCreatedAtOrderByRecommendIdDesc(userId, date);
 

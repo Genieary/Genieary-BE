@@ -6,13 +6,11 @@ import com.hongik.genieary.common.swagger.*;
 import com.hongik.genieary.domain.recommend.Category;
 import com.hongik.genieary.domain.recommend.dto.RecommendResponseDto;
 import com.hongik.genieary.domain.recommend.service.RecommendService;
-import com.hongik.genieary.domain.user.dto.request.ProfileCompleteRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,8 +29,15 @@ public class RecommendController {
     @Operation(
             summary = "사용자 맞춤 선물 추천",
             description = "사용자가 선택한 category에서 선물 3개를 추천해줍니다. 기념일은 선택하면 기념일에 맞는 선물을 추천해줍니다.")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = RecommendResponseDto.GiftResultDto .class)
+            )
+    )
     @PostMapping
-    @SuccessRecommendResponse
     @RecommendParseErrorApiResponse
     public ResponseEntity<ApiResponse> recommendGifts(
             @AuthenticationPrincipal(expression = "id") Long userId,
@@ -47,9 +52,16 @@ public class RecommendController {
     @Operation(
             summary = "추천받은 선물 좋아요",
             description = "추천 받은 선물 중에 원하는 선물에 좋아요를 남깁니다. 좋아요를 누른 선물을 저장된 선물 페이지에서 볼 수 있습니다.")
-    @PatchMapping("{recommendId}/like")
-    @SuccessRecommendLikeResponse
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = RecommendResponseDto.LikeResultDto.class)
+            )
+    )
     @RecommendAlreadyDislike
+    @PatchMapping("{recommendId}/like")
     public ResponseEntity<ApiResponse> togleLikeGift(
             @AuthenticationPrincipal(expression = "id") Long userId,
             @PathVariable Long recommendId){
@@ -62,9 +74,16 @@ public class RecommendController {
     @Operation(
             summary = "추천받은 선물 싫어요",
             description = "추천 받은 선물 중에 싫어하는 선물에 싫어요를 남깁니다. 싫어요를 누르면 당일에는 같은 선물을 다시 추천받지 않습니다.")
-    @PatchMapping("{recommendId}/dislike")
-    @SuccessRecommendDislikeResponse
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = RecommendResponseDto.HateResultDto.class)
+            )
+    )
     @RecommendAlreadyLike
+    @PatchMapping("{recommendId}/dislike")
     public ResponseEntity<ApiResponse> togleHateGift(
             @AuthenticationPrincipal(expression = "id") Long userId,
             @PathVariable Long recommendId){
@@ -74,6 +93,28 @@ public class RecommendController {
         return ApiResponse.onSuccess(SuccessStatus._OK, dto);
     }
 
+    @Operation(
+            summary = "저장한 선물 공개/비공개 토글 기능",
+            description = "저장한 선물을 비공개 처리합니다. 상대방에게는 보이지 않고 본인에게만 보입니다.")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = RecommendResponseDto.VisibilityResultDto.class)
+            )
+    )
+    @PatchMapping("{recommendId}/visibility")
+    public ResponseEntity<ApiResponse> toggleGiftVisibility(
+            @AuthenticationPrincipal(expression = "id") Long userId,
+            @PathVariable Long recommendId){
+
+        RecommendResponseDto.VisibilityResultDto dto = recommendService.togleGiftvisibilty(userId, recommendId);
+
+        return ApiResponse.onSuccess(SuccessStatus._OK, dto);
+            
+    }
+      
     @Operation(
             summary = "해당 날짜에 추천받은 선물 목록 조회",
             description = "해당 날짜에 추천받은 선물 목록을 조회합니다.")
