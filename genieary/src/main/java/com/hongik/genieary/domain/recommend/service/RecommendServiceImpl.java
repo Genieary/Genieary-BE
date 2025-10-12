@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -135,5 +135,17 @@ public class RecommendServiceImpl implements RecommendService{
                 .recommendId(recommendId)
                 .isPublic(isPublic)
                 .build();
+    }
+  
+    @Override
+    public List<RecommendResponseDto.GiftResultDto> getRecommendGifts(Long userId, LocalDate date) {
+        List<Recommend> recommends = recommendRepository.findTop3ByUserIdAndCreatedAtOrderByRecommendIdDesc(userId, date);
+
+        return recommends.stream()
+                .map(recommend -> RecommendResponseDto.GiftResultDto.builder()
+                        .name(recommend.getContentName())
+                        .description(recommend.getContentDescription())
+                        .build())
+                .toList();
     }
 }

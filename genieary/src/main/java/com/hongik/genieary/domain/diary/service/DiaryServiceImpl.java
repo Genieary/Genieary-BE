@@ -83,8 +83,8 @@ public class DiaryServiceImpl implements DiaryService{
     }
 
     @Override
-    public DiaryResponseDto.DiaryResultDto getDiary(Long diaryId, Long userId) {
-        Diary diary = diaryRepository.findByDiaryIdAndUserId(diaryId, userId)
+    public DiaryResponseDto.DiaryResultDto getDiary(LocalDate date, Long userId) {
+        Diary diary = diaryRepository.findByDiaryDateAndUserId(date, userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.DIARY_NOT_FOUND));
         return DiaryConverter.toResponseDto(diary);
     }

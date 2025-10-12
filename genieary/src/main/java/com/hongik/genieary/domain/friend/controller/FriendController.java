@@ -48,7 +48,7 @@ public class FriendController {
     @FriendUserNotFoundApiResponse
     public ResponseEntity<ApiResponse> deleteFriend(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @PathVariable Long friendId) {
+            @PathVariable("friendId") Long friendId) {
 
         friendService.deleteFriend(userDetails.getUser(), friendId);
         return ApiResponse.onSuccess(SuccessStatus._OK);
@@ -73,10 +73,23 @@ public class FriendController {
     @InvalidSearchKeywordApiResponse
     public ResponseEntity<ApiResponse> searchFriends(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam String nickname,
+            @RequestParam("nickname") String nickname,
             @ParameterObject @PageableDefault(size = 10, sort = "nickname", direction = Sort.Direction.ASC) Pageable pageable) {
         Page<FriendResponseDto.FriendSearchResultDto> resultPage = friendService.searchFriends(userDetails.getUser(),nickname, pageable);
 
         return ApiResponse.onSuccess(SuccessStatus._OK, resultPage);
+    }
+
+    @GetMapping("/recommendations")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "랜덤 친구 추천", description = "관심사/성격 2개 이상 겹치는 후보 중 랜덤으로 최대 5명 반환")
+    public ResponseEntity<ApiResponse> recommendFriendsRandom(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @RequestParam(name = "max", defaultValue = "5") int max) {
+
+        List<FriendResponseDto.RecommendItem> list =
+                friendService.getFriendRecommendationsRandom(user.getUser(), max);
+
+        return ApiResponse.onSuccess(SuccessStatus._OK, list);
     }
 }
