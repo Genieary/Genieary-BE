@@ -9,6 +9,7 @@ import com.hongik.genieary.common.swagger.FriendUserNotFoundApiResponse;
 import com.hongik.genieary.common.swagger.InvalidSearchKeywordApiResponse;
 import com.hongik.genieary.domain.friend.dto.FriendResponseDto;
 import com.hongik.genieary.domain.friend.service.FriendService;
+import com.hongik.genieary.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -91,5 +92,20 @@ public class FriendController {
                 friendService.getFriendRecommendationsRandom(user.getUser(), max);
 
         return ApiResponse.onSuccess(SuccessStatus._OK, list);
+    }
+
+    @GetMapping("/{friendId}/recommendations")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "친구의 선물 좋아요 리스트 조회", description = "친구가 '좋아요'했고 '공개'로 설정한 선물만 최신순으로 반환합니다.")
+    public ResponseEntity<ApiResponse> getFriendPublicLikedGifts(
+            @AuthenticationPrincipal(expression = "id") Long meId,
+            @PathVariable Long friendId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+
+        Page<FriendResponseDto.FriendGiftDto> data =
+                friendService.getFriendPublicLikedGifts(meId, friendId, page, size);
+
+        return ApiResponse.onSuccess(SuccessStatus._OK, data);
     }
 }

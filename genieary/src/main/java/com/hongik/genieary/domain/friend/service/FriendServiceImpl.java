@@ -15,9 +15,7 @@ import com.hongik.genieary.domain.recommend.repository.RecommendRepository;
 import com.hongik.genieary.domain.user.entity.User;
 import com.hongik.genieary.domain.user.repository.UserRepository;
 import com.hongik.genieary.s3.S3Service;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -119,7 +117,6 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<FriendResponseDto.RecommendItem> getFriendRecommendationsRandom(User me, int maxCount) {
         int minOverlap = 2;                           // 정책 고정
         int cap = Math.min(Math.max(maxCount, 1), 5); // 1~5 캡핑
@@ -150,5 +147,23 @@ public class FriendServiceImpl implements FriendService {
                         r.getInterestOverlap()
                 ))
                 .toList();
+    }
+
+    @Override
+    public Page<FriendResponseDto.FriendGiftDto> getFriendPublicLikedGifts(Long meId, Long friendId, int page, int size) {
+
+        if (!friendRepository.existsMutual(meId, friendId)) {
+            throw new GeneralException(ErrorStatus.FRIEND_NOT_FOUND); // 403/404 등 사내 규칙에 맞춰 처리
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "updatedAt"));
+        Page<Recommend> pageData = recommendRepository
+             .findByUser_IdAndIsLikedTrueAndIsPublicTrue(friendId, pageable);
+        Page<FriendResponseDto.FriendGiftDto> result = pageData.map(r -> new FriendResponseDto.FriendGiftDto(
+             r.getRecommendId(), r.getContentName(), r.getContentImage(),
+             r.getContentDescription(), r.getUpdatedAt()
+        ));
+
+        return result;
     }
 }

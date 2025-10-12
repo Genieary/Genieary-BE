@@ -23,4 +23,12 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
            or (f.user.id = :fId and f.friend.id = :uId)
     """)
     int deletePair(@Param("uId") Long uId, @Param("fId") Long fId);
+
+    @Query("""
+        select (count(f) > 0)
+        from Friend f
+        where (f.user.id = :meId and f.friend.id = :friendId)
+           or (f.user.id = :friendId and f.friend.id = :meId)
+    """)
+    boolean existsMutual(@Param("meId") Long meId, @Param("friendId") Long friendId);
 }
