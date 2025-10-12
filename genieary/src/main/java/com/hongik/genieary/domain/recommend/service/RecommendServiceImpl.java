@@ -37,7 +37,7 @@ public class RecommendServiceImpl implements RecommendService{
 
     @Override
     @Transactional
-    public List<RecommendResponseDto.GiftResultDto> getRecommendations(Long userId, Category category, String event){
+    public List<RecommendResponseDto.GiftRecommendResultDto> getRecommendations(Long userId, Category category, String event){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
@@ -61,11 +61,11 @@ public class RecommendServiceImpl implements RecommendService{
                 ? "The event is " + event + "."
                 : "There is no specific event.";
 
-        List<RecommendResponseDto.GiftResultDto> recommendations = openAiService.getRecommendations(personalities, interests, category, eventText);
+        List<RecommendResponseDto.GiftRecommendResultDto> recommendations = openAiService.getRecommendations(personalities, interests, category, eventText);
 
         // Unsplash로 검색할 키워드 정리
         List<String> keywords = recommendations.stream()
-                .map(RecommendResponseDto.GiftResultDto::getName)
+                .map(RecommendResponseDto.GiftRecommendResultDto::getName)
                 .toList();
 
         System.out.println(keywords);
@@ -81,8 +81,8 @@ public class RecommendServiceImpl implements RecommendService{
                         RecommendResponseDto.GiftImageResultDto::getImageUrl));
 
         // 이미지 url 추가한 dto생성
-        List<RecommendResponseDto.GiftResultDto> enrichedRecommendations = recommendations.stream()
-                .map(dto -> RecommendResponseDto.GiftResultDto.builder()
+        List<RecommendResponseDto.GiftRecommendResultDto> enrichedRecommendations = recommendations.stream()
+                .map(dto -> RecommendResponseDto.GiftRecommendResultDto.builder()
                         .name(dto.getName())
                         .description(dto.getDescription())
                         .imageUrl(imageMap.get(dto.getName()))
@@ -99,10 +99,16 @@ public class RecommendServiceImpl implements RecommendService{
                         .build())
                 .toList();
 
+        List<Recommend> savedEntities = recommendRepository.saveAll(entities);
 
-        recommendRepository.saveAll(entities);
-
-        return enrichedRecommendations;
+        return savedEntities.stream()
+                .map(entity -> RecommendResponseDto.GiftRecommendResultDto.builder()
+                        .recommendId(entity.getRecommendId())
+                        .name(entity.getContentName())
+                        .description(entity.getContentDescription())
+                        .imageUrl(entity.getContentImage())
+                        .build())
+                .toList();
     }
 
     @Override
@@ -174,8 +180,11 @@ public class RecommendServiceImpl implements RecommendService{
 
         return recommends.stream()
                 .map(recommend -> RecommendResponseDto.GiftResultDto.builder()
+                        .recommendId(recommend.getRecommendId())
                         .name(recommend.getContentName())
-                        .description(recommend.getContentDescription())
+                        .imageUrl(recommend.getContentImage())
+                        .isLiked(recommend.isLiked())
+                        .isHated(recommend.isHated())
                         .build())
                 .toList();
     }
