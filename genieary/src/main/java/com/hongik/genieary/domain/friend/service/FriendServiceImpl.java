@@ -78,11 +78,6 @@ public class FriendServiceImpl implements FriendService {
         User friend = userRepository.findById(friendId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.FRIEND_NOT_FOUND));
 
-        boolean isFriend = friendRepository.existsByUserAndFriend(requester, friend);
-        if (!isFriend) {
-            throw new GeneralException(ErrorStatus.FRIEND_NOT_FOUND);
-        }
-
         List<Recommend> likedGifts = recommendRepository.findByUserAndIsLikedTrue(friend);
 
         String presignedUrl = null;
@@ -150,20 +145,24 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Page<FriendResponseDto.FriendGiftDto> getFriendPublicLikedGifts(Long meId, Long friendId, int page, int size) {
+    public Page<FriendResponseDto.FriendGiftDto> getFriendPublicLikedGifts(
+            Long viewerId, Long targetUserId, int page, int size) {
 
-        if (!friendRepository.existsMutual(meId, friendId)) {
-            throw new GeneralException(ErrorStatus.FRIEND_NOT_FOUND); // 403/404 등 사내 규칙에 맞춰 처리
-        }
+        // 대상 유저 존재 확인만 — 친구 여부는 보지 않음
+        User target = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "updatedAt"));
-        Page<Recommend> pageData = recommendRepository
-             .findByUser_IdAndIsLikedTrueAndIsPublicTrue(friendId, pageable);
-        Page<FriendResponseDto.FriendGiftDto> result = pageData.map(r -> new FriendResponseDto.FriendGiftDto(
-             r.getRecommendId(), r.getContentName(), r.getContentImage(),
-             r.getContentDescription(), r.getUpdatedAt()
-        ));
 
-        return result;
+        Page<Recommend> pageData =
+                recommendRepository.findByUser_IdAndIsLikedTrueAndIsPublicTrue(target.getId(), pageable);
+
+        return pageData.map(r -> new FriendResponseDto.FriendGiftDto(
+                r.getRecommendId(),
+                r.getContentName(),
+                r.getContentImage(),
+                r.getContentDescription(),
+                r.getUpdatedAt()
+        ));
     }
 }

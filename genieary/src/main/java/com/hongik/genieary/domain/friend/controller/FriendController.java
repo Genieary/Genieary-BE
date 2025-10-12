@@ -96,15 +96,15 @@ public class FriendController {
 
     @GetMapping("/{friendId}/recommendations")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "친구의 선물 좋아요 리스트 조회", description = "친구가 '좋아요'했고 '공개'로 설정한 선물만 최신순으로 반환합니다.")
+    @Operation(summary = "유저의 선물 좋아요 리스트 조회", description = "대상 유저가 '좋아요'했고 '공개'로 설정한 선물만 최신순으로 반환합니다. (친구 여부와 무관)")
     public ResponseEntity<ApiResponse> getFriendPublicLikedGifts(
             @AuthenticationPrincipal(expression = "id") Long meId,
-            @PathVariable Long friendId,
+            @PathVariable("friendId") Long targetUserId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
 
         Page<FriendResponseDto.FriendGiftDto> data =
-                friendService.getFriendPublicLikedGifts(meId, friendId, page, size);
+                friendService.getFriendPublicLikedGifts(meId, targetUserId, page, size);
 
         return ApiResponse.onSuccess(SuccessStatus._OK, data);
     }
