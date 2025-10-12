@@ -125,6 +125,10 @@ public class RecommendServiceImpl implements RecommendService{
         Recommend recommend = recommendRepository.findByRecommendIdAndUser(recommendId, user)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.RECOMMEND_NOT_FOUND));
 
+        if(!recommend.isLiked()){
+            throw new GeneralException(ErrorStatus.RECOMMEND_NOT_LIKED);
+        }
+
         boolean isPublic = recommend.togleVisibilty();
 
         return RecommendResponseDto.VisibilityResultDto.builder()

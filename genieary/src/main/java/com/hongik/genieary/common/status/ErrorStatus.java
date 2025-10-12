@@ -76,6 +76,7 @@ public enum ErrorStatus {
     RECOMMEND_NOT_FOUND(HttpStatus.NOT_FOUND, "RECOMMEND4002", "선물추천 결과를 찾을 수 없습니다"),
     ALREADY_DISLIKED(HttpStatus.BAD_REQUEST, "RECOMMEND4003","현재 싫어요가 눌려 있어 좋아요를 누를 수 없습니다."),
     ALREADY_LIKED(HttpStatus.BAD_REQUEST, "RECOMMEND4004","현재 좋아요가 눌려 있어 싫어요를 누를 수 없습니다."),
+    RECOMMEND_NOT_LIKED(HttpStatus.BAD_REQUEST, "RECOMMEND4005", "추천이 좋아요 상태가 아닙니다."),
 
     //Chat
     CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4000", "채팅방을 찾을 수 없습니다."),
