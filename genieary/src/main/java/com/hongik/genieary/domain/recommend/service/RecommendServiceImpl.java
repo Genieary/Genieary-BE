@@ -68,8 +68,6 @@ public class RecommendServiceImpl implements RecommendService{
                 .map(RecommendResponseDto.GiftRecommendResultDto::getName)
                 .toList();
 
-        System.out.println(keywords);
-
         // Unsplash로 이미지 검색
         List<RecommendResponseDto.GiftImageResultDto> imageResults = unsplashService.getImageUrls(keywords);
 
@@ -80,22 +78,13 @@ public class RecommendServiceImpl implements RecommendService{
                         RecommendResponseDto.GiftImageResultDto::getName,
                         RecommendResponseDto.GiftImageResultDto::getImageUrl));
 
-        // 이미지 url 추가한 dto생성
-        List<RecommendResponseDto.GiftRecommendResultDto> enrichedRecommendations = recommendations.stream()
-                .map(dto -> RecommendResponseDto.GiftRecommendResultDto.builder()
-                        .name(dto.getName())
-                        .description(dto.getDescription())
-                        .imageUrl(imageMap.get(dto.getName()))
-                        .build())
-                .toList();
-
         // DB 저장
-        List<Recommend> entities = enrichedRecommendations.stream()
+        List<Recommend> entities = recommendations.stream()
                 .map(dto -> Recommend.builder()
                         .user(user)
                         .contentName(dto.getName())
                         .contentDescription(dto.getDescription())
-                        .contentImage(dto.getImageUrl())
+                        .contentImage(imageMap.get(dto.getName()))
                         .build())
                 .toList();
 
