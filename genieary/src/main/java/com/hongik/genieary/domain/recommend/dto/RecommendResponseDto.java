@@ -14,6 +14,16 @@ public class RecommendResponseDto {
     public static class GiftResultDto {
         private String name;
         private String description;
+        private String imageUrl;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class GiftImageResultDto {
+        private String name;
+        private String imageUrl;
     }
 
     @Getter

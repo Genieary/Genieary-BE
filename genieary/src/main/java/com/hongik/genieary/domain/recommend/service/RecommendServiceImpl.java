@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +32,7 @@ public class RecommendServiceImpl implements RecommendService{
     final private OpenAiService openAiService;
     final private RecommendRepository recommendRepository;
     final private InterestRepository interestRepository;
+    final private UnsplashService unsplashService;
 
 
     @Override
@@ -61,17 +63,46 @@ public class RecommendServiceImpl implements RecommendService{
 
         List<RecommendResponseDto.GiftResultDto> recommendations = openAiService.getRecommendations(personalities, interests, category, eventText);
 
-        List<Recommend> entities = recommendations.stream()
+        // Unsplash로 검색할 키워드 정리
+        List<String> keywords = recommendations.stream()
+                .map(RecommendResponseDto.GiftResultDto::getName)
+                .toList();
+
+        System.out.println(keywords);
+
+        // Unsplash로 이미지 검색
+        List<RecommendResponseDto.GiftImageResultDto> imageResults = unsplashService.getImageUrls(keywords);
+
+        // name 기준으로 이미지 URL 매핑
+        Map<String, String> imageMap = imageResults.stream()
+                .filter(dto -> dto.getImageUrl() != null) // null 제거
+                .collect(Collectors.toMap(
+                        RecommendResponseDto.GiftImageResultDto::getName,
+                        RecommendResponseDto.GiftImageResultDto::getImageUrl));
+
+        // 이미지 url 추가한 dto생성
+        List<RecommendResponseDto.GiftResultDto> enrichedRecommendations = recommendations.stream()
+                .map(dto -> RecommendResponseDto.GiftResultDto.builder()
+                        .name(dto.getName())
+                        .description(dto.getDescription())
+                        .imageUrl(imageMap.get(dto.getName()))
+                        .build())
+                .toList();
+
+        // DB 저장
+        List<Recommend> entities = enrichedRecommendations.stream()
                 .map(dto -> Recommend.builder()
                         .user(user)
                         .contentName(dto.getName())
                         .contentDescription(dto.getDescription())
+                        .contentImage(dto.getImageUrl())
                         .build())
                 .toList();
 
+
         recommendRepository.saveAll(entities);
 
-        return recommendations;
+        return enrichedRecommendations;
     }
 
     @Override

@@ -17,8 +17,8 @@ Recommend 3 gifts in {category}.
   Do NOT invent or hallucinate links. Use only real existing ones.
 
 Respond ONLY with a valid JSON array.
-Each gift must have:
-- "name": the gift name (in English or Korean if appropriate)
+Each response must have:
+- "name": the gift name ALWAYS in English (not Korean, not translated)
 - "description": a short explanation in Korean (and if category=FUN, include the link here)
 
 Return in the following JSON format:

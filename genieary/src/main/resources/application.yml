@@ -38,6 +38,10 @@ cloud:
     s3:
       bucket: genieary
 
+unsplash:
+  access-key: ${UNSPLASH_ACCESS_KEY}
+
+
 management:
   endpoints:
     web:
