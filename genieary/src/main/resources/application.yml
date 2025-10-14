@@ -38,9 +38,10 @@ cloud:
     s3:
       bucket: genieary
 
-unsplash:
-  access-key: ${UNSPLASH_ACCESS_KEY}
-
+google:
+  custom-search:
+    api-key: ${GOOGLE_API_KEY}
+    cx: ${GOOGLE_CX_ID}
 
 management:
   endpoints:

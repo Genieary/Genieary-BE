@@ -14,6 +14,7 @@ public class RecommendResponseDto {
     public static class GiftRecommendResultDto {
         private Long recommendId;
         private String name;
+        private String searchName;
         private String description;
         private String imageUrl;
     }
@@ -23,7 +24,7 @@ public class RecommendResponseDto {
     @AllArgsConstructor
     @Builder
     public static class GiftImageResultDto {
-        private String name;
+        private String searchName;
         private String imageUrl;
     }
 

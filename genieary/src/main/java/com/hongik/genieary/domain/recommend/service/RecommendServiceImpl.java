@@ -32,7 +32,7 @@ public class RecommendServiceImpl implements RecommendService{
     final private OpenAiService openAiService;
     final private RecommendRepository recommendRepository;
     final private InterestRepository interestRepository;
-    final private UnsplashService unsplashService;
+    final private GoogleSearchService googleSearchService;
 
 
     @Override
@@ -63,19 +63,18 @@ public class RecommendServiceImpl implements RecommendService{
 
         List<RecommendResponseDto.GiftRecommendResultDto> recommendations = openAiService.getRecommendations(personalities, interests, category, eventText);
 
-        // Unsplash로 검색할 키워드 정리
         List<String> keywords = recommendations.stream()
-                .map(RecommendResponseDto.GiftRecommendResultDto::getName)
+                .map(RecommendResponseDto.GiftRecommendResultDto::getSearchName)
                 .toList();
 
-        // Unsplash로 이미지 검색
-        List<RecommendResponseDto.GiftImageResultDto> imageResults = unsplashService.getImageUrls(keywords);
+        // 이미지 검색
+        List<RecommendResponseDto.GiftImageResultDto> imageResults = googleSearchService.getImageUrls(keywords);
 
-        // name 기준으로 이미지 URL 매핑
+        // searchName 기준으로 이미지 URL 매핑
         Map<String, String> imageMap = imageResults.stream()
                 .filter(dto -> dto.getImageUrl() != null) // null 제거
                 .collect(Collectors.toMap(
-                        RecommendResponseDto.GiftImageResultDto::getName,
+                        RecommendResponseDto.GiftImageResultDto::getSearchName,
                         RecommendResponseDto.GiftImageResultDto::getImageUrl));
 
         // DB 저장
@@ -84,7 +83,7 @@ public class RecommendServiceImpl implements RecommendService{
                         .user(user)
                         .contentName(dto.getName())
                         .contentDescription(dto.getDescription())
-                        .contentImage(imageMap.get(dto.getName()))
+                        .contentImage(imageMap.get(dto.getSearchName()))
                         .build())
                 .toList();
 

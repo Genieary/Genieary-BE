@@ -14,54 +14,60 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-public class UnsplashService {
+public class GoogleSearchService {
 
     private final RestTemplate restTemplate;
 
-    @Value("${unsplash.access-key}")
-    private String accessKey;
+    @Value("${google.custom-search.api-key}")
+    private String apiKey;
+
+    @Value("${google.custom-search.cx}")
+    private String cx;
 
     public List<RecommendResponseDto.GiftImageResultDto> getImageUrls(List<String> keywords) {
         List<RecommendResponseDto.GiftImageResultDto> results = new ArrayList<>();
 
         for (String keyword : keywords) {
             try {
-                int randomPage = new Random().nextInt(1) + 1;
                 String url = UriComponentsBuilder
-                        .fromHttpUrl("https://api.unsplash.com/search/photos")
-                        .queryParam("query", keyword)
-                        .queryParam("per_page", 1)
-                        .queryParam("client_id", accessKey)
+                        .fromHttpUrl("https://www.googleapis.com/customsearch/v1")
+                        .queryParam("key", apiKey)
+                        .queryParam("cx", cx)
+                        .queryParam("q", keyword)
+                        .queryParam("searchType", "image")
+                        .queryParam("num", 1)
                         .toUriString();
-
-                System.out.println(url);
 
                 Map<String, Object> response = restTemplate.getForObject(url, Map.class);
 
-                // 결과 검사
-                if (response == null || !response.containsKey("results")) {
+                if (response == null || !response.containsKey("items")) {
                     results.add(new RecommendResponseDto.GiftImageResultDto(keyword, null));
                     continue;
                 }
 
-                List<Map<String, Object>> photos = (List<Map<String, Object>>) response.get("results");
-                if (photos.isEmpty()) {
+                List<Map<String, Object>> items = (List<Map<String, Object>>) response.get("items");
+                if (items.isEmpty()) {
                     results.add(new RecommendResponseDto.GiftImageResultDto(keyword, null));
                     continue;
                 }
 
-                Map<String, Object> urls = (Map<String, Object>) photos.get(0).get("urls");
-                String imageUrl = urls != null ? (String) urls.get("small") : null;
+                String imageUrl = (String) items.get(0).get("link");
 
-                results.add(new RecommendResponseDto.GiftImageResultDto(keyword, imageUrl));
+                results.add(RecommendResponseDto.GiftImageResultDto.builder()
+                        .searchName(keyword)
+                        .imageUrl(imageUrl)
+                        .build());
 
             } catch (Exception e) {
-                results.add(new RecommendResponseDto.GiftImageResultDto(keyword, null));
+                results.add(RecommendResponseDto.GiftImageResultDto.builder()
+                        .searchName(keyword)
+                        .imageUrl(null)
+                        .build());
             }
         }
 
         return results;
     }
+
+
 }
-
-
