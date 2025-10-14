@@ -11,9 +11,21 @@ public class RecommendResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GiftResultDto {
+    public static class GiftRecommendResultDto {
+        private Long recommendId;
         private String name;
+        private String searchName;
         private String description;
+        private String imageUrl;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class GiftImageResultDto {
+        private String searchName;
+        private String imageUrl;
     }
 
     @Getter
@@ -41,5 +53,18 @@ public class RecommendResponseDto {
     public static class VisibilityResultDto {
         private Long recommendId;
         private boolean isPublic;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GiftResultDto {
+        private Long recommendId;
+        private String name;
+        private String imageUrl;
+        private boolean isLiked;
+        private boolean isHated;
+
     }
 }
