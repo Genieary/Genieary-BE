@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class FriendResponseDto {
@@ -64,5 +66,17 @@ public class FriendResponseDto {
         private Integer totalOverlap;       // 성격+관심사 겹침 수
         private Integer personalityOverlap; // 성격 겹침 수
         private Integer interestOverlap;    // 관심사 겹침 수
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FriendGiftDto {
+        private Long recommendId;
+        private String name;
+        private String imageUrl;
+        private String description;
+        private LocalDate updatedAt;
     }
 }
