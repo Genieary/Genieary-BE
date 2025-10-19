@@ -34,7 +34,7 @@ public class RecommendController {
             description = "성공",
             content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = RecommendResponseDto.GiftResultDto .class)
+                    schema = @Schema(implementation = RecommendResponseDto.GiftRecommendResultDto.class)
             )
     )
     @PostMapping
@@ -44,7 +44,7 @@ public class RecommendController {
             @RequestParam Category category,
             @RequestParam(required = false) String event){
 
-        List<RecommendResponseDto.GiftResultDto> gifts = recommendService.getRecommendations(userId, category, event);
+        List<RecommendResponseDto.GiftRecommendResultDto> gifts = recommendService.getRecommendations(userId, category, event);
 
         return ApiResponse.onSuccess(SuccessStatus._OK, gifts);
     }

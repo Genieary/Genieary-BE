@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,11 +32,12 @@ public class RecommendServiceImpl implements RecommendService{
     final private OpenAiService openAiService;
     final private RecommendRepository recommendRepository;
     final private InterestRepository interestRepository;
+    final private GoogleSearchService googleSearchService;
 
 
     @Override
     @Transactional
-    public List<RecommendResponseDto.GiftResultDto> getRecommendations(Long userId, Category category, String event){
+    public List<RecommendResponseDto.GiftRecommendResultDto> getRecommendations(Long userId, Category category, String event){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
@@ -59,19 +61,42 @@ public class RecommendServiceImpl implements RecommendService{
                 ? "The event is " + event + "."
                 : "There is no specific event.";
 
-        List<RecommendResponseDto.GiftResultDto> recommendations = openAiService.getRecommendations(personalities, interests, category, eventText);
+        List<RecommendResponseDto.GiftRecommendResultDto> recommendations = openAiService.getRecommendations(personalities, interests, category, eventText);
 
+        List<String> keywords = recommendations.stream()
+                .map(RecommendResponseDto.GiftRecommendResultDto::getSearchName)
+                .toList();
+
+        // 이미지 검색
+        List<RecommendResponseDto.GiftImageResultDto> imageResults = googleSearchService.getImageUrls(keywords);
+
+        // searchName 기준으로 이미지 URL 매핑
+        Map<String, String> imageMap = imageResults.stream()
+                .filter(dto -> dto.getImageUrl() != null) // null 제거
+                .collect(Collectors.toMap(
+                        RecommendResponseDto.GiftImageResultDto::getSearchName,
+                        RecommendResponseDto.GiftImageResultDto::getImageUrl));
+
+        // DB 저장
         List<Recommend> entities = recommendations.stream()
                 .map(dto -> Recommend.builder()
                         .user(user)
                         .contentName(dto.getName())
                         .contentDescription(dto.getDescription())
+                        .contentImage(imageMap.get(dto.getSearchName()))
                         .build())
                 .toList();
 
-        recommendRepository.saveAll(entities);
+        List<Recommend> savedEntities = recommendRepository.saveAll(entities);
 
-        return recommendations;
+        return savedEntities.stream()
+                .map(entity -> RecommendResponseDto.GiftRecommendResultDto.builder()
+                        .recommendId(entity.getRecommendId())
+                        .name(entity.getContentName())
+                        .description(entity.getContentDescription())
+                        .imageUrl(entity.getContentImage())
+                        .build())
+                .toList();
     }
 
     @Override
@@ -143,8 +168,11 @@ public class RecommendServiceImpl implements RecommendService{
 
         return recommends.stream()
                 .map(recommend -> RecommendResponseDto.GiftResultDto.builder()
+                        .recommendId(recommend.getRecommendId())
                         .name(recommend.getContentName())
-                        .description(recommend.getContentDescription())
+                        .imageUrl(recommend.getContentImage())
+                        .isLiked(recommend.isLiked())
+                        .isHated(recommend.isHated())
                         .build())
                 .toList();
     }
