@@ -2,7 +2,7 @@
 홍익대학교 졸업프로젝트 - 얼굴 분석을 통한 본인 이해 다이어리 선물 추천 서비스
 
 ## 👶🏼 Backend Members 👶🏼
-<img width="160px" alt="스크린샷 2025-09-17 오전 1 49 40" src="https://github.com/user-attachments/assets/2f082b8d-6a4b-4ef1-ab16-10d9b3c278e6" /> | <img width="160px" alt="image" src="https://github.com/user-attachments/assets/0e6bc9fe-8c18-453e-b97f-934f92efa433" />| <img width="160px" src="https://github.com/user-attachments/assets/0a2d857c-7ca2-425c-a4af-770b88527c51" />| 
+<img width="160px" height="346" alt="image" src="https://github.com/user-attachments/assets/09690ba1-57ca-4938-8672-9785eb891075" /> | <img width="160px" alt="image" src="https://github.com/user-attachments/assets/0e6bc9fe-8c18-453e-b97f-934f92efa433" />| <img width="160px" src="https://github.com/user-attachments/assets/0a2d857c-7ca2-425c-a4af-770b88527c51" />| 
 |:-----:|:-----:|:-----:|
 |[정원희](https://github.com/oneeee822)|[원동희](https://github.com/ddhi7)|[권아림](https://github.com/dkfla)|
 | 정원희 👩🏻‍💻| 원동희 👩🏻‍💻| 권아림 👩🏻‍💻|
