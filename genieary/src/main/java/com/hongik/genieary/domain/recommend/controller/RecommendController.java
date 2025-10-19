@@ -12,7 +12,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -134,5 +136,20 @@ public class RecommendController {
         List<RecommendResponseDto.GiftResultDto> gifts = recommendService.getRecommendGifts(userId, date);
 
         return ApiResponse.onSuccess(SuccessStatus._OK, gifts);
+    }
+
+    @Operation(
+            summary = "저장된 선물 목록 조회",
+            description = "좋아요를 누른 모든 추천 선물(공개/비공개 포함)을 조회합니다."
+    )
+    @GetMapping("/like")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse> getMyLikedRecommendations(
+            @AuthenticationPrincipal(expression = "id") Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+
+        Page<RecommendResponseDto.LikeListDto> data = recommendService.getMyLikedRecommendations(userId, page, size);
+        return ApiResponse.onSuccess(SuccessStatus._OK, data);
     }
 }
