@@ -19,11 +19,11 @@ import java.lang.annotation.*;
                         mediaType = "application/json",
                         schema = @Schema(implementation = com.hongik.genieary.common.response.ApiResponse.class),
                         examples = @ExampleObject(
-                                name = "RecommendParseError",
+                                name = "ParseError",
                                 summary = "Json 응답 parse 실패",
                                 value = SwaggerExamples.JSON_PARSE_ERROR
                         )
                 )
         )
 })
-public @interface RecommendParseErrorApiResponse {}
+public @interface ParseErrorApiResponse {}
