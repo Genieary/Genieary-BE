@@ -38,7 +38,7 @@ public class RecommendController {
             )
     )
     @PostMapping
-    @RecommendParseErrorApiResponse
+    @ParseErrorApiResponse
     public ResponseEntity<ApiResponse> recommendGifts(
             @AuthenticationPrincipal(expression = "id") Long userId,
             @RequestParam Category category,
