@@ -38,6 +38,14 @@ cloud:
     s3:
       bucket: genieary
 
+google:
+  custom-search:
+    api-key: ${GOOGLE_API_KEY}
+    cx: ${GOOGLE_CX_ID}
+
+fastapi:
+  base-url: ${FASTAPI_BASE_URL}
+
 management:
   endpoints:
     web:

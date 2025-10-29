@@ -122,7 +122,7 @@ public class DiaryServiceImpl implements DiaryService{
     }
 
     @Override
-    public String getDiaryFaceImageUrl(Long userId, Long diaryId) {
+    public DiaryResponseDto.DiaryFaceImageResultDto getDiaryFaceImageUrl(Long userId, Long diaryId) {
         Diary diary = diaryRepository.findByDiaryIdAndUserId(diaryId, userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.DIARY_NOT_FOUND));
 
@@ -131,7 +131,9 @@ public class DiaryServiceImpl implements DiaryService{
             throw new GeneralException(ErrorStatus.IMAGE_NOT_FOUND);
         }
 
-        return s3Service.generatePresignedDownloadUrl(fileName, ImageType.DIARY);
+        String url = s3Service.generatePresignedDownloadUrl(fileName, ImageType.DIARY);
+
+        return DiaryConverter.toFaceImageResponseDto(diary.getDiaryId(), url);
     }
 
 

@@ -15,4 +15,6 @@ public interface FriendService {
     FriendResponseDto.FriendProfileDto getFriendProfile(User requester, Long friendId);
     Page<FriendResponseDto.FriendSearchResultDto> searchFriends(User requester, String nickname, Pageable pageable);
     List<FriendResponseDto.RecommendItem> getFriendRecommendationsRandom(User me, int maxCount);
-}
+    Page<FriendResponseDto.FriendGiftDto> getFriendPublicLikedGifts(Long meId, Long friendId, int page, int size);
+
+    }
