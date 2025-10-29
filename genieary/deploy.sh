@@ -39,7 +39,8 @@ else
   sed -i 's/# server blue:8080;/server blue:8080;/' ${NGINX_CONF_PATH}
 fi
 
-docker exec genieary-nginx nginx -s reload
+echo "Reloading Nginx by recreating the container..."
+docker-compose -f ${DOCKER_COMPOSE_PATH} up -d --force-recreate nginx
 
 if [ "$CURRENT_CONTAINER" = "genieary-app-blue" ]; then
   docker-compose -f ${DOCKER_COMPOSE_PATH} down --remove-orphans blue
