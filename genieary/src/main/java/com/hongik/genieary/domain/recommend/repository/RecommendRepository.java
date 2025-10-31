@@ -15,5 +15,6 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long> {
     Optional<Recommend> findByRecommendIdAndUser(Long recommendId, User user);
     List<Recommend> findTop3ByUserIdAndCreatedAtOrderByRecommendIdDesc(Long userId, LocalDate createdAt);
     Page<Recommend> findByUser_IdAndIsLikedTrueAndIsPublicTrue(Long friendId, Pageable pageable);
+    Page<Recommend> findByUser_IdAndIsLikedTrue(Long userId, Pageable pageable);
 }
 

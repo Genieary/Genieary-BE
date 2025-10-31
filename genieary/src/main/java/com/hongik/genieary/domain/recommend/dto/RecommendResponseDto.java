@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 public class RecommendResponseDto {
 
     @Getter
@@ -66,5 +68,18 @@ public class RecommendResponseDto {
         private boolean isLiked;
         private boolean isHated;
 
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LikeListDto {
+        private Long recommendId;
+        private String name;
+        private String imageUrl;
+        private String description;
+        private LocalDate updatedAt;
+        private boolean isPublic;
     }
 }
