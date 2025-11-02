@@ -3,6 +3,7 @@ package com.hongik.genieary.domain.ai.controller;
 import com.hongik.genieary.common.response.ApiResponse;
 import com.hongik.genieary.common.status.SuccessStatus;
 import com.hongik.genieary.common.swagger.AnalysisNotFoundApiResponse;
+import com.hongik.genieary.common.swagger.DiaryNotFoundApiResponse;
 import com.hongik.genieary.common.swagger.ParseErrorApiResponse;
 import com.hongik.genieary.domain.ai.dto.FastApiResponseDto;
 import com.hongik.genieary.domain.ai.service.FaceAnalysisService;
@@ -62,10 +63,12 @@ public class FastApiController {
             )
     )
     @AnalysisNotFoundApiResponse
+    @DiaryNotFoundApiResponse
     public ResponseEntity<ApiResponse> getFaceAnalysis(
+            @AuthenticationPrincipal(expression = "id") Long userId,
             @PathVariable Long diaryId) {
 
-        FastApiResponseDto.FaceAnalysisResponseDto dto = faceAnalysisService.getFaceAnalysisByDiaryId(diaryId);
+        FastApiResponseDto.FaceAnalysisResponseDto dto = faceAnalysisService.getFaceAnalysisByDiaryId(diaryId, userId);
 
         return ApiResponse.onSuccess(SuccessStatus._OK, dto);
     }
