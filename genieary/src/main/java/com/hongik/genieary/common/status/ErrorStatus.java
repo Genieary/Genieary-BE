@@ -90,6 +90,7 @@ public enum ErrorStatus {
     //Analysis
     EMOTION_ANALYSIS_NOT_FOUND(HttpStatus.NOT_FOUND, "ANALYSIS4001", "얼굴분석이 존재하지 않습니다. 먼저 생성해주세요.");
 
+
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;

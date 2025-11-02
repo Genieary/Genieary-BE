@@ -19,4 +19,5 @@ public interface RecommendService {
     List<RecommendResponseDto.GiftResultDto> getRecommendGifts(Long userId, LocalDate date);
 
     Page<RecommendResponseDto.LikeListDto> getMyLikedRecommendations(Long userId, int page, int size);
+
 }

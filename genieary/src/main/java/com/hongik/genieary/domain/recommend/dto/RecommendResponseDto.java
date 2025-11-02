@@ -82,4 +82,5 @@ public class RecommendResponseDto {
         private LocalDate updatedAt;
         private boolean isPublic;
     }
+
 }

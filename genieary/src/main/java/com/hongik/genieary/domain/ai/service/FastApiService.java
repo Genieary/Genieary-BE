@@ -21,6 +21,7 @@ public class FastApiService {
     private final FastApiClient fastApiClient;
     private final OpenAiService openAiService;
     private final DiaryRepository diaryRepository;
+
     private final EmotionAnalysisRepository emotionAnalysisRepository;
     private final EmotionAnalysisConverter emotionAnalysisConverter;
 
@@ -41,7 +42,7 @@ public class FastApiService {
 
         EmotionAnalysis entity = emotionAnalysisConverter.toEntity(result, diaryId);
         emotionAnalysisRepository.save(entity);
-
+      
         return result;
     }
 }
