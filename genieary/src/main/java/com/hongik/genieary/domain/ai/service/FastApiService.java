@@ -1,5 +1,7 @@
 package com.hongik.genieary.domain.ai.service;
 
+import com.hongik.genieary.common.exception.GeneralException;
+import com.hongik.genieary.common.status.ErrorStatus;
 import com.hongik.genieary.domain.ai.dto.FastApiResponseDto;
 import com.hongik.genieary.domain.diary.entity.Diary;
 import com.hongik.genieary.domain.diary.repository.DiaryRepository;
@@ -18,6 +20,9 @@ public class FastApiService {
     private final DiaryRepository diaryRepository;
 
     public FastApiResponseDto.FaceAnalysisResponseDto analyzeFace(Long userId, LocalDate diaryDate, String faceImg) {
+        Long diaryId = diaryRepository.findDiaryIdByUserIdAndDiaryDate(userId, diaryDate)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.DIARY_NOT_FOUND));
+
         FastApiResponseDto.FaceEmotionResponseDto dto = fastApiClient.analyzeFace(faceImg);
 
         String diaryContent = diaryRepository.findByUserIdAndDiaryDate(userId, diaryDate)
