@@ -33,4 +33,16 @@ public class FaceAnalysisService {
 
         return emotionAnalysisConverter.toDto(faceAnalysis);
     }
+
+    @Transactional
+    public void deleteFaceAnalysis(Long diaryId, Long userId) {
+
+        diaryRepository.findByDiaryIdAndUserId(diaryId, userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.DIARY_NOT_FOUND));
+
+        EmotionAnalysis faceAnalysis = emotionAnalysisRepository.findByDiaryId(diaryId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.EMOTION_ANALYSIS_NOT_FOUND));
+
+        emotionAnalysisRepository.delete(faceAnalysis);
+    }
 }

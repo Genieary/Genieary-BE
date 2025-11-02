@@ -72,5 +72,27 @@ public class FastApiController {
 
         return ApiResponse.onSuccess(SuccessStatus._OK, dto);
     }
+
+    @DeleteMapping("/{diaryId}")
+    @Operation(
+            summary = "감정분석 삭제 api",
+            description = "다이어리 아이디로 감정분석 결과를 삭제합니다.")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = io.swagger.v3.oas.annotations.responses.ApiResponse.class)
+            )
+    )
+    @AnalysisNotFoundApiResponse
+    @DiaryNotFoundApiResponse
+    public ResponseEntity<ApiResponse> deleteFaceAnalysis(
+            @AuthenticationPrincipal(expression = "id") Long userId,
+            @PathVariable Long diaryId) {
+
+        faceAnalysisService.deleteFaceAnalysis(diaryId, userId);
+        return ApiResponse.onSuccess(SuccessStatus._OK);
+    }
 }
 
