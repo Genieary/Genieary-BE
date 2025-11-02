@@ -10,11 +10,11 @@ import java.nio.charset.StandardCharsets;
 public class PromptLoader {
 
     public String loadPrompt(String fileName) {
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("prompts/" + filename)) {
-            if (is == null) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("prompts/" + fileName)) {
+            if (inputStream == null) {
                 throw new IllegalArgumentException("프롬프트 파일을 찾을 수 없습니다: " + fileName);
             }
-            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException("프롬프트 파일 읽기 실패", e);
         }
