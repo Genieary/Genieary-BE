@@ -14,6 +14,10 @@ import com.hongik.genieary.domain.user.repository.InterestRepository;
 import com.hongik.genieary.domain.user.repository.UserInterestRepository;
 import com.hongik.genieary.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -175,5 +179,23 @@ public class RecommendServiceImpl implements RecommendService{
                         .isHated(recommend.isHated())
                         .build())
                 .toList();
+    }
+
+    @Override
+    public Page<RecommendResponseDto.LikeListDto> getMyLikedRecommendations(Long userId, int page, int size) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "updatedAt"));
+        Page<Recommend> likedPage = recommendRepository.findByUser_IdAndIsLikedTrue(user.getId(), pageable);
+
+        return likedPage.map(r -> RecommendResponseDto.LikeListDto.builder()
+                .recommendId(r.getRecommendId())
+                .name(r.getContentName())
+                .imageUrl(r.getContentImage())
+                .description(r.getContentDescription())
+                .updatedAt(r.getUpdatedAt())
+                .isPublic(r.isPublic())
+                .build());
     }
 }
