@@ -22,8 +22,6 @@ public class EmotionAnalysis {
 
     @Column
     private String analysis;
-
-    private LocalDate diaryDate;
 }
 
 
