@@ -18,6 +18,7 @@ public class FastApiService {
     private final FastApiClient fastApiClient;
     private final OpenAiService openAiService;
     private final DiaryRepository diaryRepository;
+    private final EmotionAnalysisRepository emotionAnalysisRepository;
 
     public FastApiResponseDto.FaceAnalysisResponseDto analyzeFace(Long userId, LocalDate diaryDate, String faceImg) {
         Long diaryId = diaryRepository.findDiaryIdByUserIdAndDiaryDate(userId, diaryDate)
@@ -30,6 +31,9 @@ public class FastApiService {
                 .orElse(null);
 
         FastApiResponseDto.FaceAnalysisResponseDto result = openAiService.getFaceAnalysis(faceImg, dto.getPredictedEmotion(), dto.getAllPredictions(), diaryContent);
+
+        // 감정분석 있으면 삭제
+        emotionAnalysisRepository.findByDiaryId(diaryId).ifPresent(emotionAnalysisRepository::delete);
 
         return result;
     }

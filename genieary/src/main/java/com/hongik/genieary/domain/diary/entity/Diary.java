@@ -41,9 +41,6 @@ public class Diary extends BaseEntity{
     @Column(name = "imageFileName")
     private String imageFileName;
 
-    @OneToOne(mappedBy = "diary", cascade = CascadeType.ALL)
-    private EmotionAnalysis emotionAnalysis;
-
     public void update(String content, Boolean isLiked) {
         if (content != null) this.content = content;
         if (isLiked != null) this.isLiked = isLiked;

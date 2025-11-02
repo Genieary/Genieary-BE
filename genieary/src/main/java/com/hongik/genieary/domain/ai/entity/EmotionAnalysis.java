@@ -11,9 +11,8 @@ public class EmotionAnalysis {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long emotionAnalysisId;
 
-    @OneToOne
-    @JoinColumn(name = "diary_id")
-    private Diary diary;
+    @Column(name = "diary_id", nullable = false)
+    private Long diaryId;
 
     private String predictedEmotion;
 
