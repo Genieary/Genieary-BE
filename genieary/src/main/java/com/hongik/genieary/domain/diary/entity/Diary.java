@@ -3,7 +3,6 @@ package com.hongik.genieary.domain.diary.entity;
 import com.hongik.genieary.domain.calendar.entity.Calendar;
 import com.hongik.genieary.domain.common.BaseEntity;
 import com.hongik.genieary.domain.user.entity.User;
-import com.hongik.genieary.domain.ai.entity.EmotionAnalysis;
 import jakarta.persistence.*;
 import lombok.*;
 

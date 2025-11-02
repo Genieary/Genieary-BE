@@ -24,5 +24,6 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
     Optional<Diary> findByDiaryDateAndUserId(LocalDate date, Long userId);
 
-    Optional<Long> findDiaryIdByUserIdAndDiaryDate(Long userId, LocalDate diaryDate);
+    @Query("SELECT d.id FROM Diary d WHERE d.user.id = :userId AND d.diaryDate = :diaryDate")
+    Optional<Long> findDiaryIdByUserIdAndDiaryDate(@Param("userId") Long userId, @Param("diaryDate") LocalDate diaryDate);
 }

@@ -1,11 +1,13 @@
 package com.hongik.genieary.domain.ai.entity;
 
-import com.hongik.genieary.domain.diary.entity.Diary;
 import jakarta.persistence.*;
-
-import java.time.LocalDate;
+import lombok.*;
 
 @Entity
+@Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class EmotionAnalysis {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
