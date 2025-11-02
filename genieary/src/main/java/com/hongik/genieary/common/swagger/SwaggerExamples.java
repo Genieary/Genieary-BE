@@ -151,4 +151,11 @@ public class SwaggerExamples {
             }
             """;
 
+    public static final String ANALYSIS_NOT_FOUND_ERROR = """
+            {
+              "isSuccess": false,
+              "code": "ANALYSIS4001",
+              "message": "얼굴분석이 존재하지 않습니다. 먼저 생성해주세요."
+            }
+            """;
 }
