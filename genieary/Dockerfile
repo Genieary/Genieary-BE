@@ -3,7 +3,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN ./gradlew clean build -x test
+RUN ./gradlew clean bootJar -x test
 
 FROM eclipse-temurin:17-jdk
 WORKDIR /app
