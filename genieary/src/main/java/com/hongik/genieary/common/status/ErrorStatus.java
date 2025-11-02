@@ -85,7 +85,10 @@ public enum ErrorStatus {
     NOT_FRIEND_RELATIONSHIP(HttpStatus.BAD_REQUEST, "CHAT4003", "두 유저는 친구관계가 아닙니다"),
 
     //Calendar
-    CALENDAR_NOT_FOUND(HttpStatus.NOT_FOUND, "CALENDAR4001", "캘린더가 존재하지 않습니다. 일기를 먼저 생성해주세요.");
+    CALENDAR_NOT_FOUND(HttpStatus.NOT_FOUND, "CALENDAR4001", "캘린더가 존재하지 않습니다. 일기를 먼저 생성해주세요."),
+
+    //Analysis
+    EMOTION_ANALYSIS_NOT_FOUND(HttpStatus.NOT_FOUND, "ANALYSIS4001", "얼굴분석이 존재하지 않습니다. 먼저 생성해주세요.");
 
     private final HttpStatus httpStatus;
     private final String code;

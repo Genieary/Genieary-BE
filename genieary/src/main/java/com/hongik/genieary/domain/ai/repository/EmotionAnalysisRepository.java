@@ -1,4 +1,4 @@
-package com.hongik.genieary.domain.ai.service;
+package com.hongik.genieary.domain.ai.repository;
 
 import com.hongik.genieary.domain.ai.entity.EmotionAnalysis;
 import org.springframework.data.jpa.repository.JpaRepository;

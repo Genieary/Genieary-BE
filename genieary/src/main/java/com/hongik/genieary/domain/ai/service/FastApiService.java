@@ -5,6 +5,7 @@ import com.hongik.genieary.common.status.ErrorStatus;
 import com.hongik.genieary.domain.ai.converter.EmotionAnalysisConverter;
 import com.hongik.genieary.domain.ai.dto.FastApiResponseDto;
 import com.hongik.genieary.domain.ai.entity.EmotionAnalysis;
+import com.hongik.genieary.domain.ai.repository.EmotionAnalysisRepository;
 import com.hongik.genieary.domain.diary.entity.Diary;
 import com.hongik.genieary.domain.diary.repository.DiaryRepository;
 import com.hongik.genieary.infra.fastapi.FastApiClient;
