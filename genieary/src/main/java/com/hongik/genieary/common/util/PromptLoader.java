@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 public class PromptLoader {
 
     public String loadPrompt(String fileName) {
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream("prompts/" + fileName)) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("prompts/" + filename)) {
             if (is == null) {
                 throw new IllegalArgumentException("프롬프트 파일을 찾을 수 없습니다: " + fileName);
             }
