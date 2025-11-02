@@ -3,6 +3,7 @@ package com.hongik.genieary.domain.diary.entity;
 import com.hongik.genieary.domain.calendar.entity.Calendar;
 import com.hongik.genieary.domain.common.BaseEntity;
 import com.hongik.genieary.domain.user.entity.User;
+import com.hongik.genieary.domain.ai.entity.EmotionAnalysis;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,6 +40,9 @@ public class Diary extends BaseEntity{
 
     @Column(name = "imageFileName")
     private String imageFileName;
+
+    @OneToOne(mappedBy = "diary", cascade = CascadeType.ALL)
+    private EmotionAnalysis emotionAnalysis;
 
     public void update(String content, Boolean isLiked) {
         if (content != null) this.content = content;
