@@ -66,11 +66,11 @@ public class UserService {
 
         // 변경된 필드만 업데이트
         String nickname = request.getNickname() != null ? request.getNickname() : user.getNickname();
-        LocalDate birthDate = request.getBirthDate() != null ? request.getBirthDate() : user.getBirthDate();
-        Gender gender = request.getGender() != null ? request.getGender() : user.getGender();
+//        LocalDate birthDate = request.getBirthDate() != null ? request.getBirthDate() : user.getBirthDate();
+//        Gender gender = request.getGender() != null ? request.getGender() : user.getGender();
         Set<Personality> personalities = request.getPersonalities() != null ? request.getPersonalities() : user.getPersonalities();
 
-        user.updateProfile(nickname, birthDate, gender, personalities);
+        user.updateProfile(nickname, user.getBirthDate(), user.getGender(), personalities);
         User savedUser = userRepository.save(user);
         return ProfileResponse.from(savedUser);
     }
@@ -81,7 +81,15 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-        return ProfileResponse.from(user);
+        String imageUrl = null;
+
+        if (user.getImageFileName() != null && !user.getImageFileName().isEmpty()) {
+            imageUrl = s3Service.generatePresignedDownloadUrl(
+                    user.getImageFileName(),
+                    ImageType.PROFILE
+            );
+        }
+        return ProfileResponse.from(user, imageUrl);
     }
 
     // 프로필 완성 여부 확인
