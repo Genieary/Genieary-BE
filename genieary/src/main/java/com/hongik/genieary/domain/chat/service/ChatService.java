@@ -10,9 +10,11 @@ import com.hongik.genieary.domain.chat.entity.ChatMessage;
 import com.hongik.genieary.domain.chat.entity.ChatRoom;
 import com.hongik.genieary.domain.chat.repository.ChatMessageRepository;
 import com.hongik.genieary.domain.chat.repository.ChatRoomRepository;
+import com.hongik.genieary.domain.enums.ImageType;
 import com.hongik.genieary.domain.friend.repository.FriendRepository;
 import com.hongik.genieary.domain.user.entity.User;
 import com.hongik.genieary.domain.user.repository.UserRepository;
+import com.hongik.genieary.s3.S3Service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,6 +40,7 @@ public class ChatService {
     private final FriendRepository friendRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatConverter chatConverter;
+    private final S3Service s3Service;
 
     // 채팅방 생성 또는 조회
     public ChatRoomResponse createOrGetChatRoom(Long user1Id, Long user2Id) {
@@ -51,13 +54,15 @@ public class ChatService {
 
         if (existingRoom.isPresent()) {
             ChatRoom chatRoom = existingRoom.get();
-            return chatConverter.convertToChatRoomResponse(chatRoom, user1Id);
+            User otherUser = chatRoom.getOtherUser(user1Id);
+            String profileImageUrl = generateProfileImageUrl(otherUser);
+            return chatConverter.convertToChatRoomResponse(chatRoom, user1Id, profileImageUrl);
         }
 
         // 새 채팅방 생성
-        User user1 = userRepository.findById(user1Id)
+        User user1 = userRepository.findById(user1Id) //본인
                 .orElseThrow(() ->  new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        User user2 = userRepository.findById(user2Id)
+        User user2 = userRepository.findById(user2Id) //친구
                 .orElseThrow(() ->  new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         validateFriendship(user1Id, user2Id);
@@ -71,13 +76,20 @@ public class ChatService {
                 .build();
 
         chatRoom = chatRoomRepository.save(chatRoom);
-        return chatConverter.convertToChatRoomResponse(chatRoom, user1Id);
+        String profileImageUrl = generateProfileImageUrl(user2);
+        return chatConverter.convertToChatRoomResponse(chatRoom, user1Id, profileImageUrl);
     }
 
     // 사용자의 채팅방 목록 조회
     public List<ChatRoomResponse> getUserChatRooms(Long userId) {
         List<ChatRoom> chatRooms = chatRoomRepository.findByUserIdOrderByLastMessageTimeDesc(userId);
-        return chatConverter.convertToChatRoomResponseList(chatRooms, userId);
+        return chatRooms.stream()
+                .map(chatRoom -> {
+                    User otherUser = chatRoom.getOtherUser(userId);
+                    String profileImageUrl = generateProfileImageUrl(otherUser);
+                    return chatConverter.convertToChatRoomResponse(chatRoom, userId, profileImageUrl);
+                })
+                .toList();
     }
 
     // 채팅 메시지 전송
@@ -150,6 +162,16 @@ public class ChatService {
         if (!isFriend) {
             throw new GeneralException(ErrorStatus.NOT_FRIEND_RELATIONSHIP);
         }
+    }
+
+    private String generateProfileImageUrl(User user) {
+        if (user.getImageFileName() == null || user.getImageFileName().isEmpty()) {
+            return null;
+        }
+        return s3Service.generatePresignedDownloadUrl(
+                user.getImageFileName(),
+                ImageType.PROFILE
+        );
     }
 }
 
