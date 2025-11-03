@@ -20,6 +20,6 @@ public class ChatRoomResponse {
     public static class UserResponse {
         private Long id;
         private String nickname;
-        private String imageFileName;
+        private String profileImage;
     }
 }
