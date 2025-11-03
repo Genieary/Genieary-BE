@@ -19,7 +19,7 @@ import java.util.Set;
 @Builder
 public class ProfileResponse {
     private Long id;
-    private String profileImg;
+    private String profileImage;
     private String nickname;
     private String email;
     private LocalDate birthDate;
@@ -35,11 +35,14 @@ public class ProfileResponse {
     @Schema(description = "전체 프로필 완성 여부", example = "true")
     private Boolean isProfileCompleted;
 
-
     public static ProfileResponse from(User user) {
+        return from(user, user.getImageFileName());
+    }
+
+    public static ProfileResponse from(User user, String imageUrl) {
         return ProfileResponse.builder()
                 .id(user.getId())
-                .profileImg(user.getImageFileName())
+                .profileImage(imageUrl)
                 .nickname(user.getNickname())
                 .email(user.getEmail())
                 .birthDate(user.getBirthDate())
