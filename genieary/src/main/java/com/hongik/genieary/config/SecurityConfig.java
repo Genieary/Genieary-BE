@@ -66,8 +66,8 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:3000",
-                "https://genieary.site"
-
+                "https://genieary.site",
+                "https://genieary.vercel.app"
         )); // 허용할 Origin
         configuration.setAllowedMethods(Arrays.asList("*")); //모든 HTTP메서드 허용
         configuration.setAllowedHeaders(Arrays.asList("*")); //모든 헤더값 적용
