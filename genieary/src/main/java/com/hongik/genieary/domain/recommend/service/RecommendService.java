@@ -20,4 +20,5 @@ public interface RecommendService {
 
     Page<RecommendResponseDto.LikeListDto> getMyLikedRecommendations(Long userId, int page, int size);
 
+    List<RecommendResponseDto.FriendGiftRecommendResultDto> getFriendRecommendations(Long userId, Long friendId);
 }

@@ -3,6 +3,7 @@ package com.hongik.genieary.domain.recommend.service;
 import com.hongik.genieary.common.exception.GeneralException;
 import com.hongik.genieary.common.status.ErrorStatus;
 import com.hongik.genieary.domain.ai.service.OpenAiService;
+import com.hongik.genieary.domain.friend.repository.FriendRepository;
 import com.hongik.genieary.domain.recommend.Category;
 import com.hongik.genieary.domain.recommend.dto.RecommendResponseDto;
 import com.hongik.genieary.domain.recommend.entity.Recommend;
@@ -37,6 +38,7 @@ public class RecommendServiceImpl implements RecommendService{
     final private RecommendRepository recommendRepository;
     final private InterestRepository interestRepository;
     final private GoogleSearchService googleSearchService;
+    final private FriendRepository friendRepository;
 
 
     @Override
@@ -45,41 +47,17 @@ public class RecommendServiceImpl implements RecommendService{
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-        List<UserInterest> userInterests = userInterestRepository.findByUserId(userId);
-
-        String personalities = user.getPersonalities().stream()
-                .map(Enum::name)
-                .collect(Collectors.joining(", "));
-
-        List<Long> interestIds = userInterests.stream()
-                .map(UserInterest::getInterestId)
-                .toList();
-
-        List<Interest> interestsList = interestRepository.findAllById(interestIds);
-
-        String interests = interestsList.stream()
-                .map(Interest::getName)
-                .collect(Collectors.joining(", "));
+        // 유저 정보 추출
+        UserSummary summary = buildUserSummary(user);
 
         String eventText = (event != null && !event.isBlank())
                 ? "The event is " + event + "."
                 : "There is no specific event.";
 
-        List<RecommendResponseDto.GiftRecommendResultDto> recommendations = openAiService.getRecommendations(personalities, interests, category, eventText);
+        List<RecommendResponseDto.GiftRecommendResultDto> recommendations = openAiService.getRecommendations(summary.personalities(), summary.interests(), category, eventText);
 
-        List<String> keywords = recommendations.stream()
-                .map(RecommendResponseDto.GiftRecommendResultDto::getSearchName)
-                .toList();
-
-        // 이미지 검색
-        List<RecommendResponseDto.GiftImageResultDto> imageResults = googleSearchService.getImageUrls(keywords);
-
-        // searchName 기준으로 이미지 URL 매핑
-        Map<String, String> imageMap = imageResults.stream()
-                .filter(dto -> dto.getImageUrl() != null) // null 제거
-                .collect(Collectors.toMap(
-                        RecommendResponseDto.GiftImageResultDto::getSearchName,
-                        RecommendResponseDto.GiftImageResultDto::getImageUrl));
+        // 이미지 검색 및 map변환
+        Map<String, String> imageMap = fetchImageMap(recommendations);
 
         // DB 저장
         List<Recommend> entities = recommendations.stream()
@@ -99,6 +77,34 @@ public class RecommendServiceImpl implements RecommendService{
                         .name(entity.getContentName())
                         .description(entity.getContentDescription())
                         .imageUrl(entity.getContentImage())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public List<RecommendResponseDto.FriendGiftRecommendResultDto> getFriendRecommendations(Long userId, Long friendId) {
+
+        User friend = userRepository.findById(friendId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        boolean exists = friendRepository.existsMutual(userId, friendId);
+        if (!exists) {
+            throw new GeneralException(ErrorStatus.FRIEND_NOT_FOUND);
+        }
+
+        // 유저 정보 추출
+        UserSummary summary = buildUserSummary(friend);
+
+        List<RecommendResponseDto.GiftRecommendResultDto> recommendations = openAiService.getRecommendations(summary.personalities(), summary.interests());
+
+        // 이미지 검색 및 map변환
+        Map<String, String> imageMap = fetchImageMap(recommendations);
+
+        return recommendations.stream()
+                .map(dto -> RecommendResponseDto.FriendGiftRecommendResultDto.builder()
+                        .name(dto.getName())
+                        .description(dto.getDescription())
+                        .imageUrl(imageMap.get(dto.getSearchName()))
                         .build())
                 .toList();
     }
@@ -198,4 +204,49 @@ public class RecommendServiceImpl implements RecommendService{
                 .isPublic(r.isPublic())
                 .build());
     }
+
+
+
+    // 공통 메서드
+    private static record UserSummary(String personalities, String interests) {}
+
+    private UserSummary buildUserSummary(User user) {
+
+        // 유저 성격 추출
+        String personalities = user.getPersonalities().stream()
+                .map(Enum::name)
+                .collect(Collectors.joining(", "));
+
+        // 유저 흥미 추출
+        List<Long> interestIds = userInterestRepository.findByUserId(user.getId()).stream()
+                .map(UserInterest::getInterestId)
+                .toList();
+
+        List<Interest> interestsList = interestRepository.findAllById(interestIds);
+
+        String interests = interestsList.stream()
+                .map(Interest::getName)
+                .collect(Collectors.joining(", "));
+
+        return new UserSummary(personalities, interests);
+    }
+
+    private Map<String, String> fetchImageMap(List<RecommendResponseDto.GiftRecommendResultDto> recommendations) {
+        List<String> keywords = recommendations.stream()
+                .map(RecommendResponseDto.GiftRecommendResultDto::getSearchName)
+                .toList();
+
+        // 이미지 검색 서비스 호출
+        List<RecommendResponseDto.GiftImageResultDto> imageResults = googleSearchService.getImageUrls(keywords);
+
+        // searchName -> ImageUrl 매핑
+        return imageResults.stream()
+                .filter(dto -> dto.getImageUrl() != null)
+                .collect(Collectors.toMap(
+                        RecommendResponseDto.GiftImageResultDto::getSearchName,
+                        RecommendResponseDto.GiftImageResultDto::getImageUrl,
+                        (existing, replacement) -> existing
+                ));
+    }
+
 }
