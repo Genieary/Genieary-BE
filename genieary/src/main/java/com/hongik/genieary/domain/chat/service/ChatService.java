@@ -80,6 +80,21 @@ public class ChatService {
         return chatConverter.convertToChatRoomResponse(chatRoom, user1Id, profileImageUrl);
     }
 
+    public ChatRoomResponse getChatRoom(String roomUuid, Long userId) {
+        ChatRoom chatRoom = chatRoomRepository.findByRoomUuid(roomUuid)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.CHAT_ROOM_NOT_FOUND));
+
+        // 참여중인 채팅방인지 검증
+        if (!chatRoom.isParticipant(userId)) {
+            throw new GeneralException(ErrorStatus.CHAT_ROOM_ACCESS_DENIED);
+        }
+
+        User otherUser = chatRoom.getOtherUser(userId);
+        String profileImageUrl = generateProfileImageUrl(otherUser);
+
+        return chatConverter.convertToChatRoomResponse(chatRoom, userId, profileImageUrl);
+    }
+
     // 사용자의 채팅방 목록 조회
     public List<ChatRoomResponse> getUserChatRooms(Long userId) {
         List<ChatRoom> chatRooms = chatRoomRepository.findByUserIdOrderByLastMessageTimeDesc(userId);

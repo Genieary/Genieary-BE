@@ -35,6 +35,17 @@ public class ChatController {
         return ResponseEntity.ok(chatRoom);
     }
 
+    //채팅방 단일 조회
+    @GetMapping("/rooms/{roomUuid}")
+    @Operation(summary = "채팅방 단일 조회", description = "roomUuid 기반으로 채팅방 정보를 조회합니다.")
+    public ResponseEntity<ChatRoomResponse> getChatRoom(
+            @PathVariable String roomUuid,
+            @AuthenticationPrincipal(expression = "id") Long userId
+    ) {
+        ChatRoomResponse chatRoom = chatService.getChatRoom(roomUuid, userId);
+        return ResponseEntity.ok(chatRoom);
+    }
+
     // 사용자의 채팅방 목록 조회
     @GetMapping("/rooms")
     @Operation(summary = "채팅방 목록 조회", description = "현재 사용자가 참여하고 있는 모든 채팅방 목록을 조회합니다.")
