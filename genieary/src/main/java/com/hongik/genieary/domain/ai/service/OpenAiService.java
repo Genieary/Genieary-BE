@@ -37,14 +37,24 @@ public class OpenAiService {
         return openAiClient.requestChatCompletion(prompt);
     }
 
-    public List<RecommendResponseDto.GiftRecommendResultDto> getRecommendations(String personalities, String interests, Category category, String eventText) {
+    public List<RecommendResponseDto.GiftRecommendResultDto> getRecommendations(
+            String personalities, String interests, Category category, String eventText) {
+        return buildRecommendations(personalities, interests, category, eventText);
+    }
+
+    public List<RecommendResponseDto.GiftRecommendResultDto> getRecommendations(
+            String personalities, String interests) {
+        return buildRecommendations(personalities, interests, null, null);
+    }
+
+    private List<RecommendResponseDto.GiftRecommendResultDto> buildRecommendations(String personalities, String interests, Category category, String eventText) {
         String template = promptLoader.loadPrompt("recommend_gifts_prompt.txt");
 
         String prompt = template
                 .replace("{personalities}", personalities)
                 .replace("{interests}", interests)
-                .replace("{category}", category.name())
-                .replace("{event}", eventText);;
+                .replace("{category}", category != null ? category.name() : "")
+                .replace("{event}", eventText != null ? eventText : "");
 
         String response = openAiClient.requestChatCompletion(prompt);
 
