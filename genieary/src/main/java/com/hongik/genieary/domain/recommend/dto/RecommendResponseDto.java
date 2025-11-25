@@ -22,6 +22,16 @@ public class RecommendResponseDto {
     }
 
     @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FriendGiftRecommendResultDto {
+        private String name;
+        private String description;
+        private String imageUrl;
+    }
+
+    @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder

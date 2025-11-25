@@ -52,6 +52,28 @@ public class RecommendController {
     }
 
     @Operation(
+            summary = "친구 맞춤 선물 추천",
+            description = "친구 정보를 바탕으로 선물 3개를 추천해줍니다.")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = RecommendResponseDto.GiftRecommendResultDto.class)
+            )
+    )
+    @PostMapping("/{friendId}")
+    @ParseErrorApiResponse
+    public ResponseEntity<ApiResponse> recommendFriendGifts(
+            @AuthenticationPrincipal(expression = "id") Long userId,
+            @PathVariable Long friendId){
+
+        List<RecommendResponseDto.FriendGiftRecommendResultDto> gifts = recommendService.getFriendRecommendations(userId, friendId);
+
+        return ApiResponse.onSuccess(SuccessStatus._OK, gifts);
+    }
+
+    @Operation(
             summary = "추천받은 선물 좋아요",
             description = "추천 받은 선물 중에 원하는 선물에 좋아요를 남깁니다. 좋아요를 누른 선물을 저장된 선물 페이지에서 볼 수 있습니다.")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(

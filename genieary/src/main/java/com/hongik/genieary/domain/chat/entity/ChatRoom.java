@@ -55,4 +55,9 @@ public class ChatRoom extends BaseEntity {
     public User getOtherUser(Long userId) {
         return user1.getId().equals(userId) ? user2 : user1;
     }
+
+    public boolean isParticipant(Long userId) {
+        return (user1.getId().equals(userId) || user2.getId().equals(userId));
+    }
+
 }
