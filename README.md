@@ -75,7 +75,7 @@
 
 
 ### 인프라 구성도
-
+<img width="614" height="604" alt="스크린샷 2025-12-01 오전 1 29 21" src="https://github.com/user-attachments/assets/d31e611f-7bcb-4510-8c36-e2edd5380a0b" />
 <br>
 
 ## 🌟 프로젝트 배경 및 아이디어
@@ -89,7 +89,7 @@
 <br>
 
 ## 🤖 자체 AI모델 구축
-- 얼굴이미지를 분석하여 angry, disgust, fear, happy, neutral, sad, surprise 감정 분류를 수행하며, 각 클래스의 데이터 비율과 약 50% 정확도를 가진 감정 인식 모델 구축
+- 얼굴이미지를 분석하여 angry, disgust, fear, happy, neutral, sad, surprise 감정 분류를 수행하며, 각 클래스의 데이터 비율과 약 60% 정확도를 가진 감정 인식 모델 구축
 - 사용한 데이터셋 : [FER-2013](https://www.kaggle.com/datasets/msambare/fer2013)
 
 <br>
